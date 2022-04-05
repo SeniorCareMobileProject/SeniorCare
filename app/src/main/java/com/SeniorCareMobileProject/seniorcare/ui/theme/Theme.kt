@@ -1,4 +1,4 @@
-package com.example.seniorcare.ui.theme
+package com.SeniorCareMobileProject.seniorcare.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material.MaterialTheme

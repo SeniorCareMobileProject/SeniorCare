@@ -3,6 +3,7 @@
     package="com.example.seniorcare">
 
     <application
+        android:name="com.SeniorCareMobileProject.seniorcare.MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -10,7 +11,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SeniorCare">
         <activity
-            android:name=".MainActivity"
+            android:name="com.SeniorCareMobileProject.seniorcare.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.SeniorCare">

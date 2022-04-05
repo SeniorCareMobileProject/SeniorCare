@@ -1,4 +1,4 @@
-package com.example.seniorcare
+package com.SeniorCareMobileProject.seniorcare
 
 import org.junit.Test
 
