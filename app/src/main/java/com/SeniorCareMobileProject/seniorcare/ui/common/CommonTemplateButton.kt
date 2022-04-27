@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.common
 
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -13,7 +14,9 @@ import androidx.compose.ui.unit.sp
 fun CommonTemplateButton(text: String) {
     Text(
         text,
-        Modifier.wrapContentSize(Alignment.Center),
+        Modifier
+            .wrapContentSize(Alignment.Center)
+            .wrapContentHeight(Alignment.CenterVertically),
         fontWeight = FontWeight.Normal,
         textAlign = TextAlign.Center,
         fontSize = 30.sp
