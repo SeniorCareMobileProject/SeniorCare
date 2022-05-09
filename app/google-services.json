@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "272124790691",
+    "project_id": "senior-care-mobile-proje-a58b2",
+    "storage_bucket": "senior-care-mobile-proje-a58b2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:272124790691:android:09861071d857bcca49bc16",
+        "android_client_info": {
+          "package_name": "com.SeniorCareMobileProject.seniorcare"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "272124790691-ih9ocanv6sd05ff4t6htj5qqot2ou68v.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBU52DdBES-XagH8Lxa6U3-IQY-ycdM0Q0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "272124790691-ih9ocanv6sd05ff4t6htj5qqot2ou68v.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
