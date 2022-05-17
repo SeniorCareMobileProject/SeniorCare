@@ -3,19 +3,22 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.TextField
+import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role.Companion.RadioButton
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
@@ -44,34 +47,41 @@ fun RegisterView(navController: NavController, sharedViewModel: SharedViewModel)
                 .wrapContentHeight(Alignment.CenterVertically)
                 .wrapContentWidth(Alignment.CenterHorizontally)
         ) {
-            val email = simpleOutlinedTextFieldSample()
+            val email = simpleOutlinedTextFieldSample("E-mail")
             val password = passwordTextField()
+            val firstName = simpleOutlinedTextFieldSample("First name")
+            val lastName = simpleOutlinedTextFieldSample("Last name")
+            val function = SimpleRadioButtonComponent()
 
             Button(
                 onClick = {
-                    //FirebaseAuthentication.displayToast("$email + $password")
-                    FirebaseAuthentication.startAuthentication()
-                    FirebaseAuthentication.registerUser(email, password)
+                    FirebaseAuthentication.registerUser(email, password, firstName, lastName, function)
+                    displayToast("Zarejestrowano użytkownika")
                           },
                 modifier = Modifier.padding(16.dp)
             ) {
-                Text("Confirm")
+                Text("Register")
             }
         }
+
         Column(Modifier.weight(128f)) {
             NavButton(navController, "Register", "FirstStartUpScreen")
         }
     }
 }
 
+fun displayToast(s: String) {
+    Toast.makeText(context, s, Toast.LENGTH_LONG).show()
+}
+
 @Composable
-fun simpleOutlinedTextFieldSample(): String {
-    var text by remember { mutableStateOf("test") }
+fun simpleOutlinedTextFieldSample(label: String): String {
+    var text by remember { mutableStateOf("") }
 
     OutlinedTextField(
         value = text,
         onValueChange = { text = it },
-        label = { Text("E-mail") },
+        label = { Text(label) },
         modifier = Modifier.padding(16.dp)
     )
     return text
@@ -90,6 +100,45 @@ fun passwordTextField(): String {
         modifier = Modifier.padding(16.dp)
     )
     return password
+}
+
+@Composable
+fun SimpleRadioButtonComponent(): String {
+    val radioOptions = listOf("Opiekun", "Podopieczny")
+    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+    Column(
+        modifier = Modifier.wrapContentWidth().wrapContentHeight(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Column {
+            radioOptions.forEach { text ->
+                Row(
+                    Modifier
+                        .fillMaxWidth()
+                        .selectable(
+                            selected = (text == selectedOption),
+                            onClick = { onOptionSelected(text) }
+                        )
+                        .padding(horizontal = 16.dp)
+                ) {
+                    val context = context
+                    RadioButton(
+                        selected = (text == selectedOption),modifier = Modifier.padding(all = Dp(value = 8F)),
+                        onClick = {
+                            onOptionSelected(text)
+                            Toast.makeText(context, text, Toast.LENGTH_LONG).show()
+                        }
+                    )
+                    Text(
+                        text = text,
+                        modifier = Modifier.padding(start = 16.dp)
+                    )
+                }
+            }
+        }
+    }
+    return selectedOption
 }
 
 @Preview(showBackground = true)
