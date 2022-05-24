@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.seniorcare">
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
         android:name="com.SeniorCareMobileProject.seniorcare.MyApplication"
         android:allowBackup="true"
@@ -10,6 +12,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SeniorCare">
+
+
         <activity
             android:name="com.SeniorCareMobileProject.seniorcare.MainActivity"
             android:exported="true"

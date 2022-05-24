@@ -1,6 +1,11 @@
 package com.SeniorCareMobileProject.seniorcare
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -11,6 +16,8 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -30,6 +37,8 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.TemplateView2
 class MainActivity : ComponentActivity() {
 
     private val sharedViewModel: SharedViewModel by viewModels()
+
+    private val requestCall = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
 
@@ -118,6 +127,37 @@ class MainActivity : ComponentActivity() {
 
                 }
 
+            }
+        }
+    }
+
+    fun makePhoneCall(number: String) {
+        if (number.trim { it <= ' ' }.isNotEmpty()) {
+            if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(
+                    this@MainActivity,
+                    arrayOf(Manifest.permission.CALL_PHONE),
+                    requestCall
+                )
+            } else {
+                val phoneNumber = "tel:$number"
+                startActivity(Intent(Intent.ACTION_CALL, Uri.parse(phoneNumber)))
+            }
+        } else {
+            Toast.makeText(this@MainActivity, "Nie podano numeru telefonu", Toast.LENGTH_SHORT).show()
+        }
+    }
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String?>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == requestCall) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                makePhoneCall("123456789")
+            } else {
+                Toast.makeText(this, "Odmowa dostępu", Toast.LENGTH_SHORT).show()
             }
         }
     }
