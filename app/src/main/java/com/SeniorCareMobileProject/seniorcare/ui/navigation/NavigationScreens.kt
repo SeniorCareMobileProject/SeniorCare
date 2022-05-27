@@ -17,6 +17,7 @@ enum class NavigationScreens(val title: String) {
     SeniorCalendarScreen("SeniorCalendarScreen"),
     SeniorMainScreen("SeniorMainScreen"),
     SeniorMedicalInfoScreen("SeniorMedicalInfoScreen"),
-    SeniorNotificationScreen("SeniorNotficationScreen")
+    SeniorNotificationScreen("SeniorNotficationScreen"),
+    MapsTestScreen("MapsTestScreen")
 
 }

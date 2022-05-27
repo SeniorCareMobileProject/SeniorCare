@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment.Companion.BottomCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -27,7 +28,7 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.CommonTemplateButton
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 
 @Composable
@@ -54,6 +55,7 @@ fun TemplateText2() {
             .wrapContentHeight(Alignment.CenterVertically),
         fontWeight = FontWeight.Medium,
         fontSize = 30.sp
+
     )
 }
 

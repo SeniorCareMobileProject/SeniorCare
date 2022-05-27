@@ -11,6 +11,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.NavButton
+import com.SeniorCareMobileProject.seniorcare.ui.common.PermissionsPopup
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 
 @Composable
@@ -24,6 +25,7 @@ fun FirstStartUpView(navController: NavController, sharedViewModel: SharedViewMo
             .wrapContentWidth(Alignment.CenterHorizontally)
 
     ) {
+        PermissionsPopup()
         Column(Modifier.weight(128f)) {
             NavButton(navController, "Login", "LoginScreen")
         }
