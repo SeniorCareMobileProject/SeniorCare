@@ -17,9 +17,9 @@ import com.google.android.gms.location.*
 import java.util.concurrent.TimeUnit
 
 
-class CurrentLocationService: Service() {
+class BackgroundLocationService: Service() {
     private var configurationChange = false
-    private var serviceRunningInForeground = false
+    private var serviceRunningInBackground = false
     private val localBinder = LocalBinder()
     private lateinit var notificationManager: NotificationManager
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -49,7 +49,7 @@ class CurrentLocationService: Service() {
         val intent = Intent(ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
         intent.putExtra(EXTRA_LOCATION, currentLocation)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-        if (serviceRunningInForeground) {
+        if (serviceRunningInBackground) {
             notificationManager.notify(NOTIFICATION_ID, generateNotification(currentLocation))
         }
     }
@@ -67,7 +67,7 @@ class CurrentLocationService: Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         stopForeground(true)
-        serviceRunningInForeground = false
+        serviceRunningInBackground = false
         configurationChange = false
         return localBinder
     }
@@ -76,7 +76,7 @@ class CurrentLocationService: Service() {
         if (!configurationChange && SharedPreferenceUtil.getLocationTrackingPref(this)) {
             val notification = generateNotification(currentLocation)
             startForeground(NOTIFICATION_ID, notification)
-            serviceRunningInForeground = true
+            serviceRunningInBackground = true
         }
         return true
     }
@@ -90,7 +90,7 @@ class CurrentLocationService: Service() {
     @SuppressLint("MissingPermission")
     fun subscribeToLocationUpdates() {
         SharedPreferenceUtil.saveLocationTrackingPref(this, true)
-        startService(Intent(applicationContext, CurrentLocationService::class.java))
+        startService(Intent(applicationContext, BackgroundLocationService::class.java))
         Log.d("Current Location Upda", "TRY PROBLEMMMMMM")
         try {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
@@ -137,7 +137,7 @@ class CurrentLocationService: Service() {
             .bigText(mainNotificationText)
             .setBigContentTitle(titleText)
         val launchActivity = Intent(this, MainActivity::class.java)
-        val cancelIntent = Intent(this, CurrentLocationService::class.java)
+        val cancelIntent = Intent(this, BackgroundLocationService::class.java)
         cancelIntent.putExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, true)
         val servicePendingIntent = PendingIntent.getService(
             this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT
@@ -169,7 +169,7 @@ class CurrentLocationService: Service() {
     }
 
     inner class LocalBinder: Binder() {
-        internal val service: CurrentLocationService get() = this@CurrentLocationService
+        internal val service: BackgroundLocationService get() = this@BackgroundLocationService
     }
 
     companion object {

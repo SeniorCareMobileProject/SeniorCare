@@ -2,29 +2,34 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.SeniorCareMobileProject.seniorcare">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
 
     <application
-        android:name="com.SeniorCareMobileProject.seniorcare.MyApplication"
+        android:name=".MyApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SeniorCare">
+        <receiver
+            android:name=".BootBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyChHYPORUyPsdzhqgDhA2HvUn97oAAsK_o" />
+            android:value="${MAPS_API_KEY}" />
 
         <activity
-            android:name="com.SeniorCareMobileProject.seniorcare.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.SeniorCare">
@@ -36,34 +41,18 @@
         </activity>
 
         <receiver
-            android:name="com.SeniorCareMobileProject.seniorcare.ui.widget.SosButtonWidget"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/sos_button_widget_info" />
-        </receiver>
-
-        <receiver
-            android:name="com.SeniorCareMobileProject.GeofenceBroadcastReceiver"
+            android:name=".GeofenceBroadcastReceiver"
             android:enabled="true"
             android:exported="true"
             android:permission="android.permission.ACCESS_FINE_LOCATION" />
 
         <service
-            android:name="com.SeniorCareMobileProject.seniorcare.CurrentLocationService"
+            android:name=".CurrentLocationService"
             android:enabled="true"
             android:exported="false"
             android:foregroundServiceType="location"
             android:permission="android.permission.ACCESS_FINE_LOCATION" />
 
-        <service
-            android:name="com.SeniorCareMobileProject.seniorcare.LocationJobScheduler"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>
