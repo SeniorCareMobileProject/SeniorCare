@@ -2,4 +2,7 @@
     <string name="app_name">Senior Care</string>
     <string name="template_string">Template String Button Part 1</string>
     <string name="template_string2">Template String Button Part 2</string>
+    <string name="appwidget_text">EXAMPLE</string>
+    <string name="add_widget">Add widget</string>
+    <string name="app_widget_description">This is an app widget description</string>
 </resources>
