@@ -15,6 +15,8 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.Database
+import com.SeniorCareMobileProject.seniorcare.firebase.FirebaseAuthentication
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -34,6 +36,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
+        FirebaseAuthentication.startAuthentication()
+        Database.initialDatabase()
 
         setContent {
             SeniorCareTheme() {

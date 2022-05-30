@@ -51,22 +51,30 @@ fun RegisterView(navController: NavController, sharedViewModel: SharedViewModel)
             val password = passwordTextField()
             val firstName = simpleOutlinedTextFieldSample("First name")
             val lastName = simpleOutlinedTextFieldSample("Last name")
-            val function = SimpleRadioButtonComponent()
+            val function = simpleRadioButtonComponent()
 
             Button(
                 onClick = {
                     FirebaseAuthentication.registerUser(email, password, firstName, lastName, function)
-                    displayToast("Zarejestrowano użytkownika")
                           },
                 modifier = Modifier.padding(16.dp)
             ) {
                 Text("Register")
             }
+
+            if (function == "Carer"){
+                NavButton(navController, "Register", "CarerMainScreen")
+            }
+            else {
+                NavButton(navController, "Register", "SeniorMainScreen")
+            }
         }
 
+        /*
         Column(Modifier.weight(128f)) {
             NavButton(navController, "Register", "FirstStartUpScreen")
         }
+         */
     }
 }
 
@@ -103,11 +111,13 @@ fun passwordTextField(): String {
 }
 
 @Composable
-fun SimpleRadioButtonComponent(): String {
-    val radioOptions = listOf("Opiekun", "Podopieczny")
+fun simpleRadioButtonComponent(): String {
+    val radioOptions = listOf("Carer", "Senior")
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
     Column(
-        modifier = Modifier.wrapContentWidth().wrapContentHeight(),
+        modifier = Modifier
+            .wrapContentWidth()
+            .wrapContentHeight(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {

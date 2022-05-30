@@ -5,6 +5,8 @@ import android.widget.Toast
 import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.SeniorCareMobileProject.seniorcare.data.Database.initialDatabase
 import com.SeniorCareMobileProject.seniorcare.data.Database.writeNewUser
+import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -17,7 +19,7 @@ object FirebaseAuthentication {
 
     lateinit var auth: FirebaseAuth
 
-    private fun startAuthentication(){
+    fun startAuthentication(){
         auth = FirebaseAuth.getInstance()
     }
 
@@ -35,11 +37,10 @@ object FirebaseAuthentication {
                     auth.createUserWithEmailAndPassword(email, password).await()
                     withContext(Dispatchers.Main) {
                         auth.currentUser?.sendEmailVerification()
-                        Log.d("Rejestracja", "Udało się zarejestrować!")
 
                         //WRITE TO DATABASE
-                        initialDatabase()
                         writeNewUser(auth.currentUser!!.uid, email, firstName, lastName, function)
+                        Log.d("Rejestracja", "Udało się zarejestrować!")
                     }
                 } catch (e: Exception) {
                     withContext(Dispatchers.Main) {
@@ -69,13 +70,13 @@ object FirebaseAuthentication {
         }
     }
 
-    fun checkLoggedInState(): String {
+    fun checkLoggedInState() {
         checkIfAuthInitialize()
         if (auth.currentUser == null){
-            return ("You are not logged in!")
+            Repository.loggedUserID.value = "You are not logged in!"
         }
         else {
-            return auth.currentUser.toString()
+            Repository.loggedUserID.value = auth.currentUser!!.uid
         }
     }
 

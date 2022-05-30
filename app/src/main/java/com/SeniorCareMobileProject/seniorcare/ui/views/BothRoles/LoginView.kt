@@ -4,12 +4,14 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Button
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.Database
 import com.SeniorCareMobileProject.seniorcare.firebase.FirebaseAuthentication
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.NavButton
@@ -54,19 +56,41 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
             ) {
                 Text("Sign out")
             }
-            TextLive(FirebaseAuthentication.checkLoggedInState())
+            TextLive(sharedViewModel)
+
+            Button(
+                onClick = {
+                    Database.readTest()
+                },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Read test")
+            }
+
+            Button(
+                onClick = {
+                    Database.writeNewConnectedWith("LhJ5NcLjNWhqbYAhqHpnoaCtXRp2", "Co44st0qc8U6jsqvSMLuMQNfVPg2")
+                },
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text("Connected write test")
+            }
         }
 
         Column(Modifier.weight(128f)) {
-            NavButton(navController, "Login", "FirstStartUpScreen")
+            NavButton(navController, "Login", "CarerMainScreen")
         }
 
     }
 }
 
 @Composable
-fun TextLive(loggedUser : String) {
-    Text(text = loggedUser)
+fun TextLive(sharedViewModel: SharedViewModel) {
+    FirebaseAuthentication.checkLoggedInState()
+    val loggedUser by sharedViewModel.loggedUserID.observeAsState()
+    if (loggedUser != null){
+        Text(text = loggedUser!!)
+    }
 }
 
 @Preview(showBackground = true)
