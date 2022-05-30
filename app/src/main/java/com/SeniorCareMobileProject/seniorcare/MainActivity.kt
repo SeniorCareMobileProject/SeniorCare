@@ -41,10 +41,10 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController,
-                    startDestination = NavigationScreens.FirstStartUpScreen.name,
+                    startDestination = NavigationScreens.ChooseLoginMethodScreen.name,
                 ) {
-                    composable(NavigationScreens.FirstStartUpScreen.name) {
-                        FirstStartUpView(navController, sharedViewModel)
+                    composable(NavigationScreens.ChooseLoginMethodScreen.name) {
+                        ChooseLoginMethodView(navController, sharedViewModel)
                     }
 
                     composable(NavigationScreens.LoginScreen.name) {
@@ -113,6 +113,21 @@ class MainActivity : ComponentActivity() {
 
                     composable(NavigationScreens.SeniorNotificationScreen.name) {
                         SeniorNotificationView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.SignUpGoogleScreen.name) {
+                        SignUpGoogleView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.SignUpEmailScreen.name) {
+                        SignUpEmailView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.SignUpEmailVerificationScreen.name) {
+                        SignUpEmailVerificationView(navController, sharedViewModel)
 
                     }
 
