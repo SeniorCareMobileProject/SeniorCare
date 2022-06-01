@@ -20,10 +20,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.*
-import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.SeniorCalendarView
-import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.SeniorMainView
-import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.SeniorMedicalInfoView
-import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.SeniorNotificationView
+import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.TemplateView
 import com.SeniorCareMobileProject.seniorcare.ui.views.TemplateView2
 
@@ -128,6 +125,41 @@ class MainActivity : ComponentActivity() {
 
                     composable(NavigationScreens.SignUpEmailVerificationScreen.name) {
                         SignUpEmailVerificationView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.PasswordRecoveryScreen.name) {
+                        PasswordRecoveryView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.PasswordRecoveryEmailScreen.name) {
+                        PasswordRecoveryEmailView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.PairingScreenCodeScreen.name) {
+                        PairingScreenCodeView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.PairingScreenSuccessScreen.name) {
+                        PairingScreenSuccessView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.PairingScreenCodeInputScreen.name) {
+                        PairingScreenCodeInputView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.PairingScreenConfirmationScreen.name) {
+                        PairingScreenConfirmationView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.PairingScreenSeniorSuccessScreen.name) {
+                        PairingScreenSeniorSuccessView(navController, sharedViewModel)
 
                     }
 
