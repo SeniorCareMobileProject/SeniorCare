@@ -1,13 +1,17 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -20,6 +24,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.body_16
+import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.*
 import com.example.seniorcare.R
 
@@ -111,6 +116,29 @@ fun SmallButtonNoPressedState(text: String) {
 }
 
 @Composable
+fun SmallButtonWithRout(navController: NavController, text: String, rout: String) {
+    Button(
+        onClick = { navController.navigate(rout) },
+        shape = RoundedCornerShape(10.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff7929e8)),
+        modifier = Modifier
+            .width(width = 187.dp)
+            .height(height = 30.dp)
+            .padding(horizontal = 19.dp)
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            lineHeight = 16.sp,
+            style = TextStyle(
+                fontSize = 12.sp
+            )
+        )
+    }
+}
+
+@Composable
 fun ChooseRoleSection() {
     val firstPressed = remember { mutableStateOf(false) }
     val secondPressed = remember { mutableStateOf(false) }
@@ -165,39 +193,18 @@ fun ChooseRoleSection() {
     }
 }
 
-////@Preview
-//@Composable
-//fun SmallButtonPressed() {
-//    Button(
-//        onClick = { },
-//        shape = RoundedCornerShape(10.dp),
-//        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff3d1574)),
-//        modifier = Modifier
-//            .width(width = 187.dp)
-//            .height(height = 30.dp)
-//            .padding(horizontal = 19.dp)
-//    ) {
-//        Text(
-//            text = "Text",
-//            color = Color.White,
-//            textAlign = TextAlign.Center,
-//            lineHeight = 16.sp,
-//            style = TextStyle(
-//                fontSize = 12.sp
-//            )
-//        )
-//    }
-//}
-
 @Composable
 fun IconTextButton(navController: NavController, text: String, iconName: String, rout: String) {
-    val context = LocalContext.current
-    val iconId = remember(iconName) {
-        context.resources.getIdentifier(
-            iconName,
-            "drawable",
-            context.packageName
-        )
+    var iconId = -1
+    if (!iconName.equals("")) {
+        val context = LocalContext.current
+        iconId = remember(iconName) {
+            context.resources.getIdentifier(
+                iconName,
+                "drawable",
+                context.packageName
+            )
+        }
     }
 
     Button(
@@ -209,11 +216,13 @@ fun IconTextButton(navController: NavController, text: String, iconName: String,
             .fillMaxWidth()
             .height(56.dp)
     ) {
-        Icon(
-            painter = painterResource(id = iconId),
-            contentDescription = iconName,
-            tint = Color.Unspecified
-        )
+        if (!iconId.equals(-1)) {
+            Icon(
+                painter = painterResource(id = iconId),
+                contentDescription = iconName,
+                tint = Color.Unspecified
+            )
+        }
         Spacer(
             modifier = Modifier
                 .width(width = 8.dp)
@@ -343,7 +352,45 @@ fun TextFilledButton(navController: NavController, text: String, rout: String) {
             lineHeight = 24.sp,
             style = TextStyle(
                 fontSize = 16.sp,
-                fontWeight = FontWeight.Bold))
+                fontWeight = FontWeight.Bold
+            )
+        )
+    }
+}
+
+@Composable
+fun UserCard(navController: NavController, name: String, emial: String) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Row(horizontalArrangement = Arrangement.Center) {
+            Box(
+                modifier = Modifier
+                    .border(
+                        width = 1.dp,
+                        color = MaterialTheme.colors.primary,
+                        shape = RoundedCornerShape(20.dp)
+                    )
+                    .height(76.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .wrapContentWidth()
+            )
+            {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(
+                        text = name,
+                        fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .padding(top = 14.dp)
+                            .padding(horizontal = 30.dp)
+                    )
+                    Text(
+                        text = emial,
+                        modifier = Modifier
+                            .padding(horizontal = 30.dp)
+                            .padding(bottom = 14.dp)
+                    )
+                }
+            }
+        }
     }
 }
 
@@ -377,6 +424,12 @@ fun SignUpViewPreview() {
                 ""
             )
             TextFilledButton(navController, "Text", "")
+            UserCard(
+                navController = navController,
+                name = "Piotr Kowalski",
+                emial = "piotr.kowalski@gmail.com"
+            )
+            Input()
         }
 
     }

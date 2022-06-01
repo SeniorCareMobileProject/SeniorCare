@@ -21,6 +21,13 @@ enum class NavigationScreens(val title: String) {
     SignUpGoogleScreen("SignUpGoogleScreen"),
     SignUpEmailScreen("SignUpEmailScreen"),
     SignUpEmailVerificationScreen("SignUpEmailVerificationScreen"),
+    PasswordRecoveryScreen("PasswordRecoveryScreen"),
+    PasswordRecoveryEmailScreen("PasswordRecoveryEmailScreen"),
+    PairingScreenCodeScreen("PairingScreenCodeScreen"),
+    PairingScreenSuccessScreen("PairingScreenSuccessScreen"),
+    PairingScreenCodeInputScreen("PairingScreenCodeInputScreen"),
+    PairingScreenConfirmationScreen("PairingScreenConfirmationScreen"),
+    PairingScreenSeniorSuccessScreen("PairingScreenSeniorSuccessScreen")
 
 
 }

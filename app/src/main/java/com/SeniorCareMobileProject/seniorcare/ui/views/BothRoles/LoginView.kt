@@ -90,7 +90,9 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 color = MaterialTheme.colors.primary,
                 style = TextStyle(textDecoration = TextDecoration.Underline),
                 fontWeight = FontWeight.Medium,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .clickable { navController.navigate(NavigationScreens.PasswordRecoveryScreen.name) }
             )
         }
 
