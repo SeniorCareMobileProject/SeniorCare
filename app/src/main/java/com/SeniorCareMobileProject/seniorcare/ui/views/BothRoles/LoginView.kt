@@ -78,7 +78,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
         }
 
         Column(Modifier.weight(128f)) {
-            NavButton(navController, "Login", "CarerMainScreen")
+            NavButton(navController, "Login", "LoadingUserDataView")
         }
 
     }

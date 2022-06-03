@@ -75,6 +75,11 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.LoadingUserDataView.name) {
+                        LoadingUserDataView(navController, sharedViewModel)
+
+                    }
+
                     composable(NavigationScreens.CarerCreatingNotificationsScreen.name) {
                         CarerCreatingNotificationsView(navController, sharedViewModel)
 

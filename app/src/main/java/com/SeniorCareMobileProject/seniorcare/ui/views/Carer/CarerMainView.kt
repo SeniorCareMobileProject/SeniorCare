@@ -30,7 +30,7 @@ fun CarerMainView(navController: NavController, sharedViewModel: SharedViewModel
     ) {
         Text("Carer View")
 
-        Database.readUserDataListener()
+        Database.readUserDataListener(sharedViewModel)
         TextLive(sharedViewModel.userData)
 
     }
