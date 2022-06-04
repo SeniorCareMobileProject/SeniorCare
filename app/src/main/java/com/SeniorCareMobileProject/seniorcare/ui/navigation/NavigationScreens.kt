@@ -3,7 +3,7 @@ package com.SeniorCareMobileProject.seniorcare.ui.navigation
 enum class NavigationScreens(val title: String) {
     TemplateScreen("TemplateScreen"),
     TemplateScreen2("TemplateScreen2"),
-    FirstStartUpScreen("FirstStartUpScreen"),
+    ChooseLoginMethodScreen("ChooseLoginMethodScreen"),
     LoginScreen("LoginScreen"),
     RegisterScreen("RegisterScreen"),
     ChooseRoleScreen("ChooseRoleScreen"),
@@ -18,6 +18,18 @@ enum class NavigationScreens(val title: String) {
     SeniorMainScreen("SeniorMainScreen"),
     SeniorMedicalInfoScreen("SeniorMedicalInfoScreen"),
     SeniorNotificationScreen("SeniorNotficationScreen"),
+    SignUpGoogleScreen("SignUpGoogleScreen"),
+    SignUpEmailScreen("SignUpEmailScreen"),
+    SignUpEmailVerificationScreen("SignUpEmailVerificationScreen"),
+    PasswordRecoveryScreen("PasswordRecoveryScreen"),
+    PasswordRecoveryEmailScreen("PasswordRecoveryEmailScreen"),
+    PairingScreenCodeScreen("PairingScreenCodeScreen"),
+    PairingScreenSuccessScreen("PairingScreenSuccessScreen"),
+    PairingScreenCodeInputScreen("PairingScreenCodeInputScreen"),
+    PairingScreenConfirmationScreen("PairingScreenConfirmationScreen"),
+    PairingScreenSeniorSuccessScreen("PairingScreenSeniorSuccessScreen"),
+    LoadingLoginView("LoadingLoginView"),
     LoadingUserDataView("LoadingUserDataView")
+
 
 }

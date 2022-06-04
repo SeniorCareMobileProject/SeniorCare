@@ -2,6 +2,7 @@ package com.SeniorCareMobileProject.seniorcare.data
 
 import android.util.Log
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.firebase.FirebaseAuthentication
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
@@ -23,25 +24,6 @@ object Database {
         database.child("users").child(userId).child("connectedWith").child(connectingID).setValue("")
     }
 
-    fun readUserDataListener(sharedViewModel: SharedViewModel){
-        val database = FirebaseDatabase.getInstance(url)
-        val userReference = database.getReference("users/" + sharedViewModel.loggedUserID.value)
-        val userListener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val user = snapshot.getValue<User>()
-                if (user != null) {
-                    Repository.userData.value = user
-                }
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                // Getting Post failed, log a message
-                Log.w("Database", "loadPost:onCancelled", databaseError.toException())
-            }
-        }
-        //userReference.addValueEventListener(userListener)
-        userReference.addListenerForSingleValueEvent(userListener)
-    }
-
     fun readTest(){
         database.child("users").child("LhJ5NcLjNWhqbYAhqHpnoaCtXRp2").get().addOnSuccessListener {
             val userData : User? = it.getValue<User>()
@@ -54,14 +36,14 @@ object Database {
     fun readFunction(sharedViewModel: SharedViewModel) {
         database
             .child("users")
-            .child(sharedViewModel.loggedUserID.value!!)
+            .child(FirebaseAuthentication.auth.currentUser!!.uid)
             .child("function")
             .get()
             .addOnSuccessListener {
                 val function : String? = it.getValue<String>()
-                if (function != null){
-                    sharedViewModel.setUserFunction(function)
-                }
+                //if (function != null){
+                    //sharedViewModel.setUserFunction(function)
+                //}
             }
             .addOnFailureListener {
                 Log.e("test", "Error getting data", it)

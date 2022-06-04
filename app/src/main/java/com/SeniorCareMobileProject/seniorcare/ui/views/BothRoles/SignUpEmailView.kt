@@ -1,24 +1,20 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 
-import android.app.Application
-import android.util.Log
-import android.widget.Toast
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.State
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCompositionContext
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,28 +22,29 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.SeniorCareMobileProject.seniorcare.data.util.Resource
-import com.SeniorCareMobileProject.seniorcare.firebase.FirebaseAuthentication
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
-import com.SeniorCareMobileProject.seniorcare.ui.common.InputBoxPlaceholder
-import com.SeniorCareMobileProject.seniorcare.ui.common.NavButton
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
-import com.example.seniorcare.R
-import com.google.firebase.auth.AuthResult
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.ChooseRoleSection
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TextFilledButton
+
 
 @Composable
-fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
+fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewModel) {
+//    val context = LocalContext.current
+
+    val scrollState = remember { ScrollState(0) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
+            .verticalScroll(scrollState)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
@@ -60,17 +57,18 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
 
         Column(
             modifier = Modifier
-                .padding(top = 46.dp)
+                .padding(top = 50.dp)
                 .padding(horizontal = 24.dp)
         ) {
-            Text(text = "Logowanie", color = MaterialTheme.colors.primary, style = h1)
+            Text(text = "Rejestracja", color = MaterialTheme.colors.primary, style = h1)
         }
 
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 46.dp),
-            verticalArrangement = Arrangement.spacedBy(29.dp)
+                .background(Color.White)
+                .padding(top = 5.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             InputFieldLabelIcon(
                 text = "Twój adres email",
@@ -86,40 +84,30 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 iconName = "lock",
                 viewModelVariable = sharedViewModel.password
             )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            Text(
-                text = "Zapomniałeś hasło?",
-                fontSize = 16.sp,
-                color = MaterialTheme.colors.primary,
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                fontWeight = FontWeight.Medium,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .clickable { navController.navigate(NavigationScreens.PasswordRecoveryScreen.name) }
+            InputFieldLabelIcon(
+                text = "Wprowadź swoje na imię",
+                onValueChange = {},
+                fieldLabel = "Imię",
+                iconName = "",
+                viewModelVariable = sharedViewModel.firstName
+            )
+            InputFieldLabelIcon(
+                text = "Wprowadź swoje nazwisko",
+                onValueChange = {},
+                fieldLabel = "Nazwiko",
+                iconName = "",
+                viewModelVariable = sharedViewModel.lastName
             )
         }
 
+        ChooseRoleSection(sharedViewModel)
+
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp)
-                .padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(30.dp)
+                .padding(top = 40.dp)
+                .padding(horizontal = 12.dp)
         ) {
-            LoginButton(navController, "Zaloguj się", sharedViewModel)
-            Divider(color = Color.Black, thickness = 1.dp)
-            IconTextButton(
-                navController,
-                stringResource(R.string.continue_with_Google),
-                "google",
-                ""
-            )
+            RegisterButton(navController, "Zarejestruj", sharedViewModel)
 
             Row(
                 Modifier
@@ -128,27 +116,40 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "Nie masz konta?", modifier = Modifier.padding(horizontal = 8.dp))
+                Text(text = "Już masz konto?", modifier = Modifier.padding(horizontal = 8.dp))
                 Text(
-                    text = "Zarejestruj się",
+                    text = "Zaloguj się",
                     fontSize = 16.sp,
                     color = MaterialTheme.colors.primary,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
-                        .clickable { navController.navigate("SignUpEmailScreen") }
+                        .clickable { navController.navigate("LoginScreen") }
                 )
             }
         }
+
     }
 }
 
 @Composable
-fun LoginButton(navController: NavController, text: String, sharedViewModel: SharedViewModel) {
+fun RegisterButton(navController: NavController, text: String, sharedViewModel: SharedViewModel) {
     Button(
         onClick = {
-            sharedViewModel.signInUser(sharedViewModel.email.value, sharedViewModel.password.value)
+            if (sharedViewModel.isFunctionCarer.value){
+                sharedViewModel.function.value = "Carer"
+            }
+            if (sharedViewModel.isFunctionSenior.value){
+                sharedViewModel.function.value = "Senior"
+            }
+            sharedViewModel.createUser(
+                sharedViewModel.email.value,
+                sharedViewModel.password.value,
+                sharedViewModel.firstName.value,
+                sharedViewModel.lastName.value,
+                sharedViewModel.function.value
+                )
             navController.navigate("LoadingUserDataView")
         },
         shape = RoundedCornerShape(20.dp),
@@ -172,10 +173,10 @@ fun LoginButton(navController: NavController, text: String, sharedViewModel: Sha
 
 @Preview(showBackground = true)
 @Composable
-fun LoginViewPreview() {
+fun SignUpEmailViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
         val sharedViewModel = SharedViewModel()
-        LoginView(navController, sharedViewModel)
+        SignUpEmailView(navController, sharedViewModel)
     }
 }

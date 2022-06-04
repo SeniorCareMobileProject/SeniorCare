@@ -30,7 +30,6 @@ fun CarerMainView(navController: NavController, sharedViewModel: SharedViewModel
     ) {
         Text("Carer View")
 
-        Database.readUserDataListener(sharedViewModel)
         TextLive(sharedViewModel.userData)
 
     }
@@ -39,7 +38,7 @@ fun CarerMainView(navController: NavController, sharedViewModel: SharedViewModel
 @Composable
 fun TextLive(text: LiveData<User>) {
     val loggedUser by text.observeAsState()
-    loggedUser?.let { it.firstName?.let { it1 -> Text(it1) } }
+    loggedUser?.let { it.firstName?.let { it1 -> Text("Witaj $it1") } }
 
 }
 
