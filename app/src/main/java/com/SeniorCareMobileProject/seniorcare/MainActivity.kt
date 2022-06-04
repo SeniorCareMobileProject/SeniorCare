@@ -51,11 +51,6 @@ class MainActivity : ComponentActivity() {
                         LoginView(navController, sharedViewModel)
                     }
 
-                    composable(NavigationScreens.RegisterScreen.name) {
-                        RegisterView(navController, sharedViewModel)
-
-                    }
-
                     composable(NavigationScreens.ChooseRoleScreen.name) {
                         ChooseRoleView(navController, sharedViewModel)
 
@@ -63,11 +58,6 @@ class MainActivity : ComponentActivity() {
 
                     composable(NavigationScreens.ForgotPasswordScreen.name) {
                         ForgotPasswordView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.RegisterCodeScreen.name) {
-                        RegisterView(navController, sharedViewModel)
 
                     }
 

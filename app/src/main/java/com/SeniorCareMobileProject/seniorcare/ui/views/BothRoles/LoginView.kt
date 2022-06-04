@@ -30,7 +30,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
-import com.SeniorCareMobileProject.seniorcare.firebase.FirebaseAuthentication
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.InputBoxPlaceholder
 import com.SeniorCareMobileProject.seniorcare.ui.common.NavButton

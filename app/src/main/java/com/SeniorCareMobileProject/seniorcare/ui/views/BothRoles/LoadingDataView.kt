@@ -33,8 +33,15 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
             is Resource.Success<*> -> {
                 Log.d("Funkcja", sharedViewModel.userData.value!!.function.toString())
                 LaunchedEffect(userDataState){
-                    navController.navigate("CarerMainScreen"){
-                        popUpTo("LoadingDataView") {inclusive = true}
+                    if (sharedViewModel.userData.value!!.function == "Carer"){
+                        navController.navigate("CarerMainScreen"){
+                            popUpTo("LoadingDataView") {inclusive = true}
+                        }
+                    }
+                    else if (sharedViewModel.userData.value!!.function == "Senior"){
+                        navController.navigate("SeniorMainScreen"){
+                            popUpTo("LoadingDataView") {inclusive = true}
+                        }
                     }
                 }
             }

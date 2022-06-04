@@ -1,13 +1,16 @@
 package com.SeniorCareMobileProject.seniorcare.data
 
+import android.provider.Settings.Global.getString
 import android.util.Log
 import android.widget.Toast
+import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
-import com.SeniorCareMobileProject.seniorcare.data.util.safeCall
-import com.SeniorCareMobileProject.seniorcare.firebase.FirebaseAuthentication
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.example.seniorcare.R
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth

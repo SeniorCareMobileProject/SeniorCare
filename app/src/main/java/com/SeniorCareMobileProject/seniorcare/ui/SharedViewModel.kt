@@ -20,6 +20,8 @@ class SharedViewModel : ViewModel() {
     var isFunctionSenior = mutableStateOf(false)
     var function = mutableStateOf("")
 
+    var emailForgotPassword = mutableStateOf("")
+
     // for checking request state
     val _userSignUpStatus = MutableLiveData<Resource<AuthResult>>()
     val userSignUpStatus: LiveData<Resource<AuthResult>> = _userSignUpStatus

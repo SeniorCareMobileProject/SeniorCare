@@ -2,7 +2,6 @@ package com.SeniorCareMobileProject.seniorcare.data
 
 import android.util.Log
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
-import com.SeniorCareMobileProject.seniorcare.firebase.FirebaseAuthentication
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.google.firebase.database.*
 import com.google.firebase.database.ktx.getValue
@@ -31,22 +30,5 @@ object Database {
         }.addOnFailureListener{
             Log.e("test", "Error getting data", it)
         }
-    }
-
-    fun readFunction(sharedViewModel: SharedViewModel) {
-        database
-            .child("users")
-            .child(FirebaseAuthentication.auth.currentUser!!.uid)
-            .child("function")
-            .get()
-            .addOnSuccessListener {
-                val function : String? = it.getValue<String>()
-                //if (function != null){
-                    //sharedViewModel.setUserFunction(function)
-                //}
-            }
-            .addOnFailureListener {
-                Log.e("test", "Error getting data", it)
-            }
     }
 }
