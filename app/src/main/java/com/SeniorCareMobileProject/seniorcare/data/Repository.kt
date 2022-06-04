@@ -34,24 +34,31 @@ class Repository {
 
     private val databaseUserReference = database.getReference("users")
 
-    suspend fun createUser(userEmailAddress: String, userLoginPassword: String, userFirstName: String, userLastName: String, userFunction: String): Resource<AuthResult> {
-        return withContext(Dispatchers.IO) {
-            safeCall {
-                val registrationResult = firebaseAuth.createUserWithEmailAndPassword(userEmailAddress, userLoginPassword).await()
-                val userId = registrationResult.user?.uid!!
-                val newUser = User(userEmailAddress, userFirstName, userLastName, userFunction)
-                databaseUserReference.child(userId).setValue(newUser).await()
-                Resource.Success(registrationResult)
+    fun registerUser(sharedViewModel: SharedViewModel, userEmailAddress: String, userLoginPassword: String, userFirstName: String, userLastName: String, userFunction: String) {
+        if (userEmailAddress.isNotEmpty() && userLoginPassword.isNotEmpty() || userFirstName.isNotEmpty() && userLastName.isNotEmpty() || userFunction.isNotEmpty()){
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = firebaseAuth.createUserWithEmailAndPassword(userEmailAddress, userLoginPassword).await()
+                    withContext(Dispatchers.Main) {
+                        firebaseAuth.currentUser?.sendEmailVerification()
+
+                        val userId = firebaseAuth.currentUser!!.uid
+                        val newUser = User(userEmailAddress, userFirstName, userLastName, userFunction)
+                        databaseUserReference.child(userId).setValue(newUser).await()
+                        sharedViewModel._userSignUpStatus.postValue(Resource.Success(response))
+                        Log.d("Rejestracja", "Udało się zarejestrować!")
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        sharedViewModel._userSignUpStatus.postValue(Resource.Error(e.message.toString()))
+                        Toast.makeText(MyApplication.context, e.message, Toast.LENGTH_LONG).show()
+                    }
+                }
             }
         }
-    }
-
-    suspend fun login(email: String, password: String): Resource<AuthResult> {
-        return withContext(Dispatchers.IO) {
-            safeCall {
-                val result = firebaseAuth.signInWithEmailAndPassword(email, password).await()
-                Resource.Success(result)
-            }
+        else {
+            sharedViewModel._userSignUpStatus.postValue(Resource.Error("Empty strings"))
+            Toast.makeText(MyApplication.context, "Please enter valid information", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -73,9 +80,13 @@ class Repository {
                 }
             }
         }
+        else {
+            sharedViewModel._userSignUpStatus.postValue(Resource.Error("Empty strings"))
+            Toast.makeText(MyApplication.context, "Please enter your email and password", Toast.LENGTH_LONG).show()
+        }
     }
 
-    fun readUserDataOnce(sharedViewModel: SharedViewModel){
+    fun getUserData(sharedViewModel: SharedViewModel){
         val userReference = database.getReference("users/" + firebaseAuth.currentUser!!.uid)
         val userListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {

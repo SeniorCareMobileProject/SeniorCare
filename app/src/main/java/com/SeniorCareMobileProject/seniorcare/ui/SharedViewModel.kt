@@ -1,6 +1,5 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
-import android.util.Patterns
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
@@ -34,42 +33,24 @@ class SharedViewModel : ViewModel() {
 
     private val repository = Repository()
 
-    fun createUser(userEmailAddress: String, userLoginPassword: String, userFirstName: String, userLastName: String, userFunction: String) {
-        val error =
-            if (userEmailAddress.isEmpty() || userLoginPassword.isEmpty() || userFirstName.isEmpty() || userLastName.isEmpty() || userFunction.isEmpty()) {
-                "Empty Strings"
-            } else if (!Patterns.EMAIL_ADDRESS.matcher(userEmailAddress).matches()) {
-                "Not a valid Email"
-            } else null
-
-        error?.let {
-            _userSignUpStatus.postValue(Resource.Error(it))
-            return
-        }
+    fun loginUser(userEmailAddress: String, userLoginPassword: String) {
         _userSignUpStatus.postValue(Resource.Loading())
-
         viewModelScope.launch(Dispatchers.Main) {
-            val registerResult = repository.createUser(userEmailAddress, userLoginPassword, userFirstName, userLastName, userFunction)
-            _userSignUpStatus.postValue(registerResult)
+            repository.loginUser(this@SharedViewModel, userEmailAddress, userLoginPassword)
         }
     }
 
-    fun signInUser(userEmailAddress: String, userLoginPassword: String) {
-        if (userEmailAddress.isEmpty() || userLoginPassword.isEmpty()){
-            _userSignUpStatus.postValue(Resource.Error("Empty Strings"))
-        } else {
-            _userSignUpStatus.postValue(Resource.Loading())
-            viewModelScope.launch(Dispatchers.Main) {
-                val loginResult = repository.login(userEmailAddress, userLoginPassword)
-                _userSignUpStatus.postValue(loginResult)
-            }
+    fun registerUser(sharedViewModel: SharedViewModel, userEmailAddress: String, userLoginPassword: String, userFirstName: String, userLastName: String, userFunction: String){
+        _userSignUpStatus.postValue(Resource.Loading())
+        viewModelScope.launch(Dispatchers.Main) {
+            repository.registerUser(this@SharedViewModel, userEmailAddress, userLoginPassword, userFirstName, userLastName, userFunction)
         }
     }
 
-    fun getUserDataNew(){
+    fun getUserData(){
         viewModelScope.launch(Dispatchers.Main) {
             _userDataStatus.postValue(Resource.Loading())
-            repository.readUserDataOnce(this@SharedViewModel)
+            repository.getUserData(this@SharedViewModel)
         }
     }
 }

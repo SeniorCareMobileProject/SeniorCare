@@ -27,8 +27,8 @@ class MainActivity : ComponentActivity() {
         val currentUser = firebaseAuth.currentUser?.uid
         var startDestination = ""
         if (currentUser != null){
-            sharedViewModel.getUserDataNew()
-            startDestination = NavigationScreens.CarerMainScreen.name
+            sharedViewModel.getUserData()
+            startDestination = NavigationScreens.LoadingDataView.name
         }
         else{
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
@@ -71,8 +71,18 @@ class MainActivity : ComponentActivity() {
 
                     }
 
-                    composable(NavigationScreens.LoadingUserDataView.name) {
-                        LoadingUserDataView(navController, sharedViewModel)
+                    composable(NavigationScreens.LoadingLoginView.name) {
+                        LoadingLoginView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.LoadingRegisterView.name) {
+                        LoadingRegisterView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.LoadingDataView.name) {
+                        LoadingDataView(navController, sharedViewModel)
 
                     }
 

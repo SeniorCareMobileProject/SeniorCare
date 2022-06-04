@@ -21,56 +21,34 @@ import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.google.firebase.auth.AuthResult
 
 @Composable
-fun LoadingUserDataView(navController: NavController, sharedViewModel: SharedViewModel) {
-    val context = LocalContext.current
+fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val loginState: State<Resource<AuthResult>?> = sharedViewModel.userSignUpStatus.observeAsState()
         val userDataState : State<Resource<User>?> = sharedViewModel.userDataStatus.observeAsState()
 
-        when (loginState.value){
+        when (userDataState.value){
+            is Resource.Success<*> -> {
+                Log.d("Funkcja", sharedViewModel.userData.value!!.function.toString())
+                LaunchedEffect(userDataState){
+                    navController.navigate("CarerMainScreen"){
+                        popUpTo("LoadingDataView") {inclusive = true}
+                    }
+                }
+            }
             is Resource.Loading<*> -> {
                 CircularProgressIndicator()
             }
-            is Resource.Success<*> -> {
-                // read user function once from firebase
-                LaunchedEffect(loginState){
-                    sharedViewModel.getUserDataNew()
-                }
-                when (userDataState.value){
-                    is Resource.Success<*> -> {
-                        Log.d("Funkcja", sharedViewModel.userData.value!!.function.toString())
-                        LaunchedEffect(userDataState){
-                            navController.navigate("CarerMainScreen"){
-                                popUpTo("LoadingUserDataView") {inclusive = true}
-                            }
-                        }
-                    }
-                    is Resource.Loading<*> -> {
-                        CircularProgressIndicator()
-                    }
-                    else -> {Log.d("Funkcja", "null")}
-                }
-
-            }
-            is Resource.Error<*> -> {
-                LaunchedEffect(loginState){
-                    Toast.makeText(context, "Login error - please enter a valid email and password", Toast.LENGTH_LONG).show()
-                    navController.navigate("LoginScreen"){
-                        popUpTo("LoadingUserDataView") {inclusive = true}
-                    }
-                }
-            }
+            else -> {Log.d("Funkcja", "null")}
         }
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingLoginView() {
+fun LoadingDataView() {
     SeniorCareTheme() {
         val navController = rememberNavController()
         val sharedViewModel = SharedViewModel()

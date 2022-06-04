@@ -1,5 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -10,11 +12,13 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionContext
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -35,7 +39,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TextFilledButton
 
 @Composable
 fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewModel) {
-//    val context = LocalContext.current
+    val context = LocalContext.current
 
     val scrollState = remember { ScrollState(0) }
 
@@ -107,7 +111,7 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
                 .padding(top = 40.dp)
                 .padding(horizontal = 12.dp)
         ) {
-            RegisterButton(navController, "Zarejestruj", sharedViewModel)
+            RegisterButton(navController, "Zarejestruj", sharedViewModel, context)
 
             Row(
                 Modifier
@@ -134,7 +138,7 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
 }
 
 @Composable
-fun RegisterButton(navController: NavController, text: String, sharedViewModel: SharedViewModel) {
+fun RegisterButton(navController: NavController, text: String, sharedViewModel: SharedViewModel, context: Context) {
     Button(
         onClick = {
             if (sharedViewModel.isFunctionCarer.value){
@@ -143,14 +147,21 @@ fun RegisterButton(navController: NavController, text: String, sharedViewModel: 
             if (sharedViewModel.isFunctionSenior.value){
                 sharedViewModel.function.value = "Senior"
             }
-            sharedViewModel.createUser(
-                sharedViewModel.email.value,
-                sharedViewModel.password.value,
-                sharedViewModel.firstName.value,
-                sharedViewModel.lastName.value,
-                sharedViewModel.function.value
+
+            if (sharedViewModel.function.value == "") {
+                Toast.makeText(context, "You must choose a function", Toast.LENGTH_LONG).show()
+            }
+            else{
+                sharedViewModel.registerUser(
+                    sharedViewModel,
+                    sharedViewModel.email.value,
+                    sharedViewModel.password.value,
+                    sharedViewModel.firstName.value,
+                    sharedViewModel.lastName.value,
+                    sharedViewModel.function.value
                 )
-            navController.navigate("LoadingUserDataView")
+                navController.navigate("LoadingRegisterView")
+            }
         },
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff7929e8)),

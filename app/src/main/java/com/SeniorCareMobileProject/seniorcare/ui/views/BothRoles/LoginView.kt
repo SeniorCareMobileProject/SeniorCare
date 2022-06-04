@@ -148,8 +148,8 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
 fun LoginButton(navController: NavController, text: String, sharedViewModel: SharedViewModel) {
     Button(
         onClick = {
-            sharedViewModel.signInUser(sharedViewModel.email.value, sharedViewModel.password.value)
-            navController.navigate("LoadingUserDataView")
+            sharedViewModel.loginUser(sharedViewModel.email.value, sharedViewModel.password.value)
+            navController.navigate("LoadingLoginView")
         },
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff7929e8)),
