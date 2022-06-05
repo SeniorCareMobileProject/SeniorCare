@@ -6,6 +6,7 @@ import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -28,6 +29,9 @@ class SharedViewModel : ViewModel() {
 
     val _userDataStatus = MutableLiveData<Resource<User>>()
     val userDataStatus: LiveData<Resource<User>> = _userDataStatus
+
+    val _isEmailVerified = MutableLiveData<Boolean>(FirebaseAuth.getInstance().currentUser?.isEmailVerified)
+    val isEmailVerified: LiveData<Boolean> = _isEmailVerified
 
     // user data
     val _userData: MutableLiveData<User> = MutableLiveData()
