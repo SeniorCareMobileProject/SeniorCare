@@ -1,14 +1,17 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -28,19 +31,20 @@ import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.ChooseRoleSection
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SmallButton
 import com.example.seniorcare.R
 
 
 @Composable
 fun SignUpGoogleView(navController: NavController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
+    val scrollState = remember { ScrollState(0) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
+            .verticalScroll(scrollState)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,

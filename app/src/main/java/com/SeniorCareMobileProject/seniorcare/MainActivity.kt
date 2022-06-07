@@ -4,25 +4,21 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.NavGraphBuilder
+import androidx.compose.material.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.navigation.BottomNavItem
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavigationBarView
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.NavigationSetup
 import com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.*
-import com.SeniorCareMobileProject.seniorcare.ui.views.TemplateView
-import com.SeniorCareMobileProject.seniorcare.ui.views.TemplateView2
 
 class MainActivity : ComponentActivity() {
 
@@ -31,61 +27,36 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
 
         super.onCreate(savedInstanceState)
-
         setContent {
             SeniorCareTheme() {
                 val navController = rememberNavController()
+                val scope = rememberCoroutineScope()
+                val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
                 NavHost(
                     navController,
                     startDestination = NavigationScreens.ChooseLoginMethodScreen.name,
                 ) {
+                    composable(BottomNavItem.Location.route) {
+                        CarerMainView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+                    composable(BottomNavItem.Calendar.route) {
+                        CarerDayPlanningView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+                    composable(BottomNavItem.MedInfo.route) {
+                        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+                    composable(BottomNavItem.Notifications.route) {
+                        CarerNotificationsView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+
+
                     composable(NavigationScreens.ChooseLoginMethodScreen.name) {
                         ChooseLoginMethodView(navController, sharedViewModel)
                     }
 
                     composable(NavigationScreens.LoginScreen.name) {
                         LoginView(navController, sharedViewModel)
-                    }
-
-                    composable(NavigationScreens.RegisterScreen.name) {
-                        RegisterView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.ChooseRoleScreen.name) {
-                        ChooseRoleView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.ForgotPasswordScreen.name) {
-                        ForgotPasswordView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.RegisterCodeScreen.name) {
-                        RegisterView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.CarerCreatingNotificationsScreen.name) {
-                        CarerCreatingNotificationsView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.CarerDayPlanningScreen.name) {
-                        CarerDayPlanningView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.CarerMainScreen.name) {
-                        CarerMainView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.CarerMedicalInfoScreen.name) {
-                        CarerMedicalInfoView(navController, sharedViewModel)
-
                     }
 
                     composable(NavigationScreens.CarerPairingScreen.name) {
@@ -162,6 +133,7 @@ class MainActivity : ComponentActivity() {
                         PairingScreenSeniorSuccessView(navController, sharedViewModel)
 
                     }
+
 
                 }
 

@@ -1,8 +1,10 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
@@ -10,6 +12,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,24 +26,24 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
-import com.SeniorCareMobileProject.seniorcare.ui.common.InputBoxPlaceholder
-import com.SeniorCareMobileProject.seniorcare.ui.common.NavButton
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputField
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TextFilledButton
 import com.example.seniorcare.R
 
 @Composable
 fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
+    val scrollState = remember { ScrollState(0) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
+            .verticalScroll(scrollState)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
@@ -109,7 +112,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 navController,
                 stringResource(R.string.continue_with_Google),
                 "google",
-                ""
+                "CarerMainScreen"
             )
 
             Row(

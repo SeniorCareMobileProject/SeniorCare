@@ -4,4 +4,8 @@
     <string name="template_string2">Template String Button Part 2</string>
     <string name="continue_with_Google">Kontynuuj z Google</string>
     <string name="welcome_to">Witamy w</string>
+    <string name="medical_info">Dane medyczne</string>
+    <string name="calendar">Kalendarz</string>
+    <string name="location">Lokalizacja</string>
+    <string name="notifications">Powiadomienia</string>
 </resources>
