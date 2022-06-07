@@ -5,4 +5,6 @@
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
+    <string name="continue_with_Google">Kontynuuj z Google</string>
+    <string name="welcome_to">Witamy w</string>
 </resources>
