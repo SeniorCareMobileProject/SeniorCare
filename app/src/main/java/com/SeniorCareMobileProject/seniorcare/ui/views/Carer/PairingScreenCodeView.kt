@@ -163,9 +163,9 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
     }
 
     // CHECK IF PAIRING IS DONE
-    val pairingState : State<String?> = sharedViewModel.pairingStatus.observeAsState()
+    val pairingState : State<Boolean?> = sharedViewModel.pairingStatus.observeAsState()
     when (pairingState.value){
-        "true" -> {
+        true -> {
             LaunchedEffect(pairingState){
                 navController.navigate("PairingScreenSuccessScreen"){
                     popUpTo("PairingScreenCodeScreen") {inclusive = true}

@@ -123,7 +123,8 @@ class Repository {
                     FirebaseAuth.getInstance().currentUser!!.uid,
                     userData.value!!.firstName,
                     userData.value!!.lastName,
-                    userData.value!!.email
+                    userData.value!!.email,
+                    false
                 )
                 val pairingDataReference = database.getReference("pairing").child("data")
                 pairingDataReference
@@ -145,7 +146,8 @@ class Repository {
                     FirebaseAuth.getInstance().currentUser!!.uid,
                     userData.value!!.firstName,
                     userData.value!!.lastName,
-                    userData.value!!.email
+                    userData.value!!.email,
+                    false
                 )
                 val pairingDataReference = database.getReference("pairing").child("data")
                 pairingDataReference
@@ -180,7 +182,7 @@ class Repository {
             .child("status")
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val status = snapshot.getValue<String>()
+                val status = snapshot.getValue<Boolean?>()
                 if (status != null) {
                     sharedViewModel.pairingStatus.value = status
                 }
@@ -204,5 +206,48 @@ class Repository {
             .child("codes")
             .child(sharedViewModel.pairingCode.value.toString())
         codeReference.removeValue()
+    }
+
+    fun getPairingData(sharedViewModel: SharedViewModel){
+        val pairingDataReference = database.getReference("pairing/data/" + sharedViewModel.codeInput.value)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val data = snapshot.getValue<PairingData>()
+                    if (data != null){
+                        sharedViewModel.pairingData.value = data
+                        sharedViewModel.pairingDataStatus.postValue(Resource.Success(data))
+                    }
+                }
+                else {
+                    sharedViewModel.pairingDataStatus.postValue(Resource.Error("Nie ma takiego kodu"))
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getPairingData:onCancelled", databaseError.toException())
+                sharedViewModel.pairingDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
+            }
+        }
+        pairingDataReference.addListenerForSingleValueEvent(listener)
+    }
+
+    fun writeSeniorIDForPairing(sharedViewModel: SharedViewModel){
+        database.getReference("pairing")
+            .child("data")
+            .child(sharedViewModel.codeInput.value)
+            .child("seniorID")
+            .setValue(FirebaseAuth.getInstance().currentUser?.uid)
+    }
+
+    fun writeNewConnectedWith(userId: String, connectingID: String){
+        database.getReference("users").child(userId).child("connectedWith").child(connectingID).setValue("")
+    }
+
+    fun updatePairingStatus(sharedViewModel: SharedViewModel){
+        database.getReference("pairing")
+            .child("data")
+            .child(sharedViewModel.codeInput.value)
+            .child("status")
+            .setValue(true)
     }
 }

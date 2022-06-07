@@ -7,6 +7,7 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.google.firebase.auth.AuthResult
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -38,7 +39,10 @@ class SharedViewModel : ViewModel() {
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
     val pairingData: MutableLiveData<PairingData> = MutableLiveData()
-    val pairingStatus: MutableLiveData<String> = MutableLiveData("false")
+    val pairingStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+    // senior
+    var codeInput = mutableStateOf("")
+    val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
 
     private val repository = Repository()
 
@@ -69,5 +73,24 @@ class SharedViewModel : ViewModel() {
 
     fun deletePairingCode(){
         repository.removePairingCode(this)
+    }
+
+    fun getPairingData(){
+        viewModelScope.launch(Dispatchers.Main) {
+            pairingDataStatus.postValue(Resource.Loading())
+            repository.getPairingData(this@SharedViewModel)
+        }
+    }
+
+    fun writeSeniorIDForPairing(){
+        repository.writeSeniorIDForPairing(this)
+    }
+
+    fun writeNewConnectionWith(carerID: String){
+        repository.writeNewConnectedWith(FirebaseAuth.getInstance().currentUser!!.uid, carerID)
+    }
+
+    fun updatePairingStatus(){
+        repository.updatePairingStatus(this)
     }
 }

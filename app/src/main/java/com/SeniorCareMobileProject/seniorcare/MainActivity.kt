@@ -172,6 +172,11 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.LoadingPairingDataView.name) {
+                        LoadingPairingDataView(navController, sharedViewModel)
+
+                    }
+
                 }
 
             }

@@ -30,7 +30,8 @@ enum class NavigationScreens(val title: String) {
     PairingScreenSeniorSuccessScreen("PairingScreenSeniorSuccessScreen"),
     LoadingDataView("LoadingDataView"),
     LoadingLoginView("LoadingLoginView"),
-    LoadingRegisterView("LoadingRegisterView")
+    LoadingRegisterView("LoadingRegisterView"),
+    LoadingPairingDataView("LoadingPairingDataView")
 
 
 }
