@@ -1,0 +1,253 @@
+package com.SeniorCareMobileProject.seniorcare.data
+
+import android.util.Log
+import android.widget.Toast
+import com.SeniorCareMobileProject.seniorcare.MyApplication
+import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
+import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.data.util.Resource
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.ktx.getValue
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
+import kotlin.random.Random
+
+class Repository {
+    private val firebaseAuth = FirebaseAuth.getInstance()
+    private val url = "https://senior-care-mobile-proje-a58b2-default-rtdb.europe-west1.firebasedatabase.app/"
+    private val database = FirebaseDatabase.getInstance(url)
+
+    private val databaseUserReference = database.getReference("users")
+
+    // REGISTRATION
+    fun registerUser(sharedViewModel: SharedViewModel, userEmailAddress: String, userLoginPassword: String, userFirstName: String, userLastName: String, userFunction: String) {
+        if (userEmailAddress.isNotEmpty() && userLoginPassword.isNotEmpty() || userFirstName.isNotEmpty() && userLastName.isNotEmpty() || userFunction.isNotEmpty()){
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = firebaseAuth.createUserWithEmailAndPassword(userEmailAddress, userLoginPassword).await()
+                    withContext(Dispatchers.Main) {
+                        firebaseAuth.currentUser?.sendEmailVerification()
+
+                        val userId = firebaseAuth.currentUser!!.uid
+                        val newUser = User(userEmailAddress, userFirstName, userLastName, userFunction)
+                        databaseUserReference.child(userId).setValue(newUser).await()
+                        sharedViewModel._userSignUpStatus.postValue(Resource.Success(response))
+                        Log.d("Rejestracja", "Udało się zarejestrować!")
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        sharedViewModel._userSignUpStatus.postValue(Resource.Error(e.message.toString()))
+                        Toast.makeText(MyApplication.context, e.message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+        else {
+            sharedViewModel._userSignUpStatus.postValue(Resource.Error("Empty strings"))
+            Toast.makeText(MyApplication.context, "Please enter valid information", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // LOGGING
+    fun loginUser(sharedViewModel: SharedViewModel, email: String, password: String){
+        if (email.isNotEmpty() && password.isNotEmpty()){
+            CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    val response = firebaseAuth.signInWithEmailAndPassword(email, password).await()
+                    withContext(Dispatchers.Main) {
+                        Log.d("Login", "Udało się zalogować!")
+                        sharedViewModel._userSignUpStatus.postValue(Resource.Success(response))
+
+                    }
+                } catch (e: Exception) {
+                    withContext(Dispatchers.Main) {
+                        sharedViewModel._userSignUpStatus.postValue(Resource.Error(e.message.toString()))
+                        Toast.makeText(MyApplication.context, e.message, Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+        }
+        else {
+            sharedViewModel._userSignUpStatus.postValue(Resource.Error("Empty strings"))
+            Toast.makeText(MyApplication.context, "Please enter your email and password", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // GET DATA
+    fun getUserData(sharedViewModel: SharedViewModel){
+        val userReference = database.getReference("users/" + firebaseAuth.currentUser!!.uid)
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue<User>()
+                if (user != null) {
+                    sharedViewModel._userData.value = user
+                    sharedViewModel._userDataStatus.postValue(Resource.Success(user))
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "loadPost:onCancelled", databaseError.toException())
+                sharedViewModel._userDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
+            }
+        }
+        userReference.addValueEventListener(userListener)
+        //userReference.addListenerForSingleValueEvent(userListener)
+    }
+
+    // PAIRING
+    fun createPairingCodeAndWriteToFirebase(sharedViewModel: SharedViewModel){
+        val pairingCodesReference = database.getReference("pairing").child("codes")
+        pairingCodesReference.get().addOnSuccessListener {
+            if (it != null){
+                val allCodesList = it.getValue<HashMap<String, String>>()
+                val allCodesString = allCodesList!!.keys
+                val allCodes = allCodesString.map { string -> string.toInt()}
+                val uniqueCode = getRandomWithExclusion(10000, 99999, allCodes)
+
+                // WRITE PAIRING CODE TO FIREBASE
+                pairingCodesReference
+                    .child(uniqueCode.toString())
+                    .setValue(FirebaseAuth.getInstance().currentUser?.uid)
+                sharedViewModel.pairingCode.value = uniqueCode.toString()
+
+                // WRITE USER DATA FOR PAIRING TO FIREBASE
+                val userData = sharedViewModel.userData
+                val pairingData = PairingData(
+                    FirebaseAuth.getInstance().currentUser!!.uid,
+                    userData.value!!.firstName,
+                    userData.value!!.lastName,
+                    userData.value!!.email,
+                    false
+                )
+                val pairingDataReference = database.getReference("pairing").child("data")
+                pairingDataReference
+                    .child(uniqueCode.toString())
+                    .setValue(pairingData)
+                sharedViewModel.pairingData.value = pairingData
+                // SET STATUS LISTENER
+                pairingStatusListener(sharedViewModel)
+            }
+            else {
+                val uniqueCode = Random.nextInt(10000, 99999)
+                // WRITE PAIRING CODE TO FIREBASE
+                pairingCodesReference
+                    .child(uniqueCode.toString())
+                    .setValue(FirebaseAuth.getInstance().currentUser?.uid)
+                // WRITE USER DATA FOR PAIRING TO FIREBASE
+                val userData = sharedViewModel.userData
+                val pairingData = PairingData(
+                    FirebaseAuth.getInstance().currentUser!!.uid,
+                    userData.value!!.firstName,
+                    userData.value!!.lastName,
+                    userData.value!!.email,
+                    false
+                )
+                val pairingDataReference = database.getReference("pairing").child("data")
+                pairingDataReference
+                    .child(uniqueCode.toString())
+                    .setValue(pairingData)
+                sharedViewModel.pairingData.value = pairingData
+                // SET STATUS LISTENER
+                pairingStatusListener(sharedViewModel)
+            }
+        }.addOnFailureListener{
+            Log.e("Pairing Code", "Error getting data", it)
+        }
+
+    }
+
+    private fun getRandomWithExclusion(start: Int, end: Int, exclude: List<Int>): Int {
+        var random = start + Random.nextInt(end - start + 1 - exclude.size)
+        for (ex in exclude) {
+            if (random < ex) {
+                break
+            }
+            random++
+        }
+        return random
+    }
+
+    fun pairingStatusListener(sharedViewModel: SharedViewModel){
+        val pairingDataReference = database
+            .getReference("pairing")
+            .child("data")
+            .child(sharedViewModel.pairingCode.value.toString())
+            .child("status")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val status = snapshot.getValue<Boolean?>()
+                if (status != null) {
+                    sharedViewModel.pairingStatus.value = status
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "pairingStatusListener:onCancelled", databaseError.toException())
+            }
+        }
+        pairingDataReference.addValueEventListener(listener)
+    }
+
+    fun removePairingCode(sharedViewModel: SharedViewModel){
+        val dataReference = database
+            .getReference("pairing")
+            .child("data")
+            .child(sharedViewModel.pairingCode.value.toString())
+        dataReference.removeValue()
+
+        val codeReference = database
+            .getReference("pairing")
+            .child("codes")
+            .child(sharedViewModel.pairingCode.value.toString())
+        codeReference.removeValue()
+    }
+
+    fun getPairingData(sharedViewModel: SharedViewModel){
+        val pairingDataReference = database.getReference("pairing/data/" + sharedViewModel.codeInput.value)
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    val data = snapshot.getValue<PairingData>()
+                    if (data != null){
+                        sharedViewModel.pairingData.value = data
+                        sharedViewModel.pairingDataStatus.postValue(Resource.Success(data))
+                    }
+                }
+                else {
+                    sharedViewModel.pairingDataStatus.postValue(Resource.Error("Nie ma takiego kodu"))
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getPairingData:onCancelled", databaseError.toException())
+                sharedViewModel.pairingDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
+            }
+        }
+        pairingDataReference.addListenerForSingleValueEvent(listener)
+    }
+
+    fun writeSeniorIDForPairing(sharedViewModel: SharedViewModel){
+        database.getReference("pairing")
+            .child("data")
+            .child(sharedViewModel.codeInput.value)
+            .child("seniorID")
+            .setValue(FirebaseAuth.getInstance().currentUser?.uid)
+    }
+
+    fun writeNewConnectedWith(userId: String, connectingID: String){
+        database.getReference("users").child(userId).child("connectedWith").child(connectingID).setValue("")
+    }
+
+    fun updatePairingStatus(sharedViewModel: SharedViewModel){
+        database.getReference("pairing")
+            .child("data")
+            .child(sharedViewModel.codeInput.value)
+            .child("status")
+            .setValue(true)
+    }
+}

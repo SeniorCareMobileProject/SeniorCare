@@ -27,6 +27,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.body_16
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.*
 import com.example.seniorcare.R
+import com.google.firebase.ktx.Firebase
 
 //@Preview
 @Composable
@@ -70,6 +71,8 @@ fun DeleteButton() {
 @Composable
 fun SmallButton(text: String, isPressed: MutableState<Boolean>) {
     val color = if (isPressed.value) Color(0xff3D1574) else Color(0xff7929e8)
+
+
 
     Button(
         onClick = { isPressed.value = !isPressed.value },
@@ -139,9 +142,9 @@ fun SmallButtonWithRout(navController: NavController, text: String, rout: String
 }
 
 @Composable
-fun ChooseRoleSection() {
-    val firstPressed = remember { mutableStateOf(false) }
-    val secondPressed = remember { mutableStateOf(false) }
+fun ChooseRoleSection(sharedViewModel: SharedViewModel) {
+    val firstPressed = remember { sharedViewModel.isFunctionCarer }
+    val secondPressed = remember { sharedViewModel.isFunctionSenior }
     val lastPressed = remember { mutableStateOf(-1) }
 
     if (lastPressed.value.compareTo(0) == 0 && firstPressed.value && !secondPressed.value) {
@@ -266,10 +269,8 @@ fun Input() {
 }
 
 @Composable
-fun InputField(placeholder: String, onValueChange: (String) -> Unit) {
-    var text by remember {
-        mutableStateOf("")
-    }
+fun InputField(placeholder: String, onValueChange: (String) -> Unit, viewModelVariable: MutableState<String>) {
+    val text = viewModelVariable.value
 
     OutlinedTextField(
         value = text,
@@ -281,7 +282,7 @@ fun InputField(placeholder: String, onValueChange: (String) -> Unit) {
             focusedIndicatorColor = MaterialTheme.colors.primary,
         ),
         shape = RoundedCornerShape(20.dp),
-        onValueChange = { newText -> text = newText },
+        onValueChange = { newText -> viewModelVariable.value = newText },
         placeholder = { Text(placeholder) },
         textStyle = TextStyle(
             fontSize = 14.sp
@@ -295,7 +296,8 @@ fun InputFieldLabelIcon(
     text: String,
     onValueChange: (String) -> Unit,
     fieldLabel: String,
-    iconName: String
+    iconName: String,
+    viewModelVariable: MutableState<String>
 ) {
     var iconId = -1
 
@@ -330,7 +332,7 @@ fun InputFieldLabelIcon(
             }
         }
 
-        InputField(text, onValueChange)
+        InputField(text, onValueChange, viewModelVariable)
 
     }
 }
@@ -408,20 +410,22 @@ fun SignUpViewPreview() {
             EditButton()
             DeleteButton()
             SmallButton("Text", mutableStateOf(false))
-            ChooseRoleSection()
+            ChooseRoleSection(sharedViewModel)
             IconTextButton(navController, text = "Text", iconName = "google", "")
-            InputField(placeholder = "Text", onValueChange = {})
+            InputField(placeholder = "Text", onValueChange = {}, viewModelVariable = mutableStateOf(""))
             InputFieldLabelIcon(
                 text = "Text",
                 onValueChange = {},
                 fieldLabel = "Label",
-                "alternate_email"
+                "alternate_email",
+                viewModelVariable = mutableStateOf("")
             )
             InputFieldLabelIcon(
                 text = "Text",
                 onValueChange = {},
                 fieldLabel = "Label",
-                ""
+                "",
+                viewModelVariable = mutableStateOf("")
             )
             TextFilledButton(navController, "Text", "")
             UserCard(

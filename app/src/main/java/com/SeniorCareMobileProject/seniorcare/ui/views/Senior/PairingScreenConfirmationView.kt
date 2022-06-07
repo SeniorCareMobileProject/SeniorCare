@@ -4,9 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -17,9 +16,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -157,8 +159,8 @@ fun PairingScreenConfirmationView(navController: NavController, sharedViewModel:
         ) {
             UserCard(
                 navController = navController,
-                name = "Piotr Kowalski",
-                emial = "piotr.kowalski@gmail.com"
+                name = "${sharedViewModel.pairingData.value?.firstName} ${sharedViewModel.pairingData.value?.lastName}",
+                emial = "${sharedViewModel.pairingData.value?.email}"
             )
         }
 
@@ -169,9 +171,37 @@ fun PairingScreenConfirmationView(navController: NavController, sharedViewModel:
                 .padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(14.dp)
         ) {
-            TextFilledButton(navController = navController, text = "Tak", rout = "")
-            IconTextButton(navController = navController, text = "Nie", iconName = "", rout = "")
+            PairingConfirmButton(navController = navController, text = "Tak", rout = "PairingScreenSeniorSuccessScreen", sharedViewModel)
+            IconTextButton(navController = navController, text = "Nie", iconName = "", rout = "PairingScreenCodeInputScreen")
         }
+    }
+}
+
+@Composable
+fun PairingConfirmButton(navController: NavController, text: String, rout: String, sharedViewModel: SharedViewModel) {
+    Button(
+        onClick = {
+            sharedViewModel.writeSeniorIDForPairing()
+            sharedViewModel.writeNewConnectionWith(sharedViewModel.pairingData.value!!.carerID!!)
+            navController.navigate(rout)
+            sharedViewModel.updatePairingStatus()
+                  },
+        shape = RoundedCornerShape(20.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff7929e8)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            lineHeight = 24.sp,
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
     }
 }
 

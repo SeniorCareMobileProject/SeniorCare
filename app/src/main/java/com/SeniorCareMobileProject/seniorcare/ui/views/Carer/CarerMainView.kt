@@ -1,17 +1,21 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.Database
+import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 
@@ -20,13 +24,22 @@ fun CarerMainView(navController: NavController, sharedViewModel: SharedViewModel
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.Green)
             .fillMaxHeight()
             .wrapContentHeight(Alignment.CenterVertically)
 
     ) {
+        Text("Carer View")
+
+        TextLive(sharedViewModel.userData)
 
     }
+}
+
+@Composable
+fun TextLive(text: LiveData<User>) {
+    val loggedUser by text.observeAsState()
+    loggedUser?.let { it.firstName?.let { it1 -> Text("Witaj $it1") } }
+
 }
 
 @Preview(showBackground = true)

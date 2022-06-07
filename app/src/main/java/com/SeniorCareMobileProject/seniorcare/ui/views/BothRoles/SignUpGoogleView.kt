@@ -60,7 +60,7 @@ fun SignUpGoogleView(navController: NavController, sharedViewModel: SharedViewMo
             Text(text = "Wybierz rolę, która będzie należać do tego konta.")
         }
 
-        ChooseRoleSection()
+        ChooseRoleSection(sharedViewModel)
 
         Column(
             Modifier

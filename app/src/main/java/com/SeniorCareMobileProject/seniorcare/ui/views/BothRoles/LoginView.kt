@@ -1,38 +1,44 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 
+import android.app.Application
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCompositionContext
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.InputBoxPlaceholder
 import com.SeniorCareMobileProject.seniorcare.ui.common.NavButton
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputField
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TextFilledButton
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import com.example.seniorcare.R
+import com.google.firebase.auth.AuthResult
 
 @Composable
 fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
@@ -69,13 +75,15 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 text = "Twój adres email",
                 onValueChange = {},
                 fieldLabel = "Email",
-                iconName = "alternate_email"
+                iconName = "alternate_email",
+                viewModelVariable = sharedViewModel.email
             )
             InputFieldLabelIcon(
                 text = "Twoje hasło",
                 onValueChange = {},
                 fieldLabel = "Hasło",
-                iconName = "lock"
+                iconName = "lock",
+                viewModelVariable = sharedViewModel.password
             )
         }
 
@@ -103,7 +111,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 .padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(30.dp)
         ) {
-            TextFilledButton(navController, "Zaloguj się", "")
+            LoginButton(navController, "Zaloguj się", sharedViewModel)
             Divider(color = Color.Black, thickness = 1.dp)
             IconTextButton(
                 navController,
@@ -132,6 +140,32 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 )
             }
         }
+    }
+}
+
+@Composable
+fun LoginButton(navController: NavController, text: String, sharedViewModel: SharedViewModel) {
+    Button(
+        onClick = {
+            sharedViewModel.loginUser(sharedViewModel.email.value, sharedViewModel.password.value)
+            navController.navigate("LoadingLoginView")
+        },
+        shape = RoundedCornerShape(20.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff7929e8)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            lineHeight = 24.sp,
+            style = TextStyle(
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Bold
+            )
+        )
     }
 }
 

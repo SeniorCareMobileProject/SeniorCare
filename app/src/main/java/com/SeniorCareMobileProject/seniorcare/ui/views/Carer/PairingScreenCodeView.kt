@@ -9,8 +9,8 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -21,8 +21,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -154,14 +158,37 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
                 .padding(top = 57.dp)
                 .padding(horizontal = 117.dp)
         ) {
-            Text(
-                text = "12345",
-                color = MaterialTheme.colors.primary,
-                fontSize = 44.sp,
-                fontWeight = FontWeight.Medium
-            )
+            PairingCodeText(sharedViewModel.pairingCode)
         }
     }
+
+    // CHECK IF PAIRING IS DONE
+    val pairingState : State<Boolean?> = sharedViewModel.pairingStatus.observeAsState()
+    when (pairingState.value){
+        true -> {
+            LaunchedEffect(pairingState){
+                navController.navigate("PairingScreenSuccessScreen"){
+                    popUpTo("PairingScreenCodeScreen") {inclusive = true}
+                }
+                sharedViewModel.deletePairingCode()
+            }
+        }
+    }
+}
+
+@Composable
+fun PairingCodeText(text: MutableLiveData<String?>) {
+    val pairingCode by text.observeAsState()
+
+    pairingCode?.let {
+        Text(
+        text = it,
+        color = MaterialTheme.colors.primary,
+        fontSize = 44.sp,
+        fontWeight = FontWeight.Medium
+        )
+    }
+
 }
 
 @Preview(showBackground = true)
