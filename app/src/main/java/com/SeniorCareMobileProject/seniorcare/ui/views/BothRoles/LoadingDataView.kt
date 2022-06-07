@@ -14,6 +14,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -34,13 +35,29 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
                 Log.d("Funkcja", sharedViewModel.userData.value!!.function.toString())
                 LaunchedEffect(userDataState){
                     if (sharedViewModel.userData.value!!.function == "Carer"){
-                        navController.navigate("CarerMainScreen"){
-                            popUpTo("LoadingDataView") {inclusive = true}
+                        if (sharedViewModel.isAfterRegistration){
+                            // CREATE PAIRING
+                            sharedViewModel.createPairingCode()
+                            navController.navigate("PairingScreenCodeScreen"){
+                                popUpTo("LoadingDataView") {inclusive = true}
+                            }
+                        }
+                        else {
+                            navController.navigate("CarerMainScreen"){
+                                popUpTo("LoadingDataView") {inclusive = true}
+                            }
                         }
                     }
                     else if (sharedViewModel.userData.value!!.function == "Senior"){
-                        navController.navigate("SeniorMainScreen"){
-                            popUpTo("LoadingDataView") {inclusive = true}
+                        if (sharedViewModel.isAfterRegistration){
+                            navController.navigate("PairingScreenCodeInputScreen"){
+                                popUpTo("LoadingDataView") {inclusive = true}
+                            }
+                        }
+                        else {
+                            navController.navigate("SeniorMainScreen"){
+                                popUpTo("LoadingDataView") {inclusive = true}
+                            }
                         }
                     }
                 }

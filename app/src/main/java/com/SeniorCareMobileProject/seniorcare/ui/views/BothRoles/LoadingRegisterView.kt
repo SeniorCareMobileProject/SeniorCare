@@ -36,6 +36,7 @@ fun LoadingRegisterView(navController: NavController, sharedViewModel: SharedVie
             is Resource.Success<*> -> {
                 LaunchedEffect(loginState){
                     sharedViewModel.getUserData()
+                    sharedViewModel.isAfterRegistration = true
                     navController.navigate("SignUpEmailVerificationScreen"){
                         popUpTo("LoadingRegisterView") {inclusive = true}
                     }

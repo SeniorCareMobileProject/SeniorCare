@@ -3,10 +3,10 @@ package com.SeniorCareMobileProject.seniorcare.ui
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.google.firebase.auth.AuthResult
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -20,22 +20,25 @@ class SharedViewModel : ViewModel() {
     var isFunctionCarer = mutableStateOf(false)
     var isFunctionSenior = mutableStateOf(false)
     var function = mutableStateOf("")
-
     var emailForgotPassword = mutableStateOf("")
+
+    // for checking if user is after logging in or after the register screen
+    var isAfterRegistration : Boolean = false
 
     // for checking request state
     val _userSignUpStatus = MutableLiveData<Resource<AuthResult>>()
     val userSignUpStatus: LiveData<Resource<AuthResult>> = _userSignUpStatus
-
     val _userDataStatus = MutableLiveData<Resource<User>>()
     val userDataStatus: LiveData<Resource<User>> = _userDataStatus
-
-    val _isEmailVerified = MutableLiveData<Boolean>(FirebaseAuth.getInstance().currentUser?.isEmailVerified)
-    val isEmailVerified: LiveData<Boolean> = _isEmailVerified
 
     // user data
     val _userData: MutableLiveData<User> = MutableLiveData()
     val userData: LiveData<User> = _userData
+
+    // for pairing users
+    val pairingCode: MutableLiveData<String?> = MutableLiveData("")
+    val pairingData: MutableLiveData<PairingData> = MutableLiveData()
+    val pairingStatus: MutableLiveData<String> = MutableLiveData("false")
 
     private val repository = Repository()
 
@@ -58,5 +61,13 @@ class SharedViewModel : ViewModel() {
             _userDataStatus.postValue(Resource.Loading())
             repository.getUserData(this@SharedViewModel)
         }
+    }
+
+    fun createPairingCode(){
+        repository.createPairingCodeAndWriteToFirebase(this)
+    }
+
+    fun deletePairingCode(){
+        repository.removePairingCode(this)
     }
 }
