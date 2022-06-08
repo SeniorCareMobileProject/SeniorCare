@@ -27,7 +27,7 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.CommonTemplateButton
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 
 @Composable

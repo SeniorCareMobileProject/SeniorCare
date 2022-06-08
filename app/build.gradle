@@ -71,6 +71,13 @@ dependencies {
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
     implementation 'com.google.firebase:firebase-database-ktx:20.0.5'
 
+    //gms and maps
+    implementation 'com.google.android.gms:play-services-maps:18.0.2'
+    implementation 'com.google.android.gms:play-services-location:19.0.1'
+    implementation  "com.google.maps.android:maps-compose:2.1.1"
+    implementation "androidx.compose.foundation:foundation:1.2.0-beta01"
+    implementation 'androidx.localbroadcastmanager:localbroadcastmanager:1.1.0'
+
 
     testImplementation 'junit:junit:4.13.2'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
