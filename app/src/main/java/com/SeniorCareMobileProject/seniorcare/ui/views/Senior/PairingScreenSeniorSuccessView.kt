@@ -26,6 +26,8 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SmallButtonWithRout
 
 
 @Composable
@@ -161,13 +163,19 @@ fun PairingScreenSeniorSuccessView(navController: NavController, sharedViewModel
                 fontWeight = FontWeight.Normal
             )
             Text(
-                text = "Piotr Kowalski",
+                text = "${sharedViewModel.pairingData.value?.firstName} ${sharedViewModel.pairingData.value?.lastName}",
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "piotr.kowalski@gmail.com",
+                text = "${sharedViewModel.pairingData.value?.email}",
                 fontWeight = FontWeight.Normal
             )
+        }
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally) {
+            SmallButtonWithRout(navController, "Ok", "SeniorMainScreen")
         }
 
     }

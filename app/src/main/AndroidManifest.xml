@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.seniorcare">
 
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+
     <application
         android:name="com.SeniorCareMobileProject.seniorcare.MyApplication"
         android:allowBackup="true"
@@ -10,6 +12,18 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SeniorCare">
+        <receiver
+            android:name="com.SeniorCareMobileProject.seniorcare.ui.widget.SosButtonWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/sos_button_widget_info" />
+        </receiver>
+
         <activity
             android:name="com.SeniorCareMobileProject.seniorcare.MainActivity"
             android:exported="true"

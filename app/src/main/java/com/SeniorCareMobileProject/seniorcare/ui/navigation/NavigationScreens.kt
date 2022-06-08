@@ -17,7 +17,11 @@ enum class NavigationScreens(val title: String) {
     PairingScreenSuccessScreen("PairingScreenSuccessScreen"),
     PairingScreenCodeInputScreen("PairingScreenCodeInputScreen"),
     PairingScreenConfirmationScreen("PairingScreenConfirmationScreen"),
-    PairingScreenSeniorSuccessScreen("PairingScreenSeniorSuccessScreen")
+    PairingScreenSeniorSuccessScreen("PairingScreenSeniorSuccessScreen"),
+    LoadingDataView("LoadingDataView"),
+    LoadingLoginView("LoadingLoginView"),
+    LoadingRegisterView("LoadingRegisterView"),
+    LoadingPairingDataView("LoadingPairingDataView")
 
 
 }

@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -28,10 +29,12 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.body_16
+import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.*
 import com.example.seniorcare.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
+import com.google.firebase.ktx.Firebase
 
 //@Preview
 @Composable
@@ -144,9 +147,9 @@ fun SmallButtonWithRout(navController: NavController, text: String, rout: String
 }
 
 @Composable
-fun ChooseRoleSection() {
-    val firstPressed = remember { mutableStateOf(false) }
-    val secondPressed = remember { mutableStateOf(false) }
+fun ChooseRoleSection(sharedViewModel: SharedViewModel) {
+    val firstPressed = remember { sharedViewModel.isFunctionCarer }
+    val secondPressed = remember { sharedViewModel.isFunctionSenior }
     val lastPressed = remember { mutableStateOf(-1) }
 
     if (lastPressed.value.compareTo(0) == 0 && firstPressed.value && !secondPressed.value) {
@@ -271,10 +274,8 @@ fun Input() {
 }
 
 @Composable
-fun InputField(placeholder: String, onValueChange: (String) -> Unit) {
-    var text by remember {
-        mutableStateOf("")
-    }
+fun InputField(placeholder: String, onValueChange: (String) -> Unit, viewModelVariable: MutableState<String>) {
+    val text = viewModelVariable.value
 
     OutlinedTextField(
         value = text,
@@ -286,7 +287,7 @@ fun InputField(placeholder: String, onValueChange: (String) -> Unit) {
             focusedIndicatorColor = MaterialTheme.colors.primary,
         ),
         shape = RoundedCornerShape(20.dp),
-        onValueChange = { newText -> text = newText },
+        onValueChange = { newText -> viewModelVariable.value = newText },
         placeholder = { Text(placeholder) },
         textStyle = TextStyle(
             fontSize = 14.sp
@@ -300,7 +301,8 @@ fun InputFieldLabelIcon(
     text: String,
     onValueChange: (String) -> Unit,
     fieldLabel: String,
-    iconName: String
+    iconName: String,
+    viewModelVariable: MutableState<String>
 ) {
     var iconId = -1
 
@@ -335,7 +337,7 @@ fun InputFieldLabelIcon(
             }
         }
 
-        InputField(text, onValueChange)
+        InputField(text, onValueChange, viewModelVariable)
 
     }
 }
@@ -710,23 +712,25 @@ fun SignUpViewPreview() {
         ) {
             EditButton()
             DeleteButton()
-//            SmallButton("Text", mutableStateOf(false))
-//            ChooseRoleSection()
+            SmallButton("Text", mutableStateOf(false))
+            ChooseRoleSection(sharedViewModel)
             IconTextButton(navController, text = "Text", iconName = "google", "")
-//            InputField(placeholder = "Text", onValueChange = {})
+            InputField(placeholder = "Text", onValueChange = {}, viewModelVariable = mutableStateOf(""))
             InputFieldLabelIcon(
                 text = "Text",
                 onValueChange = {},
                 fieldLabel = "Label",
-                "alternate_email"
+                "alternate_email",
+                viewModelVariable = mutableStateOf("")
             )
-//            InputFieldLabelIcon(
-//                text = "Text",
-//                onValueChange = {},
-//                fieldLabel = "Label",
-//                ""
-//            )
-//            TextFilledButton(navController, "Text", "")
+            InputFieldLabelIcon(
+                text = "Text",
+                onValueChange = {},
+                fieldLabel = "Label",
+                "",
+                viewModelVariable = mutableStateOf("")
+            )
+            TextFilledButton(navController, "Text", "")
             UserCard(
                 navController = navController,
                 name = "Piotr Kowalski",
@@ -750,4 +754,3 @@ fun SignUpViewPreview() {
 
     }
 }
-

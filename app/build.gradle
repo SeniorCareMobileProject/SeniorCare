@@ -35,6 +35,7 @@ android {
     }
     buildFeatures {
         compose true
+        viewBinding true
     }
     composeOptions {
         kotlinCompilerExtensionVersion compose_version
@@ -68,6 +69,7 @@ dependencies {
 
 
     implementation "androidx.compose.runtime:runtime-livedata:$compose_version"
+    implementation 'com.google.firebase:firebase-database-ktx:20.0.5'
 
 
     testImplementation 'junit:junit:4.13.2'
@@ -81,6 +83,13 @@ dependencies {
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:30.0.0')
     implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.android.gms:play-services-auth:20.2.0'
+
+    // Corountines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-play-services:1.6.0-native-mt'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-native-mt'
 
     // Icons
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
