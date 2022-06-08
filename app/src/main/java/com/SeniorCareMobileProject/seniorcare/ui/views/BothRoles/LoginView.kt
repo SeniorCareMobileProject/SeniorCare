@@ -1,16 +1,23 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 
+import androidx.compose.foundation.ScrollState
 import android.app.Application
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Divider
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.State
 import androidx.compose.runtime.livedata.observeAsState
@@ -31,22 +38,26 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
-import com.SeniorCareMobileProject.seniorcare.ui.common.InputBoxPlaceholder
-import com.SeniorCareMobileProject.seniorcare.ui.common.NavButton
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TextFilledButton
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import com.example.seniorcare.R
 import com.google.firebase.auth.AuthResult
 
 @Composable
 fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
+    val scrollState = remember { ScrollState(0) }
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
+            .verticalScroll(scrollState)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
@@ -117,7 +128,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 navController,
                 stringResource(R.string.continue_with_Google),
                 "google",
-                ""
+                "CarerMainScreen"
             )
 
             Row(

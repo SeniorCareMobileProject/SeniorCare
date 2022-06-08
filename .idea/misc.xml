@@ -5,6 +5,7 @@
       <map>
         <entry key="..\:/Android/projects/SeniorCare/app/src/main/res/layout/sos_button_widget.xml" value="0.14722222222222223" />
         <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.332" />
+        <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/account_circle.xml" value="0.183" />
         <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/add_circle.xml" value="0.31" />
         <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/alternate_email.xml" value="0.2565" />
         <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/calendar_today.xml" value="0.2635" />
@@ -12,6 +13,8 @@
         <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/google.xml" value="0.219" />
         <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/ic_launcher_background.xml" value="0.332" />
         <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/mail.xml" value="0.2635" />
+        <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/menu.xml" value="0.2635" />
+        <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/settings.xml" value="0.183" />
         <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/font/font_family.xml" value="0.3020833333333333" />
       </map>
     </option>

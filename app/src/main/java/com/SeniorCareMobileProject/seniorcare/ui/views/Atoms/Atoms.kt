@@ -3,9 +3,13 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +24,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.FloatingWindow
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -27,6 +32,8 @@ import com.SeniorCareMobileProject.seniorcare.ui.body_16
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.*
 import com.example.seniorcare.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 import com.google.firebase.ktx.Firebase
 
 //@Preview
@@ -71,8 +78,6 @@ fun DeleteButton() {
 @Composable
 fun SmallButton(text: String, isPressed: MutableState<Boolean>) {
     val color = if (isPressed.value) Color(0xff3D1574) else Color(0xff7929e8)
-
-
 
     Button(
         onClick = { isPressed.value = !isPressed.value },
@@ -396,12 +401,310 @@ fun UserCard(navController: NavController, name: String, emial: String) {
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+fun RoundSmallButton(
+    navController: NavController,
+    iconName: String,
+    isDrawer: Boolean,
+    scope: CoroutineScope = rememberCoroutineScope(),
+    scaffoldState: ScaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed)),
+) {
+    val context = LocalContext.current
+    val iconId = remember(iconName) {
+        context.resources.getIdentifier(
+            iconName,
+            "drawable",
+            context.packageName
+        )
+    }
+
+    if (isDrawer) {
+        Box(
+            modifier = Modifier
+                .width(46.dp)
+                .height(46.dp)
+                .clip(RoundedCornerShape(50.dp))
+                .background(Color(0xFFCAAAF9))
+                .clickable {
+                    scope.launch { scaffoldState.drawerState.open() }
+                }
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = iconId),
+                    contentDescription = iconName,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                )
+            }
+        }
+    } else {
+        Box(
+            modifier = Modifier
+                .width(46.dp)
+                .height(46.dp)
+                .clip(RoundedCornerShape(50.dp))
+                .background(Color(0xFFCAAAF9))
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+                horizontalArrangement = Arrangement.Center,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = painterResource(id = iconId),
+                    contentDescription = iconName,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                )
+            }
+        }
+    }
+
+
+}
+
+@Composable
+fun TopBarLocation(
+    navController: NavController,
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState
+) {
+    Column() {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent)
+                .padding(top = 8.dp, bottom = 8.dp)
+                .padding(horizontal = 8.dp)
+//                .clickable {
+//                    scope.launch { scaffoldState.drawerState.open() }
+//                }
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                RoundSmallButton(
+                    navController = navController,
+                    iconName = "menu",
+                    isDrawer = true,
+                    scope = scope,
+                    scaffoldState = scaffoldState
+                )
+            }
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End
+            ) {
+                RoundSmallButton(
+                    navController = navController,
+                    iconName = "settings",
+                    isDrawer = false
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun TopBar(
+    navController: NavController,
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState
+) {
+    TopAppBar(backgroundColor = Color(0xFFCAAAF9)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent),
+//                .padding(top = 11.dp, bottom = 11.dp)
+//                .padding(horizontal = 4.dp),
+            verticalAlignment = Alignment.CenterVertically
+//                .clickable {
+//                    scope.launch { scaffoldState.drawerState.open() }
+//                }
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                RoundSmallButton(
+                    navController = navController,
+                    iconName = "menu",
+                    isDrawer = true,
+                    scope = scope,
+                    scaffoldState = scaffoldState
+                )
+            }
+
+            Text(
+                text = "Grzegorz Brzęczyszczykiewicz",
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End
+            ) {
+                RoundSmallButton(
+                    navController = navController,
+                    iconName = "settings",
+                    isDrawer = false
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun StatusWidget(navController: NavController, title: String, text: String, iconName: String) {
+    val widgetContentColor = Color(0xFF666666)
+    val context = LocalContext.current
+    val iconId = remember(iconName) {
+        context.resources.getIdentifier(
+            iconName,
+            "drawable",
+            context.packageName
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colors.primary,
+                shape = RoundedCornerShape(20.dp),
+            )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(top = 14.dp, bottom = 14.dp)
+                .padding(horizontal = 26.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column() {
+                Text(
+                    text = title,
+                    fontSize = 12.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = widgetContentColor
+                )
+                Text(text = text, fontSize = 12.sp, color = widgetContentColor)
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                Icon(
+                    painter = painterResource(id = iconId),
+                    contentDescription = iconName,
+                    tint = widgetContentColor,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun MedicalDataItem(title: String, text: String) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 8.dp)
+                .padding(horizontal = 5.dp)
+        ) {
+            Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            Text(text = text, fontSize = 14.sp)
+        }
+        Divider(thickness = 1.dp, color = Color(0xFFF5F5F5))
+    }
+}
+
+@Composable
+fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 16.dp)
+
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .border(
+                    width = 1.dp,
+                    color = MaterialTheme.colors.primary,
+                    shape = RoundedCornerShape(10.dp)
+                )
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(modifier = Modifier.weight(70f)) {
+                Text(text = title)
+
+            }
+
+            Column(
+                modifier = Modifier
+                    .weight(30f),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(howOften + ":")
+                listOfTime.forEach { item ->
+                    Text(text = item)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun FloatingButton() {
+    FloatingActionButton(
+        modifier = Modifier.size(48.dp),
+        onClick = { /*TODO*/ },
+        backgroundColor = Color.Blue,
+    ) {
+        Icon(
+            Icons.Filled.Add, "",
+            modifier = Modifier.size(48.dp),
+            tint = Color.White
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 fun SignUpViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
         val sharedViewModel = SharedViewModel()
+        val scope = rememberCoroutineScope()
+        val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
+        val listOfTime = listOf<String>("10:00", "15:00", "20:00")
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -433,7 +736,20 @@ fun SignUpViewPreview() {
                 name = "Piotr Kowalski",
                 emial = "piotr.kowalski@gmail.com"
             )
-            Input()
+//            Input()
+            RoundSmallButton(navController = navController, iconName = "menu", isDrawer = false)
+            StatusWidget(
+                navController, title = "Najbliższe wydarzenie:",
+                text = "Wizyta u lekarza\nData: 12.05.22 - godzina: 08:00",
+                iconName = "calendar_month"
+            )
+            TopBar(navController, scope, scaffoldState)
+            MedicalDataItem(
+                "Przyjmowane leki:",
+                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
+            )
+            NotificationItem(title = "IBUPROM", howOften = "Codziennie", listOfTime = listOfTime)
+            FloatingButton()
         }
 
     }

@@ -1,13 +1,20 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 
+import androidx.compose.foundation.ScrollState
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Icon
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
@@ -29,7 +36,6 @@ import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SmallButton
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SmallButtonNoPressedState
 import com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles.SignUpVerificationCodeView
 import com.google.firebase.auth.AuthResult
@@ -47,12 +53,14 @@ fun SignUpEmailVerificationView(navController: NavController, sharedViewModel: S
             context.packageName
         )
     }
+    val scrollState = remember { ScrollState(0) }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
+            .verticalScroll(scrollState)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,

@@ -91,5 +91,7 @@ dependencies {
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0-native-mt'
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.6.0-native-mt'
 
+    // Icons
+    implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
 }

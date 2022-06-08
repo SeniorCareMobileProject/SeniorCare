@@ -9,20 +9,15 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.material.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.navigation.BottomNavItem
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles.*
@@ -43,11 +38,10 @@ class MainActivity : ComponentActivity() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
         var startDestination = ""
-        if (currentUser != null){
+        if (currentUser != null) {
             sharedViewModel.getUserData()
             startDestination = NavigationScreens.LoadingDataView.name
-        }
-        else{
+        } else {
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
         }
 
@@ -55,11 +49,27 @@ class MainActivity : ComponentActivity() {
         setContent {
             SeniorCareTheme() {
                 val navController = rememberNavController()
+                val scope = rememberCoroutineScope()
+                val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
                 NavHost(
                     navController,
-                    startDestination = startDestination,
+                    startDestination = NavigationScreens.ChooseLoginMethodScreen.name,
                 ) {
+                    composable(BottomNavItem.Location.route) {
+                        CarerMainView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+                    composable(BottomNavItem.Calendar.route) {
+                        CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+                    composable(BottomNavItem.MedInfo.route) {
+                        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+                    composable(BottomNavItem.Notifications.route) {
+                        CarerNotificationsView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+
+
                     composable(NavigationScreens.ChooseLoginMethodScreen.name) {
                         ChooseLoginMethodView(navController, sharedViewModel)
                     }
@@ -68,15 +78,15 @@ class MainActivity : ComponentActivity() {
                         LoginView(navController, sharedViewModel)
                     }
 
-                    composable(NavigationScreens.ChooseRoleScreen.name) {
-                        ChooseRoleView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.ForgotPasswordScreen.name) {
-                        ForgotPasswordView(navController, sharedViewModel)
-
-                    }
+//                    composable(NavigationScreens.ChooseRoleScreen.name) {
+//                        ChooseRoleView(navController, sharedViewModel)
+//
+//                    }
+//
+//                    composable(NavigationScreens.ForgotPasswordScreen.name) {
+//                        ForgotPasswordView(navController, sharedViewModel)
+//
+//                    }
 
                     composable(NavigationScreens.LoadingLoginView.name) {
                         LoadingLoginView(navController, sharedViewModel)
@@ -94,25 +104,26 @@ class MainActivity : ComponentActivity() {
                     }
 
 
-                    composable(NavigationScreens.CarerCreatingNotificationsScreen.name) {
-                        CarerCreatingNotificationsView(navController, sharedViewModel)
+//                    composable(NavigationScreens.CarerCreatingNotificationsScreen.name) {
+//                        CarerCreatingNotificationsView(navController, sharedViewModel)
+//
+//                    }
 
-                    }
-
-                    composable(NavigationScreens.CarerDayPlanningScreen.name) {
-                        CarerDayPlanningView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.CarerMainScreen.name) {
-                        CarerMainView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.CarerMedicalInfoScreen.name) {
-                        CarerMedicalInfoView(navController, sharedViewModel)
-
-                    }
+//                    composable(NavigationScreens.CarerDayPlanningScreen.name) {
+//                        CarerCalendarView(navController, sharedViewModel)
+//
+//                    }
+//
+//
+//                    composable(NavigationScreens.CarerMainScreen.name) {
+//                        CarerMainView(navController, sharedViewModel)
+//
+//                    }
+//
+//                    composable(NavigationScreens.CarerMedicalInfoScreen.name) {
+//                        CarerMedicalInfoView(navController, sharedViewModel)
+//
+//                    }
 
                     composable(NavigationScreens.CarerPairingScreen.name) {
                         CarerPairingView(navController, sharedViewModel)
@@ -189,20 +200,23 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+
                     composable(NavigationScreens.LoadingPairingDataView.name) {
                         LoadingPairingDataView(navController, sharedViewModel)
 
                     }
 
                 }
-
             }
         }
     }
-
     fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {
-            if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.CALL_PHONE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 ActivityCompat.requestPermissions(
                     this@MainActivity,
                     arrayOf(Manifest.permission.CALL_PHONE),
@@ -213,9 +227,14 @@ class MainActivity : ComponentActivity() {
                 startActivity(Intent(Intent.ACTION_CALL, Uri.parse(phoneNumber)))
             }
         } else {
-            Toast.makeText(this@MainActivity, "Nie podano numeru telefonu", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@MainActivity,
+                "Nie podano numeru telefonu",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String?>,

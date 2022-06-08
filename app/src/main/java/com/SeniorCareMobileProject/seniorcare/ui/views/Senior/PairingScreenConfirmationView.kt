@@ -28,7 +28,6 @@ import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TextFilledButton
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.UserCard
 
