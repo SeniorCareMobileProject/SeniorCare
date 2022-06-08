@@ -54,7 +54,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController,
-                    startDestination = NavigationScreens.ChooseLoginMethodScreen.name,
+                    startDestination = startDestination,
                 ) {
                     composable(BottomNavItem.Location.route) {
                         CarerMainView(navController, sharedViewModel, scope, scaffoldState)

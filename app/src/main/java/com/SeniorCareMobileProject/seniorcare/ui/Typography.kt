@@ -6,7 +6,7 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 private val regular = Font(R.font.roboto_regular, FontWeight.Normal)
 private val medium = Font(R.font.roboto_medium, FontWeight.Medium)
