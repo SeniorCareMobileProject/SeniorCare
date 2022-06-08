@@ -1,17 +1,27 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
+import android.location.Location
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SharedViewModel : ViewModel() {
+
+    //location
+    val onGeofenceRequest = MutableLiveData<Boolean>(false)
+    val seniorLocalization = mutableStateOf(LatLng(52.408839, 16.906782))
+
+    val localizationAccuracy = mutableStateOf(50f)
+    val location = mutableStateOf<Location?>(null)
+
 
     // for getting input
     var email = mutableStateOf("")

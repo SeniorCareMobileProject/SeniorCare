@@ -8,7 +8,7 @@ import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Screen
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 sealed class BottomNavItem(
     val route: String,

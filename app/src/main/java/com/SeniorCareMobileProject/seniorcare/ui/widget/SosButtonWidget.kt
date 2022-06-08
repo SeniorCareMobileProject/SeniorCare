@@ -11,7 +11,7 @@ import android.net.Uri
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 /**
  * Implementation of App Widget functionality.

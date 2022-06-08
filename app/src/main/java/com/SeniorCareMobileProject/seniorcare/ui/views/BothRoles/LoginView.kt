@@ -45,7 +45,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TextFilledButton
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 import com.google.firebase.auth.AuthResult
 
 @Composable

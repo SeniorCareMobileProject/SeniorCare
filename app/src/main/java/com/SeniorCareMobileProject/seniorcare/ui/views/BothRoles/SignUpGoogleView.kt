@@ -31,7 +31,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.ChooseRoleSection
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 
 @Composable

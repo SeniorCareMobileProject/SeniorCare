@@ -26,7 +26,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.h4
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 @Composable
 fun ChooseLoginMethodView(navController: NavController, sharedViewModel: SharedViewModel) {

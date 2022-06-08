@@ -1,7 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import androidx.annotation.StringRes
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 sealed class Screen(val route: String, @StringRes val resourceId: Int) {
     object Location : Screen("CarerMainScreen", R.string.location)

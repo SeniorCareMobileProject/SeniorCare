@@ -7,7 +7,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 @Composable
 fun NavButton(navController: NavController, buttonString: String, route: String){
