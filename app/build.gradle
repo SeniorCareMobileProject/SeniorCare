@@ -94,5 +94,4 @@ dependencies {
     // Icons
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
 
-
 }

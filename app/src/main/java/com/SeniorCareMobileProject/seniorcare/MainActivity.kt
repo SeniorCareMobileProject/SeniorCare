@@ -11,16 +11,8 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material.*
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -28,9 +20,6 @@ import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.BottomNavItem
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavigationBarView
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.NavigationSetup
 import com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.*
@@ -49,11 +38,10 @@ class MainActivity : ComponentActivity() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
         var startDestination = ""
-        if (currentUser != null){
+        if (currentUser != null) {
             sharedViewModel.getUserData()
             startDestination = NavigationScreens.LoadingDataView.name
-        }
-        else{
+        } else {
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
         }
 
@@ -72,7 +60,7 @@ class MainActivity : ComponentActivity() {
                         CarerMainView(navController, sharedViewModel, scope, scaffoldState)
                     }
                     composable(BottomNavItem.Calendar.route) {
-                        CarerDayPlanningView(navController, sharedViewModel, scope, scaffoldState)
+                        CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
                     }
                     composable(BottomNavItem.MedInfo.route) {
                         CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
@@ -90,15 +78,15 @@ class MainActivity : ComponentActivity() {
                         LoginView(navController, sharedViewModel)
                     }
 
-                    composable(NavigationScreens.ChooseRoleScreen.name) {
-                        ChooseRoleView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.ForgotPasswordScreen.name) {
-                        ForgotPasswordView(navController, sharedViewModel)
-
-                    }
+//                    composable(NavigationScreens.ChooseRoleScreen.name) {
+//                        ChooseRoleView(navController, sharedViewModel)
+//
+//                    }
+//
+//                    composable(NavigationScreens.ForgotPasswordScreen.name) {
+//                        ForgotPasswordView(navController, sharedViewModel)
+//
+//                    }
 
                     composable(NavigationScreens.LoadingLoginView.name) {
                         LoadingLoginView(navController, sharedViewModel)
@@ -116,25 +104,26 @@ class MainActivity : ComponentActivity() {
                     }
 
 
-                    composable(NavigationScreens.CarerCreatingNotificationsScreen.name) {
-                        CarerCreatingNotificationsView(navController, sharedViewModel)
+//                    composable(NavigationScreens.CarerCreatingNotificationsScreen.name) {
+//                        CarerCreatingNotificationsView(navController, sharedViewModel)
+//
+//                    }
 
-                    }
-
-                    composable(NavigationScreens.CarerDayPlanningScreen.name) {
-                        CarerDayPlanningView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.CarerMainScreen.name) {
-                        CarerMainView(navController, sharedViewModel)
-
-                    }
-
-                    composable(NavigationScreens.CarerMedicalInfoScreen.name) {
-                        CarerMedicalInfoView(navController, sharedViewModel)
-
-                    }
+//                    composable(NavigationScreens.CarerDayPlanningScreen.name) {
+//                        CarerCalendarView(navController, sharedViewModel)
+//
+//                    }
+//
+//
+//                    composable(NavigationScreens.CarerMainScreen.name) {
+//                        CarerMainView(navController, sharedViewModel)
+//
+//                    }
+//
+//                    composable(NavigationScreens.CarerMedicalInfoScreen.name) {
+//                        CarerMedicalInfoView(navController, sharedViewModel)
+//
+//                    }
 
                     composable(NavigationScreens.CarerPairingScreen.name) {
                         CarerPairingView(navController, sharedViewModel)
@@ -218,10 +207,16 @@ class MainActivity : ComponentActivity() {
                     }
 
                 }
-
+            }
+        }
+    }
     fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {
-            if (ContextCompat.checkSelfPermission(this@MainActivity, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            if (ContextCompat.checkSelfPermission(
+                    this@MainActivity,
+                    Manifest.permission.CALL_PHONE
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
                 ActivityCompat.requestPermissions(
                     this@MainActivity,
                     arrayOf(Manifest.permission.CALL_PHONE),
@@ -232,9 +227,14 @@ class MainActivity : ComponentActivity() {
                 startActivity(Intent(Intent.ACTION_CALL, Uri.parse(phoneNumber)))
             }
         } else {
-            Toast.makeText(this@MainActivity, "Nie podano numeru telefonu", Toast.LENGTH_SHORT).show()
+            Toast.makeText(
+                this@MainActivity,
+                "Nie podano numeru telefonu",
+                Toast.LENGTH_SHORT
+            ).show()
         }
     }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String?>,

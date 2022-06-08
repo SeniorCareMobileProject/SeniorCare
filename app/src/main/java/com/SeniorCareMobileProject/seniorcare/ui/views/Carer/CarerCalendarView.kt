@@ -18,12 +18,11 @@ import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavigationBarView
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.FloatingButton
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBar
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun CarerDayPlanningView(
+fun CarerCalendarView(
     navController: NavController,
     sharedViewModel: SharedViewModel,
     scope: CoroutineScope,
@@ -64,6 +63,6 @@ fun CarerDayPlanningViewPreview() {
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
-        CarerDayPlanningView(navController, sharedViewModel, scope, scaffoldState)
+        CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
     }
 }

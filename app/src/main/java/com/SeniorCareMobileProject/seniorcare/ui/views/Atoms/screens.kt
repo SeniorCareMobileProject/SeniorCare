@@ -5,7 +5,7 @@ import com.example.seniorcare.R
 
 sealed class Screen(val route: String, @StringRes val resourceId: Int) {
     object Location : Screen("CarerMainScreen", R.string.location)
-    object Calendar : Screen("CarerDayPlanningScreen", R.string.calendar)
+    object Calendar : Screen("CarerCalendarScreen", R.string.calendar)
     object MedInfo : Screen("CarerMedicalInfoScreen", R.string.medical_info)
     object Notifications : Screen("CarerNotificationsScreen", R.string.notifications)
 }

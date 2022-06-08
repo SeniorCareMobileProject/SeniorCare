@@ -19,7 +19,6 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.google.firebase.auth.AuthResult
 
 @Composable
 fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewModel) {

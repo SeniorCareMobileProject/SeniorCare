@@ -7,7 +7,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.BottomNavItem
-import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.CarerDayPlanningView
+import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.CarerCalendarView
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.CarerMainView
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.CarerMedicalInfoView
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.CarerNotificationsView
@@ -25,7 +25,7 @@ fun NavigationSetup(
             CarerMainView(navController, sharedViewModel, scope, scaffoldState)
         }
         composable(BottomNavItem.Calendar.route) {
-            CarerDayPlanningView(navController, sharedViewModel, scope, scaffoldState)
+            CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
         }
         composable(BottomNavItem.MedInfo.route) {
             CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
