@@ -163,11 +163,11 @@ fun PairingScreenSuccessView(navController: NavController, sharedViewModel: Shar
                 fontWeight = FontWeight.Normal
             )
             Text(
-                text = "${sharedViewModel.pairingData.value?.firstName} ${sharedViewModel.pairingData.value?.lastName}",
+                text = "${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}",
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = "${sharedViewModel.pairingData.value?.email}",
+                text = "${sharedViewModel.currentSeniorData.value?.email}",
                 fontWeight = FontWeight.Normal
             )
         }

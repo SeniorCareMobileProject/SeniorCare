@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
+import android.location.Location
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
@@ -8,6 +9,7 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.google.firebase.auth.AuthCredential
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -19,6 +21,14 @@ import kotlinx.coroutines.tasks.await
 import org.koin.core.component.KoinComponent
 
 class SharedViewModel : ViewModel(), KoinComponent {
+
+    //location
+    val onGeofenceRequest = MutableLiveData<Boolean>(false)
+    val seniorLocalization = mutableStateOf(LatLng(52.408839, 16.906782))
+
+    val localizationAccuracy = mutableStateOf(50f)
+    val location = mutableStateOf<Location?>(null)
+
 
     // for getting input
     var email = mutableStateOf("")
@@ -38,15 +48,22 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val userSignUpStatus: LiveData<Resource<AuthResult>> = _userSignUpStatus
     val _userDataStatus = MutableLiveData<Resource<User>>()
     val userDataStatus: LiveData<Resource<User>> = _userDataStatus
+    val _currentSeniorDataStatus = MutableLiveData<Resource<User>>()
+    val currentSeniorDataStatus: LiveData<Resource<User>> = _currentSeniorDataStatus
+
 
     // user data
     val _userData: MutableLiveData<User> = MutableLiveData()
     val userData: LiveData<User> = _userData
+    val listOfAllSeniors = mutableListOf<String>()
+    val currentSeniorData: MutableLiveData<User> = MutableLiveData()
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
     val pairingData: MutableLiveData<PairingData> = MutableLiveData()
     val pairingStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+    val pairingSeniorID: MutableLiveData<String> = MutableLiveData("")
+    val writeNewConnectionStatus = MutableLiveData<Resource<String>>()
     // senior
     var codeInput = mutableStateOf("")
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
@@ -72,6 +89,17 @@ class SharedViewModel : ViewModel(), KoinComponent {
             _userDataStatus.postValue(Resource.Loading())
             repository.getUserData(this@SharedViewModel)
         }
+    }
+
+    fun getCurrentSeniorData(){
+        viewModelScope.launch(Dispatchers.Main) {
+            _currentSeniorDataStatus.postValue(Resource.Loading())
+            repository.getListOfSeniors(this@SharedViewModel)
+        }
+    }
+
+    fun getSeniorIDForPairing(){
+        repository.getSeniorIDForPairing(this)
     }
 
     fun createPairingCode(){

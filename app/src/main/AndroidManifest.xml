@@ -6,6 +6,11 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:name="com.SeniorCareMobileProject.seniorcare.MyApplication"
@@ -15,17 +20,22 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.SeniorCare">
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyChHYPORUyPsdzhqgDhA2HvUn97oAAsK_o" />
         <receiver
-            android:name="com.SeniorCareMobileProject.seniorcare.ui.widget.SosButtonWidget"
+            android:name=".receivers.BootBroadcastReceiver"
+            android:enabled="true"
             android:exported="true">
             <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
-
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/sos_button_widget_info" />
         </receiver>
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyChHYPORUyPsdzhqgDhA2HvUn97oAAsK_o" />
 
         <activity
             android:name="com.SeniorCareMobileProject.seniorcare.MainActivity"
@@ -38,6 +48,38 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <receiver
+            android:name="com.SeniorCareMobileProject.seniorcare.ui.widget.SosButtonWidget"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/sos_button_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".receivers.GeofenceBroadcastReceiver"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.ACCESS_FINE_LOCATION" />
+
+        <service
+
+            android:name="com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService"
+            android:enabled="true"
+            android:exported="false"
+            android:foregroundServiceType="location"
+            android:permission="android.permission.ACCESS_FINE_LOCATION" />
+
+
+        <service
+            android:name="com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

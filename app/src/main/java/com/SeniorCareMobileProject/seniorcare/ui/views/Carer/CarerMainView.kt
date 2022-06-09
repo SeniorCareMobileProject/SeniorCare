@@ -87,7 +87,7 @@ fun CarerMainView(
                 ) {
                     Text(
                         modifier = Modifier.padding(top = 22.dp),
-                        text = "Grzegorz Brzęczyszczykiewicz",
+                        text = "${sharedViewModel.currentSeniorData.value!!.firstName} ${sharedViewModel.currentSeniorData.value!!.lastName}",
                         fontSize = 20.sp,
                         fontWeight = FontWeight.Medium,
                         color = MaterialTheme.colors.primary
