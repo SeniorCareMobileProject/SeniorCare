@@ -31,9 +31,6 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                 try {
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
                         showNotification(context, "SENIOR POZA OBSZAREM", "SKONTAKTUJ SIE Z SENIOREM")
-                        geofencingEvent.triggeringGeofences.forEach {
-                            val geofence = it.requestId
-                        }
 
 
                         Log.d("GEOFENCE ACTIVATED", "GEOFENCE ACTIVATED")

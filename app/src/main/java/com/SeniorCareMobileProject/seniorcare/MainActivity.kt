@@ -112,6 +112,7 @@ class MainActivity : ComponentActivity() {
         val disabled = sharedPreferences.getBoolean(
             SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
         )
+
         if (disabled) {
             currentOnlyLocationService?.unSubscribeToLocationUpdates()
         } else {
@@ -373,6 +374,8 @@ class MainActivity : ComponentActivity() {
         Log.d("CreateGeofence", "Main")
         createGeoFence(sharedViewModel.seniorLocalization.value, geofencingClient)
         sharedViewModel.onGeofenceRequest.value = false
+        sharedViewModel.geofenceLocation.value = sharedViewModel.seniorLocalization.value
+        sharedViewModel.geofenceRadius.value = GEOFENCE_RADIUS
     }
 
     private fun createGeoFence(location: LatLng, geofencingClient: GeofencingClient) {
@@ -522,7 +525,6 @@ class MainActivity : ComponentActivity() {
                 sharedViewModel.seniorLocalization.value = LatLng( location.latitude, location.longitude)
                 sharedViewModel.localizationAccuracy.value = location.accuracy
                 sharedViewModel.location.value = locations
-
             }
         }
     }

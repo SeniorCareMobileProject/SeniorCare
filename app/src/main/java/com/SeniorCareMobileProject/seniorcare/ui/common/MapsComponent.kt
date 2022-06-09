@@ -10,16 +10,20 @@ import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.MutableLiveData
 import com.SeniorCareMobileProject.seniorcare.*
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBarLocation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.Marker
 import com.google.maps.android.compose.*
 import kotlinx.coroutines.launch
@@ -30,15 +34,26 @@ fun MapWindowComponent(sharedViewModel: SharedViewModel){
     var isMapLoaded by remember { mutableStateOf(false) }
     // Observing and controlling the camera's state can be done with a CameraPositionState
 
-
-    //todo change it
-//    val cameraPositionState = rememberCameraPositionState {
-//        position = sharedViewModel.defaultCameraPosition.value
-//    }
-    //todo delete it
-    val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, 11f)
+    var isLocationLoaded by remember {
+        mutableStateOf(MutableLiveData(false))
     }
+
+    var trackSenior by remember { mutableStateOf(MutableLiveData(true)) }
+
+
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, 17f)
+    }
+
+    if (trackSenior.value == true){
+        cameraPositionState.position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, 17f)
+    }
+
+    if (sharedViewModel.seniorLocalization.value != LatLng(52.408839, 16.906782) && !isLocationLoaded.value!!){
+        isLocationLoaded.value = true
+        cameraPositionState.position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, 17f)
+    }
+
 
     Box(Modifier.fillMaxSize()) {
         GoogleMapView(
@@ -75,17 +90,19 @@ fun GoogleMapView(
     sharedViewModel: SharedViewModel
 ) {
     val TAG = "tag"
-    var circleCenter by remember { mutableStateOf(sharedViewModel.seniorLocalization) }
-
-
-
-    var uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
-    var shouldAnimateZoom by remember { mutableStateOf(true) }
-    var ticker by remember { mutableStateOf(0) }
-    var mapProperties by remember {
+    val circleCenter by remember { mutableStateOf(sharedViewModel.seniorLocalization) }
+    val uiSettings by remember { mutableStateOf(MapUiSettings(compassEnabled = false)) }
+    val mapProperties by remember {
         mutableStateOf(MapProperties(mapType = MapType.NORMAL))
     }
-    var mapVisible by remember { mutableStateOf(true) }
+    val mapVisible by remember { mutableStateOf(true) }
+
+    val geofenceLocation by remember { mutableStateOf(sharedViewModel.geofenceLocation) }
+    val geofenceRadius by remember { mutableStateOf(sharedViewModel.geofenceRadius) }
+    var trackSenior by remember { mutableStateOf(MutableLiveData(true)) }
+
+
+
 
     if (mapVisible) {
         GoogleMap(
@@ -98,10 +115,21 @@ fun GoogleMapView(
                 Log.d(TAG, "POI clicked: ${it.name}")
             }
         ) {
+            if (geofenceRadius.value!=1 && geofenceLocation.value.latitude != 1.0){
+                Log.d("geofenceLocation $geofenceLocation", "geofenceRadius $geofenceRadius")
+                Circle(
+                    center = geofenceLocation.value,
+                    fillColor = Color.Transparent,
+                    strokeColor = Color.Black,
+                    strokeWidth = 5f,
+                    radius = geofenceRadius.value.toDouble(),
+                )
+            }
             Circle(
                 center = circleCenter.value,
                 fillColor = MaterialTheme.colors.secondary,
                 strokeColor = MaterialTheme.colors.secondaryVariant,
+                strokeWidth = 2f,
                 radius = sharedViewModel.localizationAccuracy.value.toDouble(),
             )
 
@@ -111,51 +139,22 @@ fun GoogleMapView(
                 strokeColor = MaterialTheme.colors.secondaryVariant,
                 radius = 5.0,
             )
-            Log.d("Loc aCcc",  sharedViewModel.localizationAccuracy.value.toDouble().toString())
+          //  Log.d("geofenceLocation ${geofenceLocation!!}", "geofenceRadius ${geofenceRadius}")
+
+
         }
 
     }
-    Column {
-        if (sharedViewModel.location.value != null) {
             TextButton(
                 onClick = {
-                      sharedViewModel.onGeofenceRequest.value = true
-                }
+                      sharedViewModel.onGeofenceRequest.value = true }
             ) {
-                Text(text = "DODAJ GEOFENCA", textAlign = TextAlign.Center)
-
+                Text(text = "DODAJ GEOFENCE", textAlign = TextAlign.Center)
             }
-        }
-    }
+
+
 }
 
-@Composable
-private fun ZoomControls(
-    isCameraAnimationChecked: Boolean,
-    isZoomControlsEnabledChecked: Boolean,
-    onZoomOut: () -> Unit,
-    onZoomIn: () -> Unit,
-    onCameraAnimationCheckedChange: (Boolean) -> Unit,
-    onZoomControlsCheckedChange: (Boolean) -> Unit,
-) {
-    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
-        MapButton("-", onClick = { onZoomOut() })
-        MapButton("+", onClick = { onZoomIn() })
-        Column(verticalArrangement = Arrangement.Center) {
-            Text(text = "Camera Animations On?")
-            Switch(
-                isCameraAnimationChecked,
-                onCheckedChange = onCameraAnimationCheckedChange,
-                modifier = Modifier.testTag("cameraAnimations"),
-            )
-            Text(text = "Zoom Controls On?")
-            Switch(
-                isZoomControlsEnabledChecked,
-                onCheckedChange = onZoomControlsCheckedChange
-            )
-        }
-    }
-}
 
 @Composable
 private fun MapButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
@@ -171,27 +170,6 @@ private fun MapButton(text: String, onClick: () -> Unit, modifier: Modifier = Mo
     }
 }
 
-@Composable
-private fun DebugView(
-    cameraPositionState: CameraPositionState,
-    markerState: MarkerState
-) {
-    Column(
-        Modifier
-            .fillMaxWidth(),
-        verticalArrangement = Arrangement.Center
-    ) {
-        val moving =
-            if (cameraPositionState.isMoving) "moving" else "not moving"
-        Text(text = "Camera is $moving")
-        Text(text = "Camera position is ${cameraPositionState.position}")
-        Spacer(modifier = Modifier.height(4.dp))
-        val dragging =
-            if (markerState.dragState == DragState.DRAG) "dragging" else "not dragging"
-        Text(text = "Marker is $dragging")
-        Text(text = "Marker position is ${markerState.position}")
-    }
-}
 
 
 
