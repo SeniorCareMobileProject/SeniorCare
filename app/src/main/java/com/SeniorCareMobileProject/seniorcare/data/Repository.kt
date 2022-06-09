@@ -2,6 +2,7 @@ package com.SeniorCareMobileProject.seniorcare.data
 
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
@@ -15,6 +16,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -53,6 +55,22 @@ class Repository {
         else {
             sharedViewModel._userSignUpStatus.postValue(Resource.Error("Empty strings"))
             Toast.makeText(MyApplication.context, "Please enter valid information", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun writeNewUserFromGoogle(user: LiveData<User>){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val newUser = User(user.value?.email, user.value?.firstName, user.value?.lastName, user.value?.function)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    databaseUserReference.child(userId).setValue(newUser).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(MyApplication.context, e.message, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
