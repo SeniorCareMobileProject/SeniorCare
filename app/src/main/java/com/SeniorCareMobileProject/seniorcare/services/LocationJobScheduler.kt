@@ -1,4 +1,4 @@
-package com.SeniorCareMobileProject.seniorcare
+package com.SeniorCareMobileProject.seniorcare.services
 
 import android.Manifest
 import android.app.job.JobParameters
@@ -7,6 +7,7 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.google.android.gms.location.LocationServices
 
 

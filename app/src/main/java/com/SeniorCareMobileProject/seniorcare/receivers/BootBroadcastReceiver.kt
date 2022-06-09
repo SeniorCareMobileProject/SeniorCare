@@ -1,4 +1,4 @@
-package com.SeniorCareMobileProject.seniorcare
+package com.SeniorCareMobileProject.seniorcare.receivers
 
 import android.content.BroadcastReceiver
 import android.content.Context

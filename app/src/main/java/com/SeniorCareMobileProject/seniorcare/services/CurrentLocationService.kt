@@ -1,6 +1,6 @@
-package com.SeniorCareMobileProject.seniorcare
+package com.SeniorCareMobileProject.seniorcare.services
 
-import android.annotation.SuppressLint
+
 import android.app.*
 import android.content.Context
 import android.content.Intent
@@ -13,13 +13,17 @@ import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import com.SeniorCareMobileProject.seniorcare.MainActivity
+import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.utils.SharedPreferenceUtil
+import com.SeniorCareMobileProject.seniorcare.utils.toText
 import com.google.android.gms.location.*
 import java.util.concurrent.TimeUnit
 
 
-class BackgroundLocationService: Service() {
+class CurrentLocationService: Service() {
     private var configurationChange = false
-    private var serviceRunningInBackground = false
+    private var serviceRunningInForeground = false
     private val localBinder = LocalBinder()
     private lateinit var notificationManager: NotificationManager
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
@@ -49,7 +53,7 @@ class BackgroundLocationService: Service() {
         val intent = Intent(ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST)
         intent.putExtra(EXTRA_LOCATION, currentLocation)
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
-        if (serviceRunningInBackground) {
+        if (serviceRunningInForeground) {
             notificationManager.notify(NOTIFICATION_ID, generateNotification(currentLocation))
         }
     }
@@ -67,7 +71,7 @@ class BackgroundLocationService: Service() {
 
     override fun onBind(intent: Intent?): IBinder? {
         stopForeground(true)
-        serviceRunningInBackground = false
+        serviceRunningInForeground = false
         configurationChange = false
         return localBinder
     }
@@ -76,7 +80,7 @@ class BackgroundLocationService: Service() {
         if (!configurationChange && SharedPreferenceUtil.getLocationTrackingPref(this)) {
             val notification = generateNotification(currentLocation)
             startForeground(NOTIFICATION_ID, notification)
-            serviceRunningInBackground = true
+            serviceRunningInForeground = true
         }
         return true
     }
@@ -87,15 +91,14 @@ class BackgroundLocationService: Service() {
     }
 
 
-    @SuppressLint("MissingPermission")
     fun subscribeToLocationUpdates() {
         SharedPreferenceUtil.saveLocationTrackingPref(this, true)
-        startService(Intent(applicationContext, BackgroundLocationService::class.java))
-        Log.d("Current Location Upda", "TRY PROBLEMMMMMM")
+        startService(Intent(applicationContext, CurrentLocationService::class.java))
+        Log.d("Current Location Update", "TRY")
         try {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                 sendLocation(location!!)
-                Log.d("Current Location Upda", "${location.latitude}, ${location.longitude}")
+                Log.d("Current Location Updade", "${location.latitude}, ${location.longitude}")
 
             }
             fusedLocationProviderClient.requestLocationUpdates(
@@ -137,7 +140,7 @@ class BackgroundLocationService: Service() {
             .bigText(mainNotificationText)
             .setBigContentTitle(titleText)
         val launchActivity = Intent(this, MainActivity::class.java)
-        val cancelIntent = Intent(this, BackgroundLocationService::class.java)
+        val cancelIntent = Intent(this, CurrentLocationService::class.java)
         cancelIntent.putExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, true)
         val servicePendingIntent = PendingIntent.getService(
             this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT
@@ -150,7 +153,7 @@ class BackgroundLocationService: Service() {
         return notificationCompatBuilder.setStyle(bigTextStyle)
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
-            .setSmallIcon(R.mipmap.ic_launcher)
+            .setSmallIcon(R.drawable.add_circle)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
@@ -169,7 +172,7 @@ class BackgroundLocationService: Service() {
     }
 
     inner class LocalBinder: Binder() {
-        internal val service: BackgroundLocationService get() = this@BackgroundLocationService
+        internal val service: CurrentLocationService get() = this@CurrentLocationService
     }
 
     companion object {

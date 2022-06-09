@@ -1,4 +1,4 @@
-package com.SeniorCareMobileProject.seniorcare
+package com.SeniorCareMobileProject.seniorcare.utils
 
 import android.content.Context
 import android.location.Location

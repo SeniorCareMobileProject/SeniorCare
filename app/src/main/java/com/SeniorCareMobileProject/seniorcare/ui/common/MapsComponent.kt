@@ -119,10 +119,7 @@ fun GoogleMapView(
         if (sharedViewModel.location.value != null) {
             TextButton(
                 onClick = {
-                    Geofencing().getGeofencingRequest(
-                        mutableListOf(Geofencing().
-                        createGeofence("Senior Geofence", sharedViewModel.location.value!!))
-                    )
+                      sharedViewModel.onGeofenceRequest.value = true
                 }
             ) {
                 Text(text = "DODAJ GEOFENCA", textAlign = TextAlign.Center)
