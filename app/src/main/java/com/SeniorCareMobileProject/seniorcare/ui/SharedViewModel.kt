@@ -41,15 +41,22 @@ class SharedViewModel : ViewModel() {
     val userSignUpStatus: LiveData<Resource<AuthResult>> = _userSignUpStatus
     val _userDataStatus = MutableLiveData<Resource<User>>()
     val userDataStatus: LiveData<Resource<User>> = _userDataStatus
+    val _currentSeniorDataStatus = MutableLiveData<Resource<User>>()
+    val currentSeniorDataStatus: LiveData<Resource<User>> = _currentSeniorDataStatus
+
 
     // user data
     val _userData: MutableLiveData<User> = MutableLiveData()
     val userData: LiveData<User> = _userData
+    val listOfAllSeniors = mutableListOf<String>()
+    val currentSeniorData: MutableLiveData<User> = MutableLiveData()
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
     val pairingData: MutableLiveData<PairingData> = MutableLiveData()
     val pairingStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+    val pairingSeniorID: MutableLiveData<String> = MutableLiveData("")
+    val writeNewConnectionStatus = MutableLiveData<Resource<String>>()
     // senior
     var codeInput = mutableStateOf("")
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
@@ -75,6 +82,17 @@ class SharedViewModel : ViewModel() {
             _userDataStatus.postValue(Resource.Loading())
             repository.getUserData(this@SharedViewModel)
         }
+    }
+
+    fun getCurrentSeniorData(){
+        viewModelScope.launch(Dispatchers.Main) {
+            _currentSeniorDataStatus.postValue(Resource.Loading())
+            repository.getListOfSeniors(this@SharedViewModel)
+        }
+    }
+
+    fun getSeniorIDForPairing(){
+        repository.getSeniorIDForPairing(this)
     }
 
     fun createPairingCode(){
