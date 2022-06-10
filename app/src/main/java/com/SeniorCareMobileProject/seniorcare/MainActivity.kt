@@ -26,6 +26,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
 import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
@@ -44,6 +45,11 @@ import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import kotlinx.coroutines.withContext
 
 private const val TAG = "MainActivity"
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
@@ -112,16 +118,22 @@ class MainActivity : ComponentActivity() {
         val disabled = sharedPreferences.getBoolean(
             SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
         )
-        if (disabled) {
-            currentOnlyLocationService?.unSubscribeToLocationUpdates()
-        } else {
-            if (foregroundPermissionApproved()) {
-                currentOnlyLocationService?.subscribeToLocationUpdates()
-                    ?: Log.d("TAG", "Service Not Bound")
+        
+        sharedViewModel.userData.observe(this, Observer{
+            value -> if (value.function == "Senior"){
+            if (disabled) {
+                currentOnlyLocationService?.unSubscribeToLocationUpdates()
             } else {
-                requestForegroundPermissions()
+                if (foregroundPermissionApproved()) {
+                    currentOnlyLocationService?.subscribeToLocationUpdates()
+                        ?: Log.d("TAG", "Service Not Bound")
+                } else {
+                    requestForegroundPermissions()
+                }
             }
         }
+        })
+
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
@@ -528,11 +540,14 @@ class MainActivity : ComponentActivity() {
                 sharedViewModel.seniorLocalization.value = LatLng( location.latitude, location.longitude)
                 sharedViewModel.localizationAccuracy.value = location.accuracy
                 sharedViewModel.location.value = locations
-                saveLocationToFirebase()
+
+                val firebaseAuth = FirebaseAuth.getInstance()
+                val currentUser = firebaseAuth.currentUser?.uid
+                if (currentUser != null){
+                    sharedViewModel.saveLocationToFirebase()
+                }
             }
         }
-
-        fun saveLocationToFirebase(){}
     }
 }
 

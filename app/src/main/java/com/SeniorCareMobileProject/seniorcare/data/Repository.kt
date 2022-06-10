@@ -1,13 +1,16 @@
 package com.SeniorCareMobileProject.seniorcare.data
 
+import android.location.Location
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
+import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -145,6 +148,7 @@ class Repository {
                 if (user != null) {
                     sharedViewModel.currentSeniorData.value = user
                     sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(user))
+                    getSeniorLocation(sharedViewModel)
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -324,5 +328,42 @@ class Repository {
             .child(sharedViewModel.codeInput.value)
             .child("status")
             .setValue(true)
+    }
+
+    // LOCATION
+    fun saveLocationToFirebase(location: LocationDAO?){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val databaseReference = databaseUserReference.child(userId).child("location")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    databaseReference.setValue(location).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("LocationFirebase", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun getSeniorLocation(sharedViewModel: SharedViewModel){
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("location")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val location = snapshot.getValue<LocationDAO>()
+                if (location != null) {
+                    sharedViewModel.seniorLocalization.value = LatLng(location.latitude!!, location.longitude!!)
+                    sharedViewModel.localizationAccuracy.value = location.accuracy!!
+                    Log.d("Wspolrzedne", "${sharedViewModel.seniorLocalization.value.latitude} ${sharedViewModel.seniorLocalization.value.longitude}")
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorLocation:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
     }
 }
