@@ -4,6 +4,7 @@ import android.location.Location
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
@@ -55,6 +56,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     // user data
     val _userData: MutableLiveData<User> = MutableLiveData()
     val userData: LiveData<User> = _userData
+    val functionLiveData: MutableLiveData<String> = MutableLiveData(userData.value?.function)
     val listOfAllSeniors = mutableListOf<String>()
     val currentSeniorData: MutableLiveData<User> = MutableLiveData()
 
@@ -151,5 +153,13 @@ class SharedViewModel : ViewModel(), KoinComponent {
         } catch (e: Exception) {
             loadingGoogleSignInState.emit(LoadingState.error(e.localizedMessage))
         }
+    }
+
+    // LOCATION
+
+    fun saveLocationToFirebase(){
+        val locationAll = this@SharedViewModel.location.value
+        val location = LocationDAO(locationAll?.latitude, locationAll?.longitude, locationAll?.accuracy)
+        repository.saveLocationToFirebase(location)
     }
 }
