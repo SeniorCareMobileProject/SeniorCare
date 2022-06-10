@@ -118,7 +118,7 @@ class MainActivity : ComponentActivity() {
         val disabled = sharedPreferences.getBoolean(
             SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
         )
-
+        
         sharedViewModel.userData.observe(this, Observer{
             value -> if (value.function == "Senior"){
             if (disabled) {
@@ -389,6 +389,8 @@ class MainActivity : ComponentActivity() {
         Log.d("CreateGeofence", "Main")
         createGeoFence(sharedViewModel.seniorLocalization.value, geofencingClient)
         sharedViewModel.onGeofenceRequest.value = false
+        sharedViewModel.geofenceLocation.value = sharedViewModel.seniorLocalization.value
+        sharedViewModel.geofenceRadius.value = GEOFENCE_RADIUS
     }
 
     private fun createGeoFence(location: LatLng, geofencingClient: GeofencingClient) {

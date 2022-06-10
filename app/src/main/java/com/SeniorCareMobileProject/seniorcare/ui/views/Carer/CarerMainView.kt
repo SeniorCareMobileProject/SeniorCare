@@ -20,6 +20,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.LiveData
 import androidx.compose.ui.unit.dp
@@ -29,6 +30,7 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.data.Database
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavigationBarView
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
@@ -55,7 +57,6 @@ fun CarerMainView(
             )
         }) {
         val scrollState = remember { ScrollState(0) }
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -66,6 +67,10 @@ fun CarerMainView(
                 scope = scope,
                 scaffoldState = scaffoldState
             )
+            Column(Modifier.height(225.dp) ) {
+                MapWindowComponent(sharedViewModel = sharedViewModel)
+            }
+
 
             Column(
                 modifier = Modifier
@@ -85,6 +90,8 @@ fun CarerMainView(
                     verticalArrangement = Arrangement.spacedBy(18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
+
+
                     Text(
                         modifier = Modifier.padding(top = 22.dp),
                         text = "${sharedViewModel.currentSeniorData.value!!.firstName} ${sharedViewModel.currentSeniorData.value!!.lastName}",

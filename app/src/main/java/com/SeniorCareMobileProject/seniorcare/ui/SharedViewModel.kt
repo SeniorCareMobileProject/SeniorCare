@@ -1,6 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
 import android.location.Location
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
@@ -26,9 +27,12 @@ class SharedViewModel : ViewModel(), KoinComponent {
     //location
     val onGeofenceRequest = MutableLiveData<Boolean>(false)
     val seniorLocalization = mutableStateOf(LatLng(52.408839, 16.906782))
-
     val localizationAccuracy = mutableStateOf(50f)
     val location = mutableStateOf<Location?>(null)
+
+    //geofence
+    val geofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
+    val geofenceRadius = mutableStateOf(1)
 
 
     // for getting input

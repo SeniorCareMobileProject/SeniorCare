@@ -9,6 +9,7 @@ import android.util.Log
 import androidx.core.app.ActivityCompat
 import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.google.android.gms.location.LocationServices
+import com.google.firebase.auth.FirebaseAuth
 
 
 class LocationJobScheduler : JobService() {
@@ -52,7 +53,9 @@ class LocationJobScheduler : JobService() {
         }
         MyApplication.context?.let {
             LocationServices.getFusedLocationProviderClient(it)
-                .lastLocation.addOnSuccessListener { location: Location? -> }
+                .lastLocation.addOnSuccessListener { location: Location? ->
+
+                }
                 .addOnFailureListener { e: Exception -> e.printStackTrace() }
         }
         jobFinished(params, true)

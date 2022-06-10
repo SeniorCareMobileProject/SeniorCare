@@ -37,7 +37,7 @@ class CurrentLocationService: Service() {
         locationRequest = LocationRequest.create().apply {
             interval = TimeUnit.SECONDS.toMillis(5)
             fastestInterval = TimeUnit.SECONDS.toMillis(5)
-            maxWaitTime = TimeUnit.SECONDS.toMillis(5)
+            maxWaitTime = TimeUnit.SECONDS.toMillis(10)
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
