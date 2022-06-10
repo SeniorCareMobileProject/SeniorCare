@@ -112,7 +112,6 @@ class MainActivity : ComponentActivity() {
         val disabled = sharedPreferences.getBoolean(
             SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
         )
-
         if (disabled) {
             currentOnlyLocationService?.unSubscribeToLocationUpdates()
         } else {
@@ -143,7 +142,7 @@ class MainActivity : ComponentActivity() {
 
                 NavHost(
                     navController,
-                    startDestination = NavigationScreens.ChooseLoginMethodScreen.name,
+                    startDestination = startDestination,
                 ) {
 
 
@@ -167,6 +166,10 @@ class MainActivity : ComponentActivity() {
 
                     composable(NavigationScreens.LoginScreen.name) {
                         LoginView(navController, sharedViewModel)
+                    }
+
+                    composable(NavigationScreens.LoadingSeniorDataView.name) {
+                        LoadingSeniorDataView(navController, sharedViewModel)
                     }
 
 //                    composable(NavigationScreens.ChooseRoleScreen.name) {
@@ -525,8 +528,11 @@ class MainActivity : ComponentActivity() {
                 sharedViewModel.seniorLocalization.value = LatLng( location.latitude, location.longitude)
                 sharedViewModel.localizationAccuracy.value = location.accuracy
                 sharedViewModel.location.value = locations
+                saveLocationToFirebase()
             }
         }
+
+        fun saveLocationToFirebase(){}
     }
 }
 

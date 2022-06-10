@@ -163,13 +163,30 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
 
     // CHECK IF PAIRING IS DONE
     val pairingState : State<Boolean?> = sharedViewModel.pairingStatus.observeAsState()
+    val writeNewConnectionStatus: State<Resource<String>?> =  sharedViewModel.writeNewConnectionStatus.observeAsState()
+    val currentSeniorDataStatus : State<Resource<User>?> = sharedViewModel.currentSeniorDataStatus.observeAsState()
     when (pairingState.value){
         true -> {
             LaunchedEffect(pairingState){
-                navController.navigate("PairingScreenSuccessScreen"){
-                    popUpTo("PairingScreenCodeScreen") {inclusive = true}
+                sharedViewModel.getSeniorIDForPairing()
+            }
+            when (writeNewConnectionStatus.value){
+                is Resource.Success<*> -> {
+                    LaunchedEffect(writeNewConnectionStatus){
+                        sharedViewModel.writeNewConnectionWith(sharedViewModel.pairingSeniorID.value!!)
+                        sharedViewModel.deletePairingCode()
+                        sharedViewModel.getCurrentSeniorData()
+                    }
+                    when (currentSeniorDataStatus.value) {
+                        is Resource.Success<*> -> {
+                            LaunchedEffect(currentSeniorDataStatus) {
+                                navController.navigate("PairingScreenSuccessScreen") {
+                                    popUpTo("PairingScreenCodeScreen") { inclusive = true }
+                                }
+                            }
+                        }
+                    }
                 }
-                sharedViewModel.deletePairingCode()
             }
         }
     }

@@ -28,6 +28,7 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val userDataState : State<Resource<User>?> = sharedViewModel.userDataStatus.observeAsState()
+        val currentSeniorDataStatus : State<Resource<User>?> = sharedViewModel.currentSeniorDataStatus.observeAsState()
 
         when (userDataState.value){
             is Resource.Success<*> -> {
@@ -42,7 +43,8 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
                             }
                         }
                         else {
-                            navController.navigate("CarerMainScreen"){
+                            sharedViewModel.getCurrentSeniorData()
+                            navController.navigate("LoadingSeniorDataView"){
                                 popUpTo("LoadingDataView") {inclusive = true}
                             }
                         }

@@ -2,6 +2,7 @@ package com.SeniorCareMobileProject.seniorcare.data
 
 import android.util.Log
 import android.widget.Toast
+import androidx.lifecycle.LiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
@@ -15,6 +16,7 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -53,6 +55,22 @@ class Repository {
         else {
             sharedViewModel._userSignUpStatus.postValue(Resource.Error("Empty strings"))
             Toast.makeText(MyApplication.context, "Please enter valid information", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun writeNewUserFromGoogle(user: LiveData<User>){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val newUser = User(user.value?.email, user.value?.firstName, user.value?.lastName, user.value?.function)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    databaseUserReference.child(userId).setValue(newUser).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(MyApplication.context, e.message, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
@@ -95,6 +113,43 @@ class Repository {
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("Database", "loadPost:onCancelled", databaseError.toException())
                 sharedViewModel._userDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
+            }
+        }
+        userReference.addValueEventListener(userListener)
+        //userReference.addListenerForSingleValueEvent(userListener)
+    }
+
+    fun getListOfSeniors(sharedViewModel: SharedViewModel){
+        val reference = databaseUserReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child("connectedWith")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = snapshot.getValue<HashMap<String, String>>()
+                if (data != null){
+                    sharedViewModel.listOfAllSeniors.addAll(data.keys)
+                    getCurrentSeniorData(sharedViewModel)
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getListOfSeniors:onCancelled", databaseError.toException())
+                sharedViewModel._currentSeniorDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
+            }
+        }
+        reference.addListenerForSingleValueEvent(listener)
+    }
+
+    fun getCurrentSeniorData(sharedViewModel: SharedViewModel){
+        val userReference = database.getReference("users/" + sharedViewModel.listOfAllSeniors[0])
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue<User>()
+                if (user != null) {
+                    sharedViewModel.currentSeniorData.value = user
+                    sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(user))
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getCurrentSeniorData:onCancelled", databaseError.toException())
+                sharedViewModel._currentSeniorDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
             }
         }
         userReference.addValueEventListener(userListener)
@@ -226,6 +281,26 @@ class Repository {
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("Database", "getPairingData:onCancelled", databaseError.toException())
                 sharedViewModel.pairingDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
+            }
+        }
+        pairingDataReference.addListenerForSingleValueEvent(listener)
+    }
+
+    fun getSeniorIDForPairing(sharedViewModel: SharedViewModel){
+        val pairingDataReference = database.getReference("pairing")
+            .child("data")
+            .child(sharedViewModel.pairingCode.value!!)
+            .child("seniorID")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = snapshot.getValue<String>()
+                if (data != null){
+                    sharedViewModel.pairingSeniorID.value = data
+                    sharedViewModel.writeNewConnectionStatus.postValue(Resource.Success(data))
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorIDForPairing:onCancelled", databaseError.toException())
             }
         }
         pairingDataReference.addListenerForSingleValueEvent(listener)

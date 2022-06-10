@@ -7,14 +7,21 @@ import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
+import com.google.firebase.auth.AuthCredential
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.tasks.await
+import org.koin.core.component.KoinComponent
 
-class SharedViewModel : ViewModel() {
+class SharedViewModel : ViewModel(), KoinComponent {
 
     //location
     val onGeofenceRequest = MutableLiveData<Boolean>(false)
@@ -45,15 +52,22 @@ class SharedViewModel : ViewModel() {
     val userSignUpStatus: LiveData<Resource<AuthResult>> = _userSignUpStatus
     val _userDataStatus = MutableLiveData<Resource<User>>()
     val userDataStatus: LiveData<Resource<User>> = _userDataStatus
+    val _currentSeniorDataStatus = MutableLiveData<Resource<User>>()
+    val currentSeniorDataStatus: LiveData<Resource<User>> = _currentSeniorDataStatus
+
 
     // user data
     val _userData: MutableLiveData<User> = MutableLiveData()
     val userData: LiveData<User> = _userData
+    val listOfAllSeniors = mutableListOf<String>()
+    val currentSeniorData: MutableLiveData<User> = MutableLiveData()
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
     val pairingData: MutableLiveData<PairingData> = MutableLiveData()
     val pairingStatus: MutableLiveData<Boolean> = MutableLiveData(false)
+    val pairingSeniorID: MutableLiveData<String> = MutableLiveData("")
+    val writeNewConnectionStatus = MutableLiveData<Resource<String>>()
     // senior
     var codeInput = mutableStateOf("")
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
@@ -81,6 +95,17 @@ class SharedViewModel : ViewModel() {
         }
     }
 
+    fun getCurrentSeniorData(){
+        viewModelScope.launch(Dispatchers.Main) {
+            _currentSeniorDataStatus.postValue(Resource.Loading())
+            repository.getListOfSeniors(this@SharedViewModel)
+        }
+    }
+
+    fun getSeniorIDForPairing(){
+        repository.getSeniorIDForPairing(this)
+    }
+
     fun createPairingCode(){
         repository.createPairingCodeAndWriteToFirebase(this)
     }
@@ -106,5 +131,29 @@ class SharedViewModel : ViewModel() {
 
     fun updatePairingStatus(){
         repository.updatePairingStatus(this)
+    }
+
+    // GOOGLE SIGN IN
+    fun userDataFromGoogle(email: String, displayName: String){
+        val fullName = displayName.split(" ")
+        val firstName = fullName[0]
+        val lastName = fullName[1]
+        _userData.value = User(email, firstName, lastName, this.function.value)
+    }
+
+    fun writeNewUserFromGoogle(userData: LiveData<User>){
+        repository.writeNewUserFromGoogle(userData)
+    }
+
+    val loadingGoogleSignInState = MutableStateFlow(LoadingState.IDLE)
+
+    fun signWithCredential(credential: AuthCredential) = viewModelScope.launch {
+        try {
+            loadingGoogleSignInState.emit(LoadingState.LOADING)
+            Firebase.auth.signInWithCredential(credential).await()
+            loadingGoogleSignInState.emit(LoadingState.LOADED)
+        } catch (e: Exception) {
+            loadingGoogleSignInState.emit(LoadingState.error(e.localizedMessage))
+        }
     }
 }
