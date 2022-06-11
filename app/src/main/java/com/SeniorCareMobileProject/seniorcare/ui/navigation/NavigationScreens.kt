@@ -23,7 +23,8 @@ enum class NavigationScreens(val title: String) {
     LoadingRegisterView("LoadingRegisterView"),
     LoadingPairingDataView("LoadingPairingDataView"),
     LoadingSeniorDataView("LoadingSeniorDataView"),
-    MapComponentView("MapComponentView")
+    MapComponentView("MapComponentView"),
+    SeniorSettingsScreen("SeniorSettingsScreen")
 
 
 }

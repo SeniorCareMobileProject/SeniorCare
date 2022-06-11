@@ -165,7 +165,7 @@ class MainActivity : ComponentActivity() {
                         CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
                     }
                     composable(BottomNavItem.MedInfo.route) {
-                        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
+                        CarerMedicalInfoView(navController, scope, scaffoldState)
                     }
                     composable(BottomNavItem.Notifications.route) {
                         CarerNotificationsView(navController, sharedViewModel, scope, scaffoldState)
@@ -247,12 +247,12 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(NavigationScreens.SeniorMainScreen.name) {
-                        SeniorMainView(navController, sharedViewModel)
+                        SeniorMainView(navController)
 
                     }
 
                     composable(NavigationScreens.SeniorMedicalInfoScreen.name) {
-                        SeniorMedicalInfoView(navController, sharedViewModel)
+                        SeniorMedicalInfoView(navController)
 
                     }
 
@@ -314,6 +314,11 @@ class MainActivity : ComponentActivity() {
 
                     composable(NavigationScreens.LoadingPairingDataView.name) {
                         LoadingPairingDataView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.SeniorSettingsScreen.name) {
+                        SeniorSettingsView(navController)
 
                     }
 

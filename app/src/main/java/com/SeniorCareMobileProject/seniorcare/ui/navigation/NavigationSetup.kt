@@ -28,7 +28,7 @@ fun NavigationSetup(
             CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
         }
         composable(BottomNavItem.MedInfo.route) {
-            CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
+            CarerMedicalInfoView(navController, scope, scaffoldState)
         }
         composable(BottomNavItem.Notifications.route) {
             CarerNotificationsView(navController, sharedViewModel, scope, scaffoldState)

@@ -700,7 +700,7 @@ fun FloatingButton() {
 fun SignUpViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        val sharedViewModel = SharedViewModel()
+//        val sharedViewModel = SharedViewModel()
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
         val listOfTime = listOf<String>("10:00", "15:00", "20:00")
@@ -712,24 +712,24 @@ fun SignUpViewPreview() {
         ) {
             EditButton()
             DeleteButton()
-            SmallButton("Text", mutableStateOf(false))
-            ChooseRoleSection(sharedViewModel)
-            IconTextButton(navController, text = "Text", iconName = "google", "")
-            InputField(placeholder = "Text", onValueChange = {}, viewModelVariable = mutableStateOf(""))
-            InputFieldLabelIcon(
-                text = "Text",
-                onValueChange = {},
-                fieldLabel = "Label",
-                "alternate_email",
-                viewModelVariable = mutableStateOf("")
-            )
-            InputFieldLabelIcon(
-                text = "Text",
-                onValueChange = {},
-                fieldLabel = "Label",
-                "",
-                viewModelVariable = mutableStateOf("")
-            )
+//            SmallButton("Text", mutableStateOf(false))
+//            ChooseRoleSection(sharedViewModel)
+//            IconTextButton(navController, text = "Text", iconName = "google", "")
+//            InputField(placeholder = "Text", onValueChange = {}, viewModelVariable = mutableStateOf(""))
+//            InputFieldLabelIcon(
+//                text = "Text",
+//                onValueChange = {},
+//                fieldLabel = "Label",
+//                "alternate_email",
+//                viewModelVariable = mutableStateOf("")
+//            )
+//            InputFieldLabelIcon(
+//                text = "Text",
+//                onValueChange = {},
+//                fieldLabel = "Label",
+//                "",
+//                viewModelVariable = mutableStateOf("")
+//            )
             TextFilledButton(navController, "Text", "")
             UserCard(
                 navController = navController,
