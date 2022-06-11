@@ -1,25 +1,22 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Senior
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorButton
 
 @Composable
-fun SeniorMainView(navController: NavController) {
+fun SeniorSettingsView(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -30,10 +27,9 @@ fun SeniorMainView(navController: NavController) {
 
     ) {
         Text(
-            text = "Witaj Piotr",
+            text = "Ustawienia",
             fontWeight = FontWeight.Medium,
             fontSize = 36.sp,
-            color = MaterialTheme.colors.primary
         )
 
         Column(
@@ -43,44 +39,30 @@ fun SeniorMainView(navController: NavController) {
 
             SeniorButton(
                 navController = navController,
-                text = "Wychodzę z domu",
-                iconName = "my_location",
-                rout = "",
-                color = "main"
-            )
-            SeniorButton(
-                navController = navController,
-                text = "Informacje medyczne",
-                iconName = "info",
-                rout = "SeniorMedicalInfoScreen",
-                color = "main"
-            )
-            SeniorButton(
-                navController = navController,
-                text = "Kalendarz",
-                iconName = "calendar_month",
-                rout = "",
-                color = "main"
-            )
-            SeniorButton(
-                navController = navController,
                 text = "Detektor upadku",
                 iconName = "clear",
                 rout = "",
-                color = "main"
+                color = ""
             )
             SeniorButton(
                 navController = navController,
-                text = "SOS",
+                text = "Dodaj opiekuna",
+                iconName = "add_circle",
+                rout = "",
+                color = ""
+            )
+            SeniorButton(
+                navController = navController,
+                text = "Usuń opiekuna",
                 iconName = "clear",
                 rout = "",
-                color = "red"
+                color = ""
             )
             SeniorButton(
                 navController = navController,
-                text = "Ustawienia",
-                iconName = "settings",
-                rout = "SeniorSettingsScreen",
+                text = "Wyloguj się",
+                iconName = "logout",
+                rout = "",
                 color = ""
             )
         }
@@ -89,9 +71,9 @@ fun SeniorMainView(navController: NavController) {
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun SeniorMainViewPreview() {
+fun SeniorSettingsViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        SeniorMainView(navController)
+        SeniorSettingsView(navController)
     }
 }
