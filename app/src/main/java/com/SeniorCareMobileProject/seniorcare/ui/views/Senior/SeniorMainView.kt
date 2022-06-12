@@ -2,6 +2,7 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Senior
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -17,9 +18,10 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorButton
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SosButton
 
 @Composable
-fun SeniorMainView(navController: NavController) {
+fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -69,11 +71,18 @@ fun SeniorMainView(navController: NavController) {
                 rout = "",
                 color = "main"
             )
-            SeniorButton(
+            /*SeniorButton(
                 navController = navController,
                 text = "SOS",
                 iconName = "clear",
                 rout = "",
+                color = "red"
+            )*/
+            SosButton(
+                navController = navController,
+                text = "SOS",
+                iconName = "clear",
+                sharedViewModel = sharedViewModel,
                 color = "red"
             )
             SeniorButton(
@@ -92,6 +101,11 @@ fun SeniorMainView(navController: NavController) {
 fun SeniorMainViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        SeniorMainView(navController)
+        val sharedViewModel = SharedViewModel()
+        SeniorMainView(navController,sharedViewModel)
     }
 }
+
+
+
+
