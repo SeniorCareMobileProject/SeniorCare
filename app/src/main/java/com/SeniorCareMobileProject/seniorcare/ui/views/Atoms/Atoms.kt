@@ -483,7 +483,7 @@ fun TopBarLocation(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
-    Column() {
+    Column(modifier = Modifier.wrapContentSize()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
