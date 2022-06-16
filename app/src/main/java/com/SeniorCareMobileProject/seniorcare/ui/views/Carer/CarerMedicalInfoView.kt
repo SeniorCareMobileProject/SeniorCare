@@ -86,7 +86,6 @@ fun ItemsList(items: List<List<String>>) {
 @Composable
 fun CarerMedicalInfoView(
     navController: NavController,
-    sharedViewModel: SharedViewModel,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
@@ -139,10 +138,9 @@ fun CarerMedicalInfoView(
 fun CarerMedicalInfoViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        val sharedViewModel = SharedViewModel()
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
-        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
+        CarerMedicalInfoView(navController, scope, scaffoldState)
     }
 }
