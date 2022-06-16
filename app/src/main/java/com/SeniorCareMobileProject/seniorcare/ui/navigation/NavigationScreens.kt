@@ -24,7 +24,8 @@ enum class NavigationScreens(val title: String) {
     LoadingPairingDataView("LoadingPairingDataView"),
     LoadingSeniorDataView("LoadingSeniorDataView"),
     MapComponentView("MapComponentView"),
-    SeniorSettingsScreen("SeniorSettingsScreen")
+    SeniorSettingsScreen("SeniorSettingsScreen"),
+    SosCascadeView("SosCascadeView")
 
 
 }

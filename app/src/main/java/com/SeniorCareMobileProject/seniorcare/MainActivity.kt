@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val requestCall = 1
+
     private val sharedViewModel: SharedViewModel by viewModels()
     private var foregroundOnlyLocationServiceBound = false
     private var currentOnlyLocationService: CurrentLocationService? = null
@@ -134,11 +135,14 @@ class MainActivity : ComponentActivity() {
         }
         })
         sharedViewModel.sosButtonClicked.observe(this, Observer{
-            value -> if(value == true){
-                makePhoneCall("123456789")
-                sharedViewModel.sosButtonClicked.value = false
+            value -> if(value >=0) {
+            makePhoneCall(sharedViewModel.phoneNumbers[sharedViewModel.sosButtonClicked.value!!])
+            if(sharedViewModel.sosButtonClicked.value!!>=sharedViewModel.phoneNumbers.size-1){
+                sharedViewModel.sosButtonClicked.value = -1
+            }
         }
-        })
+        }
+        )
 
 
 
@@ -330,10 +334,17 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.SosCascadeView.name) {
+                        SosCascadeView(navController, sharedViewModel)
+
+                    }
+
                 }
             }
         }
     }
+
+
 
     fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {

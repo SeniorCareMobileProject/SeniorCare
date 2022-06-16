@@ -74,7 +74,8 @@ class SharedViewModel : ViewModel(), KoinComponent {
     var codeInput = mutableStateOf("")
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
     // sos button
-    val sosButtonClicked: MutableLiveData<Boolean> = MutableLiveData(false)
+    val sosButtonClicked: MutableLiveData<Int> = MutableLiveData(-1)
+    val phoneNumbers = listOf("123456789","987654321","123456780")
 
     private val repository = Repository()
 
