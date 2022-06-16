@@ -64,7 +64,6 @@ fun HeaderUpd() {
                 modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
-
     }
 }
 
@@ -94,21 +93,24 @@ fun CarerMedicalInfoDataUpdateView(
                 scaffoldState = scaffoldState,
                 navController = navController
             )
-        }) {
-        val scrollState = remember { ScrollState(0) }
+        }) { innerPadding ->
+        Box(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())) {
+            val scrollState = remember { ScrollState(0) }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(Color.White)
-                .verticalScroll(scrollState)
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(Color.White)
+                    .captionBarPadding()
+                    .verticalScroll(scrollState)
 
-        ) {
-
-            HeaderUpd()
-            ItemsListUpd(items)
+            ) {
+                HeaderUpd()
+                ItemsListUpd(items)
+            }
         }
+
     }
 }
 

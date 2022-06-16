@@ -18,6 +18,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -661,21 +662,22 @@ fun MedicalDataItemUpd(title: String, text: String) {
                 .padding(horizontal = 5.dp)
         ) {
             Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-//            TextField(
-//                value = textRem.value,
-//                onValueChange = { textRem.value = it },
-//                textStyle = TextStyle(
-//                    fontSize = 14.sp
-//                ),
-//                colors = TextFieldDefaults.textFieldColors(
-//                    backgroundColor = Color.Transparent,
-//                    unfocusedIndicatorColor = Color.Transparent
-//                )
-//            )
-            BasicTextField(
+            TextField(modifier = Modifier.fillMaxWidth(),
                 value = textRem.value,
                 onValueChange = { textRem.value = it },
+                textStyle = TextStyle(
+                    fontSize = 16.sp,
+                    fontStyle = FontStyle.Italic
+                ),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color(0xFFF5F5F5),
+                    unfocusedIndicatorColor = Color.Transparent
+                )
             )
+//            BasicTextField(
+//                value = textRem.value,
+//                onValueChange = { textRem.value = it },
+//            )
 
 //            Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
 
