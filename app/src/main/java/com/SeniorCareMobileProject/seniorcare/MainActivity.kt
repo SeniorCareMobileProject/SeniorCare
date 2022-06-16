@@ -53,7 +53,7 @@ import kotlinx.coroutines.withContext
 
 private const val TAG = "MainActivity"
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
-private var locations: Location?=null
+private var locations: Location? = null
 
 class MainActivity : ComponentActivity() {
 
@@ -118,20 +118,20 @@ class MainActivity : ComponentActivity() {
         val disabled = sharedPreferences.getBoolean(
             SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
         )
-        
-        sharedViewModel.userData.observe(this, Observer{
-            value -> if (value.function == "Senior"){
-            if (disabled) {
-                currentOnlyLocationService?.unSubscribeToLocationUpdates()
-            } else {
-                if (foregroundPermissionApproved()) {
-                    currentOnlyLocationService?.subscribeToLocationUpdates()
-                        ?: Log.d("TAG", "Service Not Bound")
+
+        sharedViewModel.userData.observe(this, Observer { value ->
+            if (value.function == "Senior") {
+                if (disabled) {
+                    currentOnlyLocationService?.unSubscribeToLocationUpdates()
                 } else {
-                    requestForegroundPermissions()
+                    if (foregroundPermissionApproved()) {
+                        currentOnlyLocationService?.subscribeToLocationUpdates()
+                            ?: Log.d("TAG", "Service Not Bound")
+                    } else {
+                        requestForegroundPermissions()
+                    }
                 }
             }
-        }
         })
         sharedViewModel.sosButtonClicked.observe(this, Observer{
             value -> if(value == true){
@@ -159,6 +159,21 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val scope = rememberCoroutineScope()
                 val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
+
+                val items = listOf(
+                    listOf("Data urodzenia", "17.06.1943 (79 lat)"),
+                    listOf("Choroby", "Demencja"),
+                    listOf("Grupa krwi", "A+"),
+                    listOf("Alergie", "Orzechy"),
+                    listOf(
+                        "Przyjmowane leki",
+                        "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
+                    ),
+                    listOf("Wzrost", "168"),
+                    listOf("Waga", "58"),
+                    listOf("Główny język", "Polski"),
+                    listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
+                )
 
                 NavHost(
                     navController,
@@ -325,6 +340,14 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name) {
+                        CarerMedicalInfoDataUpdateView(
+                            navController,
+                            sharedViewModel,
+                            scope,
+                            scaffoldState,
+                            items
+                        )
                     composable(NavigationScreens.SeniorSettingsScreen.name) {
                         SeniorSettingsView(navController)
 
@@ -386,7 +409,7 @@ class MainActivity : ComponentActivity() {
     override fun onStart() {
         super.onStart()
 
-       // sharedPreferences.registerOnSharedPreferenceChangeListener(this)
+        // sharedPreferences.registerOnSharedPreferenceChangeListener(this)
 
         val serviceIntent = Intent(this, CurrentLocationService::class.java)
         bindService(
@@ -398,7 +421,7 @@ class MainActivity : ComponentActivity() {
 
     }
 
-    private fun handleGeofence(){
+    private fun handleGeofence() {
         Log.d("CreateGeofence", "Main")
         createGeoFence(sharedViewModel.seniorLocalization.value, geofencingClient)
         sharedViewModel.onGeofenceRequest.value = false
@@ -455,7 +478,6 @@ class MainActivity : ComponentActivity() {
     }
 
 
-
     override fun onPause() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(
             foregroundOnlyBroadcastReceiver
@@ -472,7 +494,7 @@ class MainActivity : ComponentActivity() {
             unbindService(foregroundOnlyServiceConnection)
             foregroundOnlyLocationServiceBound = false
         }
-       // sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+        // sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
 
         super.onStop()
     }
@@ -539,6 +561,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
     private inner class ForegroundOnlyBroadcastReceiver : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent) {
             val location = intent.getParcelableExtra<Location>(
@@ -550,13 +573,14 @@ class MainActivity : ComponentActivity() {
             )
             if (location != null) {
                 locations = location
-                sharedViewModel.seniorLocalization.value = LatLng( location.latitude, location.longitude)
+                sharedViewModel.seniorLocalization.value =
+                    LatLng(location.latitude, location.longitude)
                 sharedViewModel.localizationAccuracy.value = location.accuracy
                 sharedViewModel.location.value = locations
 
                 val firebaseAuth = FirebaseAuth.getInstance()
                 val currentUser = firebaseAuth.currentUser?.uid
-                if (currentUser != null){
+                if (currentUser != null) {
                     sharedViewModel.saveLocationToFirebase()
                 }
             }

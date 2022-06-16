@@ -4,9 +4,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -15,26 +15,26 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.FloatingWindow
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.body_16
-import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
-import com.SeniorCareMobileProject.seniorcare.ui.theme.*
-import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.ui.theme.Main
+import com.SeniorCareMobileProject.seniorcare.ui.theme.Red
+import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
-import com.google.firebase.ktx.Firebase
 
 //@Preview
 @Composable
@@ -274,7 +274,11 @@ fun Input() {
 }
 
 @Composable
-fun InputField(placeholder: String, onValueChange: (String) -> Unit, viewModelVariable: MutableState<String>) {
+fun InputField(
+    placeholder: String,
+    onValueChange: (String) -> Unit,
+    viewModelVariable: MutableState<String>
+) {
     val text = viewModelVariable.value
 
     OutlinedTextField(
@@ -480,7 +484,7 @@ fun TopBarLocation(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
-    Column() {
+    Column(modifier = Modifier.wrapContentSize()) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -642,6 +646,48 @@ fun MedicalDataItem(title: String, text: String) {
 }
 
 @Composable
+fun MedicalDataItemUpd(title: String, text: String) {
+//    val titleRem = remember { mutableStateOf(TextFieldValue(title)) }
+    val textRem = remember { mutableStateOf(TextFieldValue(text)) }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, bottom = 8.dp)
+                .padding(horizontal = 5.dp)
+        ) {
+            Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+            TextField(modifier = Modifier.fillMaxWidth(),
+                value = textRem.value,
+                onValueChange = { textRem.value = it },
+                textStyle = TextStyle(
+                    fontSize = 16.sp,
+                    fontStyle = FontStyle.Italic
+                ),
+                colors = TextFieldDefaults.textFieldColors(
+                    backgroundColor = Color(0xFFF5F5F5),
+                    unfocusedIndicatorColor = Color.Transparent
+                )
+            )
+//            BasicTextField(
+//                value = textRem.value,
+//                onValueChange = { textRem.value = it },
+//            )
+
+//            Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
+
+//            Text(text = text, fontSize = 14.sp)
+        }
+        Divider(thickness = 1.dp, color = Color(0xFFF5F5F5))
+    }
+}
+
+@Composable
 fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) {
     Column(
         modifier = Modifier
@@ -701,6 +747,7 @@ fun SignUpViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
 //        val sharedViewModel = SharedViewModel()
+
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
         val listOfTime = listOf<String>("10:00", "15:00", "20:00")
@@ -710,26 +757,27 @@ fun SignUpViewPreview() {
                 .fillMaxWidth()
                 .wrapContentHeight()
         ) {
-            EditButton()
-            DeleteButton()
+//            EditButton()
+//            DeleteButton()
+
 //            SmallButton("Text", mutableStateOf(false))
 //            ChooseRoleSection(sharedViewModel)
 //            IconTextButton(navController, text = "Text", iconName = "google", "")
 //            InputField(placeholder = "Text", onValueChange = {}, viewModelVariable = mutableStateOf(""))
-//            InputFieldLabelIcon(
-//                text = "Text",
-//                onValueChange = {},
-//                fieldLabel = "Label",
-//                "alternate_email",
-//                viewModelVariable = mutableStateOf("")
-//            )
-//            InputFieldLabelIcon(
-//                text = "Text",
-//                onValueChange = {},
-//                fieldLabel = "Label",
-//                "",
-//                viewModelVariable = mutableStateOf("")
-//            )
+            InputFieldLabelIcon(
+                text = "Text",
+                onValueChange = {},
+                fieldLabel = "Label",
+                "alternate_email",
+                viewModelVariable = remember { mutableStateOf("") }
+            )
+            InputFieldLabelIcon(
+                text = "Text",
+                onValueChange = {},
+                fieldLabel = "Label",
+                "",
+                viewModelVariable = remember { mutableStateOf("") }
+            )
             TextFilledButton(navController, "Text", "")
             UserCard(
                 navController = navController,
@@ -748,8 +796,12 @@ fun SignUpViewPreview() {
                 "Przyjmowane leki:",
                 "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
             )
-            NotificationItem(title = "IBUPROM", howOften = "Codziennie", listOfTime = listOfTime)
-            FloatingButton()
+            MedicalDataItemUpd(
+                "Przyjmowane leki:",
+                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
+            )
+//            NotificationItem(title = "IBUPROM", howOften = "Codziennie", listOfTime = listOfTime)
+//            FloatingButton()
         }
 
     }
