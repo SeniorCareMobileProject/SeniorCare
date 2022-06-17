@@ -133,14 +133,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
-        sharedViewModel.sosButtonClicked.observe(this, Observer{
-            value -> if(value == true){
+        sharedViewModel.sosButtonClicked.observe(this, Observer { value ->
+            if (value == true) {
                 makePhoneCall("123456789")
                 sharedViewModel.sosButtonClicked.value = false
-        }
+            }
         })
-
-
 
 
         val firebaseAuth = FirebaseAuth.getInstance()
@@ -349,6 +347,7 @@ class MainActivity : ComponentActivity() {
                             scaffoldState,
                             items
                         )
+                    }
                     composable(NavigationScreens.SeniorSettingsScreen.name) {
                         SeniorSettingsView(navController)
 
@@ -530,13 +529,19 @@ class MainActivity : ComponentActivity() {
         if (provideRationale) {
             ActivityCompat.requestPermissions(
                 this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.CALL_PHONE),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.CALL_PHONE
+                ),
                 REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
         } else {
             ActivityCompat.requestPermissions(
                 this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.CALL_PHONE),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.CALL_PHONE
+                ),
                 REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
         }
