@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.core.content.ContextCompat
 import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.WidgetActivity
 
 /**
  * Implementation of App Widget functionality.
@@ -45,12 +46,12 @@ internal fun updateAppWidget(context: Context,
     else {
         var number: String? = "123456789"
 
-        val intent = Intent(Intent.ACTION_CALL)
+        /**val intent = Intent(Intent.ACTION_CALL)
         intent.data = Uri.parse("tel:$number")
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
-
-        /**val intent = Intent(context, MainActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)**/
+
+        val intent = Intent(context, WidgetActivity::class.java)
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
 
 
 

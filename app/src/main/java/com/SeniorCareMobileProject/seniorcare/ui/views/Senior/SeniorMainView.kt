@@ -19,6 +19,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorButton
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SosButton
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SosCascadeStartButton
 
 @Composable
 fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewModel) {
@@ -71,20 +72,21 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 rout = "",
                 color = "main"
             )
-            SeniorButton(
+            /**SeniorButton(
                 navController = navController,
                 text = "SOS",
                 iconName = "clear",
                 rout = "SosCascadeView",
                 color = "red"
-            )
-            /*SosButton(
+            )**/
+            SosCascadeStartButton(
                 navController = navController,
                 text = "SOS",
                 iconName = "clear",
                 sharedViewModel = sharedViewModel,
-                color = "red"
-            )*/
+                color = "red",
+                rout = "SosCascadeView"
+            )
             SeniorButton(
                 navController = navController,
                 text = "Ustawienia",

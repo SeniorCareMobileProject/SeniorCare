@@ -4,6 +4,7 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Senior
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -21,6 +22,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
+            .onPlaced { sharedViewModel.timer.start() }
             .fillMaxWidth()
             .background(Color.Green)
             .fillMaxHeight()
@@ -38,8 +40,7 @@ fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewMode
         ) {
 
             Column(
-                modifier = Modifier.padding(horizontal = 12.dp)
-                    .onPlaced { sharedViewModel.timer.start() },
+                modifier = Modifier.padding(horizontal = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
 

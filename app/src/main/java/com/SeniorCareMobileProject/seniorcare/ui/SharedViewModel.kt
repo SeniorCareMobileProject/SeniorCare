@@ -78,9 +78,11 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val sosButtonClicked: MutableLiveData<Int> = MutableLiveData(-1)
     val phoneNumbers = listOf("111111111","222222222","333333333","444444444")
     val timer = object: CountDownTimer(10000, 1000) {
-        override fun onTick(millisUntilFinished: Long) {}
+        override fun onTick(millisUntilFinished: Long) {
+        }
 
-        override fun onFinish() {sosButtonClicked.value = sosButtonClicked.value!!.plus(1)
+        override fun onFinish() {
+            sosButtonClicked.value = sosButtonClicked.value!!.plus(1)
         }
     }
 
