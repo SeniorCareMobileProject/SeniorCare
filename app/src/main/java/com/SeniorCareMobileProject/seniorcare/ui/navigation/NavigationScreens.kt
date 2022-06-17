@@ -24,7 +24,10 @@ enum class NavigationScreens(val title: String) {
     LoadingPairingDataView("LoadingPairingDataView"),
     LoadingSeniorDataView("LoadingSeniorDataView"),
     MapComponentView("MapComponentView"),
-    CarerMedicalInfoDataUpdateScreen("CarerMedicalInfoDataUpdateScreen")
+    CarerMedicalInfoDataUpdateScreen("CarerMedicalInfoDataUpdateScreen"),
+    CarerSettingsListScreen("CarerSettingsListScreen"),
+    CarerSettingsSOSScreen("CarerSettingsSOSScreen"),
+    CarerSettingsSOSUpdateScreen("CarerSettingsSOSUpdateScreen")
 
 
 }

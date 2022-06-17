@@ -343,6 +343,22 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.CarerSettingsListScreen.name) {
+                        CarerSettingsListView(navController)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSOSScreen.name) {
+                        CarerSettingsSOSView(navController)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSOSUpdateScreen.name) {
+                        CarerSettingsSOSUpdateView(navController)
+
+                    }
+
+
                 }
             }
         }
