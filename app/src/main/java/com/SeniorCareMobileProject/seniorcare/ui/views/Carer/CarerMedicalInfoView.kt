@@ -86,11 +86,12 @@ fun ItemsList(items: List<List<String>>) {
 @Composable
 fun CarerMedicalInfoView(
     navController: NavController,
-    sharedViewModel: SharedViewModel,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
     val items = listOf(
+        listOf("Imię", "Grzegorz"),
+        listOf("Nazwisko", "Brzęczyszczykiewicz"),
         listOf("Data urodzenia", "17.06.1943 (79 lat)"),
         listOf("Choroby", "Demencja"),
         listOf("Grupa krwi", "A+"),
@@ -116,7 +117,7 @@ fun CarerMedicalInfoView(
                 scaffoldState = scaffoldState,
                 navController = navController
             )
-        }) {
+        }) {innerPadding ->
         val scrollState = remember { ScrollState(0) }
 
         Column(
@@ -125,6 +126,7 @@ fun CarerMedicalInfoView(
                 .fillMaxHeight()
                 .background(Color.White)
                 .verticalScroll(scrollState)
+                .padding(bottom = innerPadding.calculateBottomPadding())
 
         ) {
 
@@ -139,10 +141,9 @@ fun CarerMedicalInfoView(
 fun CarerMedicalInfoViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        val sharedViewModel = SharedViewModel()
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
-        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
+        CarerMedicalInfoView(navController, scope, scaffoldState)
     }
 }

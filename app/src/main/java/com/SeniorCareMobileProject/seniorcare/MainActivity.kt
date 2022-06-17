@@ -153,6 +153,8 @@ class MainActivity : ComponentActivity() {
                 val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
                 val items = listOf(
+                    listOf("Imię", "Grzegorz"),
+                    listOf("Nazwisko", "Brzęczyszczykiewicz"),
                     listOf("Data urodzenia", "17.06.1943 (79 lat)"),
                     listOf("Choroby", "Demencja"),
                     listOf("Grupa krwi", "A+"),
@@ -180,7 +182,7 @@ class MainActivity : ComponentActivity() {
                         CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
                     }
                     composable(BottomNavItem.MedInfo.route) {
-                        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
+                        CarerMedicalInfoView(navController, scope, scaffoldState)
                     }
                     composable(BottomNavItem.Notifications.route) {
                         CarerNotificationsView(navController, sharedViewModel, scope, scaffoldState)
@@ -335,7 +337,6 @@ class MainActivity : ComponentActivity() {
                     composable(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name) {
                         CarerMedicalInfoDataUpdateView(
                             navController,
-                            sharedViewModel,
                             scope,
                             scaffoldState,
                             items
