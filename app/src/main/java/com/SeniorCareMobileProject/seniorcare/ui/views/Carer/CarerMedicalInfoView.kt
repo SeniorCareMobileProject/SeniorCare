@@ -90,6 +90,8 @@ fun CarerMedicalInfoView(
     scaffoldState: ScaffoldState
 ) {
     val items = listOf(
+        listOf("Imię", "Grzegorz"),
+        listOf("Nazwisko", "Brzęczyszczykiewicz"),
         listOf("Data urodzenia", "17.06.1943 (79 lat)"),
         listOf("Choroby", "Demencja"),
         listOf("Grupa krwi", "A+"),
@@ -115,7 +117,7 @@ fun CarerMedicalInfoView(
                 scaffoldState = scaffoldState,
                 navController = navController
             )
-        }) {
+        }) {innerPadding ->
         val scrollState = remember { ScrollState(0) }
 
         Column(
@@ -124,6 +126,7 @@ fun CarerMedicalInfoView(
                 .fillMaxHeight()
                 .background(Color.White)
                 .verticalScroll(scrollState)
+                .padding(bottom = innerPadding.calculateBottomPadding())
 
         ) {
 

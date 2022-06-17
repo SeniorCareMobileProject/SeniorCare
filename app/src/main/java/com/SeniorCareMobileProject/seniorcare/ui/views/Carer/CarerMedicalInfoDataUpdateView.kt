@@ -77,7 +77,6 @@ fun ItemsListUpd(items: List<List<String>>) {
 @Composable
 fun CarerMedicalInfoDataUpdateView(
     navController: NavController,
-    sharedViewModel: SharedViewModel,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState,
     items: List<List<String>>
@@ -137,6 +136,6 @@ fun CarerMedicalInfoDataUpdateViewPreview() {
             listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
         )
 
-//        CarerMedicalInfoDataUpdateView(navController, sharedViewModel, scope, scaffoldState, items)
+        CarerMedicalInfoDataUpdateView(navController, scope, scaffoldState, items)
     }
 }

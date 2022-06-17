@@ -161,6 +161,8 @@ class MainActivity : ComponentActivity() {
                 val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
                 val items = listOf(
+                    listOf("Imię", "Grzegorz"),
+                    listOf("Nazwisko", "Brzęczyszczykiewicz"),
                     listOf("Data urodzenia", "17.06.1943 (79 lat)"),
                     listOf("Choroby", "Demencja"),
                     listOf("Grupa krwi", "A+"),
@@ -343,7 +345,6 @@ class MainActivity : ComponentActivity() {
                     composable(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name) {
                         CarerMedicalInfoDataUpdateView(
                             navController,
-                            sharedViewModel,
                             scope,
                             scaffoldState,
                             items
@@ -352,6 +353,22 @@ class MainActivity : ComponentActivity() {
                         SeniorSettingsView(navController)
 
                     }
+
+                    composable(NavigationScreens.CarerSettingsListScreen.name) {
+                        CarerSettingsListView(navController)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSOSScreen.name) {
+                        CarerSettingsSOSView(navController)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSOSUpdateScreen.name) {
+                        CarerSettingsSOSUpdateView(navController)
+
+                    }
+
 
                 }
             }
