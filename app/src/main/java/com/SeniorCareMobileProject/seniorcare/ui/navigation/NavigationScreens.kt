@@ -28,6 +28,8 @@ enum class NavigationScreens(val title: String) {
     CarerSettingsListScreen("CarerSettingsListScreen"),
     CarerSettingsSOSScreen("CarerSettingsSOSScreen"),
     CarerSettingsSOSUpdateScreen("CarerSettingsSOSUpdateScreen")
+    CarerMedicalInfoDataUpdateScreen("CarerMedicalInfoDataUpdateScreen")
+    SeniorSettingsScreen("SeniorSettingsScreen")
 
 
 }

@@ -1073,6 +1073,8 @@ fun PopupButton(text: String) {
 fun SignUpViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
+//        val sharedViewModel = SharedViewModel()
+
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
         val listOfTime = listOf<String>("10:00", "15:00", "20:00")
@@ -1084,6 +1086,7 @@ fun SignUpViewPreview() {
         ) {
 //            EditButton()
 //            DeleteButton()
+
 //            SmallButton("Text", mutableStateOf(false))
 //            ChooseRoleSection(sharedViewModel)
 //            IconTextButton(navController, text = "Text", iconName = "google", "")

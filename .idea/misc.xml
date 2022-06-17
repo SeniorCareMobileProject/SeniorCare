@@ -3,6 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/add_circle.xml" value="0.1695" />
+        <entry key="..\:/Projects/Android Studio/SeniorCare/app/src/main/res/drawable/my_location.xml" value="0.1695" />
         <entry key="..\:/Users/Praca/AndroidStudioProjects/SeniorCare/app/src/main/res/layout/activity_maps.xml" value="0.17604166666666668" />
       </map>
     </option>
