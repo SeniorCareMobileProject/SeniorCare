@@ -144,9 +144,6 @@ class MainActivity : ComponentActivity() {
         }
         )
 
-
-
-
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
         var startDestination = ""

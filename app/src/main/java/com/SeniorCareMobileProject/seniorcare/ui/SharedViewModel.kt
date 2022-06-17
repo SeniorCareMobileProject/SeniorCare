@@ -1,6 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
 import android.location.Location
+import android.os.CountDownTimer
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
@@ -75,7 +76,13 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
     // sos button
     val sosButtonClicked: MutableLiveData<Int> = MutableLiveData(-1)
-    val phoneNumbers = listOf("123456789","987654321","123456780")
+    val phoneNumbers = listOf("111111111","222222222","333333333","444444444")
+    val timer = object: CountDownTimer(10000, 1000) {
+        override fun onTick(millisUntilFinished: Long) {}
+
+        override fun onFinish() {sosButtonClicked.value = sosButtonClicked.value!!.plus(1)
+        }
+    }
 
     private val repository = Repository()
 

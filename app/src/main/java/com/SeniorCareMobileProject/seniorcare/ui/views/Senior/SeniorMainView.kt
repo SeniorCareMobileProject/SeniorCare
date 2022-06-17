@@ -71,20 +71,20 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 rout = "",
                 color = "main"
             )
-            /*SeniorButton(
+            SeniorButton(
                 navController = navController,
                 text = "SOS",
                 iconName = "clear",
-                rout = "",
+                rout = "SosCascadeView",
                 color = "red"
-            )*/
-            SosButton(
+            )
+            /*SosButton(
                 navController = navController,
                 text = "SOS",
                 iconName = "clear",
                 sharedViewModel = sharedViewModel,
                 color = "red"
-            )
+            )*/
             SeniorButton(
                 navController = navController,
                 text = "Ustawienia",

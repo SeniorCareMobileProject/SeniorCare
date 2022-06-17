@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.os.CountDownTimer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -167,7 +168,9 @@ fun SosButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(86.dp)
-            .clickable { sharedViewModel.sosButtonClicked.value = sharedViewModel.sosButtonClicked.value!! + 1; navController.navigate("SosCascadeView") },
+            .clickable {
+                sharedViewModel.timer.start(); navController.navigate("SosCascadeView")
+                },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor
@@ -216,8 +219,9 @@ fun SosButton(
     }
 }
 
+
 @Composable
-fun SosButton2(
+fun SosCascadeStop(
     navController: NavController,
     sharedViewModel: SharedViewModel,
     text: String,
@@ -243,7 +247,7 @@ fun SosButton2(
             .fillMaxWidth()
             .height(86.dp)
             .clickable {
-                sharedViewModel.sosButtonClicked.value = -1; navController.navigate("SeniorMainScreen")
+                sharedViewModel.sosButtonClicked.value = -2; navController.navigate("SeniorMainScreen");sharedViewModel.timer.cancel()
             },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),

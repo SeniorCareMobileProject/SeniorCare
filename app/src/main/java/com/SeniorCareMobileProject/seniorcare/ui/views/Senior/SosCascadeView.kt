@@ -3,12 +3,11 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Senior
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.layout.onPlaced
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -16,9 +15,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorButton
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SosButton
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SosButton2
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 
 @Composable
 fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewModel) {
@@ -41,18 +38,19 @@ fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewMode
         ) {
 
             Column(
-                modifier = Modifier.padding(horizontal = 12.dp),
+                modifier = Modifier.padding(horizontal = 12.dp)
+                    .onPlaced { sharedViewModel.timer.start() },
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
 
                 SosButton(
                     navController = navController,
-                    text = "Dzwoń dalej",
+                    text = "Masz 10 sekund",
                     iconName = "clear",
                     sharedViewModel = sharedViewModel,
                     color = "red"
                 )
-                SosButton2(
+                SosCascadeStop(
                     navController = navController,
                     text = "Nie dzwoń",
                     iconName = "add_circle",
@@ -73,3 +71,6 @@ fun SosCascadeViewPreview() {
         SeniorNotificationView(navController, sharedViewModel)
     }
 }
+
+
+
