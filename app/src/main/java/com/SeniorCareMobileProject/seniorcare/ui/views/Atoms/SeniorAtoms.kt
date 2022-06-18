@@ -7,6 +7,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.SnackbarDefaults.backgroundColor
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 
@@ -31,20 +34,42 @@ fun SeniorButton(
     iconName: String,
     rout: String,
     color: String = ""
+    /*
+    * @param[iconName] "" - no icon
+    * @param[color]:
+    *   "main" - purple
+    *   "red" - red
+    *   "came_home' - dark purple
+    *   "" - white
+    */
 ) {
-    val backgroundColor: Color
-
-    backgroundColor = when (color) {
+    val backgroundColor: Color = when (color) {
         "main" -> {
-            Color(0xffcaaaf9)
+            Color(0xFFcaaaf9)
         }
         "red" -> {
             Color.Red
+        }
+        "came_home" -> {
+            Color(0xFFA670F0)
         }
         else -> {
             Color.White
         }
     }
+
+    var iconId = -1
+    if (iconName != "") {
+        val context = LocalContext.current
+        iconId = remember(iconName) {
+            context.resources.getIdentifier(
+                iconName,
+                "drawable",
+                context.packageName
+            )
+        }
+    }
+
 
     Surface(
         modifier = Modifier
@@ -55,15 +80,6 @@ fun SeniorButton(
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor
     ) {
-        val context = LocalContext.current
-        val iconId = remember(iconName) {
-            context.resources.getIdentifier(
-                iconName,
-                "drawable",
-                context.packageName
-            )
-        }
-
         Row(
             modifier = Modifier
                 .padding(horizontal = 29.dp),
@@ -88,10 +104,129 @@ fun SeniorButton(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.End
             ) {
-                Icon(
-                    painter = painterResource(id = iconId),
-                    contentDescription = iconName,
-                    tint = Color.Black
+                if (iconId != -1) {
+                    Icon(
+                        painter = painterResource(id = iconId),
+                        contentDescription = iconName,
+                        tint = Color.Black
+                    )
+                }
+            }
+
+        }
+    }
+}
+
+@Composable
+fun SeniorButtonNoIcon(
+    navController: NavController,
+    text: String,
+    rout: String,
+    color: String = ""
+) {
+    val backgroundColor: Color = when (color) {
+        "main" -> {
+            Color(0xFFcaaaf9)
+        }
+        "red" -> {
+            Color.Red
+        }
+        "came_home" -> {
+            Color(0xFFA670F0)
+        }
+        else -> {
+            Color.White
+        }
+    }
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(86.dp)
+            .clickable { navController.navigate(rout) },
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(1.dp, Color.Black),
+        color = backgroundColor
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 29.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = text,
+                    color = Color(0xff070707),
+                    textAlign = TextAlign.Start,
+                    lineHeight = 36.sp,
+                    style = TextStyle(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun SeniorSwitchButton(
+    text: String,
+    color: String = "",
+    mCheckedState: MutableState<Boolean>
+) {
+    val backgroundColor: Color = when (color) {
+        "main" -> {
+            Color(0xFFcaaaf9)
+        }
+        "red" -> {
+            Color.Red
+        }
+        "came_home" -> {
+            Color(0xFFA670F0)
+        }
+        else -> {
+            Color.White
+        }
+    }
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(86.dp),
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(1.dp, Color.Black),
+        color = backgroundColor
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 29.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = text,
+                    color = Color(0xff070707),
+                    textAlign = TextAlign.Start,
+                    lineHeight = 36.sp,
+                    style = TextStyle(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End
+            ) {
+                Switch(
+                    checked = mCheckedState.value,
+                    onCheckedChange = { mCheckedState.value = it },
+//                colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF6522C1))
                 )
             }
 

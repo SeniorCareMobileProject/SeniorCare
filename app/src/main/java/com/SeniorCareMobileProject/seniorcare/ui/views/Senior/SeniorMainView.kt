@@ -42,13 +42,22 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
             modifier = Modifier.padding(horizontal = 12.dp),
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
+            val comeHomeColor: String
+            val comeHomeText: String
+            if (/* wyszedł z domu */ false) {
+                comeHomeColor = "came_home"
+                comeHomeText = "Wróciłem do domu"
+            } else {
+                comeHomeColor = "main"
+                comeHomeText = "Wychodzę z domu"
+            }
 
             SeniorButton(
                 navController = navController,
-                text = "Wychodzę z domu",
+                text = comeHomeText,
                 iconName = "my_location",
-                rout = "",
-                color = "main"
+                rout = "SeniorGoingOutInfoScreen",
+                color = comeHomeColor
             )
             SeniorButton(
                 navController = navController,

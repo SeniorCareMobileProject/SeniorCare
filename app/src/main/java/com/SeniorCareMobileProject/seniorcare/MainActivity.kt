@@ -368,7 +368,20 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.SeniorGoingOutInfoScreen.name) {
+                        SeniorGoingOutInfoView(navController)
 
+                    }
+
+                    composable(NavigationScreens.SettingsFallDetectorScreen.name) {
+                        SettingsFallDetectorView(navController)
+
+                    }
+
+                    composable(NavigationScreens.SeniorCarersListScreen.name) {
+                        SeniorCarersListView(navController)
+
+                    }
                 }
             }
         }
