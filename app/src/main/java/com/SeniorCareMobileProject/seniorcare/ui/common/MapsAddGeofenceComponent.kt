@@ -5,23 +5,27 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.lifecycle.MutableLiveData
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.google.android.gms.maps.CameraUpdateFactory
-import com.google.android.gms.maps.model.*
+import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.*
+import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun MapWindowComponent(sharedViewModel: SharedViewModel){
+fun MapsAddGeofenceComponent(sharedViewModel: SharedViewModel){
 
     var isMapLoaded by remember { mutableStateOf(false) }
     // Observing and controlling the camera's state can be done with a CameraPositionState
@@ -29,11 +33,7 @@ fun MapWindowComponent(sharedViewModel: SharedViewModel){
     val isLocationLoaded by remember {
         mutableStateOf(MutableLiveData(false))
     }
-
-    val fullScreen by remember { sharedViewModel.mapFullscreen }
     val resetCamera by remember { sharedViewModel.resetCamera }
-//    val currZoom by remember { sharedViewModel.seniorLocalizationZoom }
-
 
     val cameraPositionState = rememberCameraPositionState {
         position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, sharedViewModel.seniorLocalizationZoom.value)
@@ -45,10 +45,6 @@ fun MapWindowComponent(sharedViewModel: SharedViewModel){
         sharedViewModel.resetCamera.value = false
     }
 
-    if (!fullScreen){
-        cameraPositionState.position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, sharedViewModel.seniorLocalizationZoom.value)
-    }
-
 
     if (sharedViewModel.seniorLocalization.value != LatLng(52.408839, 16.906782) && !isLocationLoaded.value!!){
         isLocationLoaded.value = true
@@ -57,7 +53,7 @@ fun MapWindowComponent(sharedViewModel: SharedViewModel){
 
 
     Box(Modifier.fillMaxSize()) {
-        GoogleMapView(
+        GoogleMapViewAddGeofence(
             modifier = Modifier.matchParentSize(),
             cameraPositionState = cameraPositionState,
             onMapLoaded = {
@@ -85,7 +81,7 @@ fun MapWindowComponent(sharedViewModel: SharedViewModel){
 
 
 @Composable
-fun GoogleMapView(
+fun GoogleMapViewAddGeofence(
     modifier: Modifier,
     cameraPositionState: CameraPositionState,
     onMapLoaded: () -> Unit,
@@ -93,31 +89,16 @@ fun GoogleMapView(
 ) {
     val TAG = "tag"
     val circleCenter by remember { mutableStateOf(sharedViewModel.seniorLocalization) }
-    val uiSettings = if (sharedViewModel.mapFullscreen.value) {
-          remember {
+    val uiSettings = remember {
             mutableStateOf(
                 MapUiSettings(
                     compassEnabled = false,
                     zoomControlsEnabled = false,
                     tiltGesturesEnabled = false,
-                    scrollGesturesEnabledDuringRotateOrZoom = false
-                )
-            )
-        } }else {
-        remember {
-            mutableStateOf(
-                MapUiSettings(
-                    compassEnabled = false,
-                    zoomControlsEnabled = false,
-                    rotationGesturesEnabled = false,
-                    scrollGesturesEnabled = false,
-                    tiltGesturesEnabled = false,
-                    zoomGesturesEnabled = false,
                     scrollGesturesEnabledDuringRotateOrZoom = false
                 )
             )
         }
-    }
 
 
     val mapProperties by remember {
@@ -127,6 +108,7 @@ fun GoogleMapView(
 
     val geofenceLocation by remember { mutableStateOf(sharedViewModel.geofenceLocation) }
     val geofenceRadius by remember { mutableStateOf(sharedViewModel.geofenceRadius) }
+
 
 
 
@@ -142,7 +124,11 @@ fun GoogleMapView(
                 Log.d(TAG, "POI clicked: ${it.name}")
             }
         ) {
-            if (geofenceRadius.value!=1 && geofenceLocation.value.latitude != 1.0){
+            val geofenceCirclePosition by remember { mutableStateOf(cameraPositionState.position) }
+
+            sharedViewModel.newGeofenceLocation.value = geofenceCirclePosition.target
+
+            if (sharedViewModel.newGeofenceRadius.value!=1 && sharedViewModel.newGeofenceLocation.value.latitude != 1.0){
                 Log.d("geofenceLocation $geofenceLocation", "geofenceRadius $geofenceRadius")
                 Circle(
                     center = geofenceLocation.value,
@@ -173,14 +159,14 @@ fun GoogleMapView(
             }
 
         }
-            Box() {
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(align = Alignment.BottomStart)
-                ) {
-                    val coroutineScope = rememberCoroutineScope()
-                    if(sharedViewModel.mapFullscreen.value){
+        Box() {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(align = Alignment.BottomStart)
+            ) {
+                val coroutineScope = rememberCoroutineScope()
+
                     MapButton(text = "+", onClick = { coroutineScope.launch {
                         cameraPositionState.animate(CameraUpdateFactory.zoomIn())
                         sharedViewModel.seniorLocalizationZoom.value = cameraPositionState.position.zoom
@@ -188,62 +174,40 @@ fun GoogleMapView(
                     MapButton(text = "-", onClick = { coroutineScope.launch {
                         cameraPositionState.animate(CameraUpdateFactory.zoomOut())
                         sharedViewModel.seniorLocalizationZoom.value = cameraPositionState.position.zoom
-                    } })} else {
-                        MapButton(text = "+", onClick = { coroutineScope.launch {
-                            sharedViewModel.seniorLocalizationZoom.value = cameraPositionState.position.zoom + 1
-                            cameraPositionState.animate(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(
-                                sharedViewModel.seniorLocalization.value,
-                                sharedViewModel.seniorLocalizationZoom.value)))
-                        } })
-                        MapButton(text = "-", onClick = { coroutineScope.launch {
-                            sharedViewModel.seniorLocalizationZoom.value = cameraPositionState.position.zoom - 1
-                            cameraPositionState.animate(CameraUpdateFactory.newCameraPosition(CameraPosition.fromLatLngZoom(
-                                sharedViewModel.seniorLocalization.value,
-                                sharedViewModel.seniorLocalizationZoom.value)))
-                        } })
-                    }
+                    } })
 
-                }
-                Column(
-                    Modifier
-                        .fillMaxSize()
-                        .wrapContentSize(align = Alignment.BottomEnd)
-                ) {
-                    if (sharedViewModel.mapFullscreen.value) {
-                        MapButton(
-                            text = "o",
-                            onClick = { sharedViewModel.resetCamera.value = true })
-                        MapButton(
-                            text = "><",
-                            onClick = { sharedViewModel.mapFullscreen.value = false })
-                    } else {
-                        MapButton(
-                            text = "<>",
-                            onClick = { sharedViewModel.mapFullscreen.value = true})
-                    }
-                }
             }
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .wrapContentSize(align = Alignment.BottomEnd)
+            ) {
+                    MapButton(
+                        text = "+10",
+                        onClick = { sharedViewModel.newGeofenceRadius.value += 10 })
+                    MapButton(
+                        text = "-10",
+                        onClick = { sharedViewModel.newGeofenceRadius.value -= 10 })
+            }
+        }
 
 
     }
-            TextButton(
-                onClick = {
-                      sharedViewModel.onGeofenceRequest.value = true }
-            ) {
-                Text(text = "DODAJ GEOFENCE", textAlign = TextAlign.Center)
-            }
-
+    TextButton(
+        onClick = {
+            sharedViewModel.onGeofenceRequest.value = true }
+    ) {
+        Text(text = "DODAJ GEOFENCE", textAlign = TextAlign.Center)
+    }
 
 }
-
-
 
 @Composable
 private fun MapButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
     Button(
         modifier = modifier
-          //  .padding(4.dp)
-           ,
+        //  .padding(4.dp)
+        ,
         colors = ButtonDefaults.buttonColors(
             backgroundColor = MaterialTheme.colors.onPrimary,
             contentColor = MaterialTheme.colors.primary

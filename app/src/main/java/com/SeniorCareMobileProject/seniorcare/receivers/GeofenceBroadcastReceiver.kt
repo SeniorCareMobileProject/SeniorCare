@@ -32,6 +32,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
                         showNotification(context, "SENIOR POZA OBSZAREM", "SKONTAKTUJ SIE Z SENIOREM")
 
+                        //todo update firebase
 
                         Log.d("GEOFENCE ACTIVATED", "GEOFENCE ACTIVATED")
                     }

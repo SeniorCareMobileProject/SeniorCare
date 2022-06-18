@@ -1,6 +1,9 @@
 package com.SeniorCareMobileProject.seniorcare
 
 import android.Manifest
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.app.PendingIntent
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
@@ -20,6 +23,7 @@ import androidx.activity.viewModels
 import androidx.compose.material.*
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -108,6 +112,11 @@ class MainActivity : ComponentActivity() {
             if (value) handleGeofence()
         })
 
+        sharedViewModel.onNotficationShow.observe(this, Observer { value ->
+            if (value) showNotification(this, "title", "text")
+        })
+
+
         geofencingClient = LocationServices.getGeofencingClient(this)
         geofencePendingIntent.send()
 
@@ -118,7 +127,14 @@ class MainActivity : ComponentActivity() {
         val disabled = sharedPreferences.getBoolean(
             SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
         )
-
+//todo delete \/
+        if (foregroundPermissionApproved()) {
+            currentOnlyLocationService?.subscribeToLocationUpdates()
+                ?: Log.d("TAG", "Service Not Bound")
+        } else {
+            requestForegroundPermissions()
+        }
+//todo delete /\
         sharedViewModel.userData.observe(this, Observer { value ->
             if (value.function == "Senior") {
                 if (disabled) {
@@ -133,14 +149,12 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
-        sharedViewModel.sosButtonClicked.observe(this, Observer{
-            value -> if(value == true){
+        sharedViewModel.sosButtonClicked.observe(this, Observer { value ->
+            if (value == true) {
                 makePhoneCall("123456789")
                 sharedViewModel.sosButtonClicked.value = false
-        }
+            }
         })
-
-
 
 
         val firebaseAuth = FirebaseAuth.getInstance()
@@ -347,16 +361,69 @@ class MainActivity : ComponentActivity() {
                             scope,
                             scaffoldState,
                             items
-                        )
+                        )}
                     composable(NavigationScreens.SeniorSettingsScreen.name) {
                         SeniorSettingsView(navController)
 
                     }
-
                 }
             }
         }
     }
+
+
+    private fun createNotificationChannel(context: Context?) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Channel Name"
+            val descriptionText = "getString(R.string.channel_description)"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("CHANNEL_ID", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+
+    fun showNotification(context: Context?, title: String, text: String) {
+
+        createNotificationChannel(context)
+        Log.d("Notification", "showing")
+
+        var mBuilder = NotificationCompat.Builder(context!!, "CHANNEL_ID")
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+
+        val contentIntent =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(
+                context,
+                0,
+                Intent(context, GeofenceBroadcastReceiver::class.java),
+                PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getActivity(
+                context, 0,
+                Intent(context, GeofenceBroadcastReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+
+        mBuilder.setContentIntent(contentIntent)
+
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND)
+        mBuilder.setAutoCancel(true)
+        val mNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        mNotificationManager.notify(1, mBuilder.build())
+    }
+
 
     fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {

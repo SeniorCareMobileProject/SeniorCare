@@ -7,9 +7,15 @@ import android.content.pm.PackageManager
 import android.location.Location
 import android.util.Log
 import androidx.core.app.ActivityCompat
+import androidx.lifecycle.viewModelScope
 import com.SeniorCareMobileProject.seniorcare.MyApplication
+import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
+import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 
 class LocationJobScheduler : JobService() {
@@ -42,24 +48,20 @@ class LocationJobScheduler : JobService() {
                 Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             return
         }
         MyApplication.context?.let {
             LocationServices.getFusedLocationProviderClient(it)
                 .lastLocation.addOnSuccessListener { location: Location? ->
-
                 }
                 .addOnFailureListener { e: Exception -> e.printStackTrace() }
         }
         jobFinished(params, true)
     }
+
+    private val repository = Repository()
+
+
 
     override fun onStopJob(params: JobParameters): Boolean {
         Log.d(TAG, "Job cancelled before completion")
