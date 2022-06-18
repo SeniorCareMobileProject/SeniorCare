@@ -87,7 +87,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 iconName = "clear",
                 rout = "",
                 color = "main"
-            )
+            )*/
             /**SeniorButton(
                 navController = navController,
                 text = "SOS",
