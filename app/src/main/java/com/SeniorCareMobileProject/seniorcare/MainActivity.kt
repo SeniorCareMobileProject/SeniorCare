@@ -134,11 +134,11 @@ class MainActivity : ComponentActivity() {
             }
         }
         })
-        sharedViewModel.sosButtonClicked.observe(this, Observer{
+        sharedViewModel.sosCascadeIndex.observe(this, Observer{
             value -> if(value >=0) {
-            makePhoneCall(sharedViewModel.phoneNumbers[sharedViewModel.sosButtonClicked.value!!])
-            if(sharedViewModel.sosButtonClicked.value!!>=sharedViewModel.phoneNumbers.size-1){
-                sharedViewModel.sosButtonClicked.value = -1
+            makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])
+            if(sharedViewModel.sosCascadeIndex.value!!>=sharedViewModel.sosCascadePhoneNumbers.size-1){
+                sharedViewModel.sosCascadeIndex.value = -1
             }
         }
         }

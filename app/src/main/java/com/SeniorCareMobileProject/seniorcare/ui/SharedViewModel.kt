@@ -75,14 +75,15 @@ class SharedViewModel : ViewModel(), KoinComponent {
     var codeInput = mutableStateOf("")
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
     // sos button
-    val sosButtonClicked: MutableLiveData<Int> = MutableLiveData(-1)
-    val phoneNumbers = listOf("111111111","222222222","333333333","444444444")
-    val timer = object: CountDownTimer(10000, 1000) {
+    val sosCascadeIndex: MutableLiveData<Int> = MutableLiveData(-2)
+    val sosCascadePhoneNumbers = listOf("111111111","222222222","333333333","444444444")
+    val sosCascadeInterval:Long = 10000
+    val sosCascadeTimer = object: CountDownTimer(sosCascadeInterval, 1000) {
         override fun onTick(millisUntilFinished: Long) {
         }
 
         override fun onFinish() {
-            sosButtonClicked.value = sosButtonClicked.value!!.plus(1)
+            sosCascadeIndex.value = sosCascadeIndex.value!!.plus(1)
         }
     }
 

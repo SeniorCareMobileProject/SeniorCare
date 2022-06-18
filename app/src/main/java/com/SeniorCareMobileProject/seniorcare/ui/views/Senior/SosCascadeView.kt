@@ -3,12 +3,14 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Senior
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -22,7 +24,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
-            .onPlaced { sharedViewModel.timer.start() }
+            .onPlaced { sharedViewModel.sosCascadeTimer.start() }
             .fillMaxWidth()
             .background(Color.Green)
             .fillMaxHeight()
@@ -44,17 +46,15 @@ fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewMode
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
 
-                SosButton(
-                    navController = navController,
-                    text = "Masz 10 sekund",
-                    iconName = "clear",
-                    sharedViewModel = sharedViewModel,
-                    color = "red"
+                Text(
+                    text = "W ciągu 10 sekund wykona się kolejne połączenie",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 36.sp,
                 )
                 SosCascadeStop(
                     navController = navController,
-                    text = "Nie dzwoń",
-                    iconName = "add_circle",
+                    text = "Zakończ połączenia",
+                    iconName = "clear",
                     sharedViewModel = sharedViewModel,
                     color = ""
                 )
