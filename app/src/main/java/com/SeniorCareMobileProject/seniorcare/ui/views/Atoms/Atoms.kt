@@ -6,7 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -20,12 +20,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -406,10 +408,9 @@ fun UserCard(navController: NavController, name: String, emial: String) {
 }
 
 @Composable
-fun RoundSmallButton(
+fun RoundSmallButtonDrawer(
     navController: NavController,
     iconName: String,
-    isDrawer: Boolean,
     scope: CoroutineScope = rememberCoroutineScope(),
     scaffoldState: ScaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed)),
 ) {
@@ -422,60 +423,111 @@ fun RoundSmallButton(
         )
     }
 
-    if (isDrawer) {
-        Box(
-            modifier = Modifier
-                .width(46.dp)
-                .height(46.dp)
-                .clip(RoundedCornerShape(50.dp))
-                .background(Color(0xFFCAAAF9))
-                .clickable {
-                    scope.launch { scaffoldState.drawerState.open() }
-                }
-        ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(id = iconId),
-                    contentDescription = iconName,
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                )
+    Box(
+        modifier = Modifier
+            .width(46.dp)
+            .height(46.dp)
+            .clip(RoundedCornerShape(50.dp))
+            .background(Color(0xFFCAAAF9))
+            .clickable {
+                scope.launch { scaffoldState.drawerState.open() }
             }
-        }
-    } else {
-        Box(
+    ) {
+        Row(
             modifier = Modifier
-                .width(46.dp)
-                .height(46.dp)
-                .clip(RoundedCornerShape(50.dp))
-                .background(Color(0xFFCAAAF9))
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Row(
+            Icon(
+                painter = painterResource(id = iconId),
+                contentDescription = iconName,
+                tint = Color.Black,
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight(),
-                horizontalArrangement = Arrangement.Center,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Icon(
-                    painter = painterResource(id = iconId),
-                    contentDescription = iconName,
-                    tint = Color.Black,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                )
-            }
+                    .padding(horizontal = 8.dp)
+            )
         }
     }
+}
 
+@Composable
+fun RoundSmallButton(
+    navController: NavController,
+    iconName: String,
+    rout: String
+) {
+    val context = LocalContext.current
+    val iconId = remember(iconName) {
+        context.resources.getIdentifier(
+            iconName,
+            "drawable",
+            context.packageName
+        )
+    }
+    Box(
+        modifier = Modifier
+            .width(46.dp)
+            .height(46.dp)
+            .clip(RoundedCornerShape(50.dp))
+            .background(Color(0xFFCAAAF9))
+            .clickable { navController.navigate(rout) }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = iconId),
+                contentDescription = iconName,
+                tint = Color.Black,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+            )
+        }
+    }
+}
 
+@Composable
+fun RoundSmallButtonBack(
+    navController: NavController,
+    iconName: String,
+) {
+    val context = LocalContext.current
+    val iconId = remember(iconName) {
+        context.resources.getIdentifier(
+            iconName,
+            "drawable",
+            context.packageName
+        )
+    }
+    Box(
+        modifier = Modifier
+            .width(46.dp)
+            .height(46.dp)
+            .clip(RoundedCornerShape(50.dp))
+            .background(Color(0xFFCAAAF9))
+            .clickable { navController.popBackStack() }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight(),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = iconId),
+                contentDescription = iconName,
+                tint = Color.Black,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+            )
+        }
+    }
 }
 
 @Composable
@@ -498,10 +550,9 @@ fun TopBarLocation(
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
-                RoundSmallButton(
+                RoundSmallButtonDrawer(
                     navController = navController,
                     iconName = "menu",
-                    isDrawer = true,
                     scope = scope,
                     scaffoldState = scaffoldState
                 )
@@ -513,7 +564,7 @@ fun TopBarLocation(
                 RoundSmallButton(
                     navController = navController,
                     iconName = "settings",
-                    isDrawer = false
+                    rout = "CarerSettingsListScreen"
                 )
             }
         }
@@ -541,10 +592,9 @@ fun TopBar(
             Column(
                 horizontalAlignment = Alignment.Start
             ) {
-                RoundSmallButton(
+                RoundSmallButtonDrawer(
                     navController = navController,
                     iconName = "menu",
-                    isDrawer = true,
                     scope = scope,
                     scaffoldState = scaffoldState
                 )
@@ -563,11 +613,271 @@ fun TopBar(
                 RoundSmallButton(
                     navController = navController,
                     iconName = "settings",
-                    isDrawer = false
+                    rout = "CarerSettingsListScreen"
                 )
             }
         }
     }
+}
+
+@Composable
+fun TopBarSettings(
+    navController: NavController,
+    text: String
+) {
+    TopAppBar(backgroundColor = Color(0xFFCAAAF9)) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color.Transparent),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                RoundSmallButtonBack(
+                    navController = navController,
+                    iconName = "keyboard_backspace",
+                )
+            }
+
+            Text(
+                text = text,
+                fontSize = 16.sp,
+                fontWeight = FontWeight.Medium
+            )
+        }
+    }
+}
+
+@Composable
+fun SettingsItem(
+    navController: NavController,
+    text: String,
+    rout: String
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .clickable { navController.navigate(rout) }
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .padding(top = 16.dp),
+            text = text,
+            color = Color.Black,
+            textAlign = TextAlign.Start,
+            lineHeight = 24.sp,
+            style = TextStyle(
+                fontSize = 16.sp
+            )
+        )
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Divider(color = Color(0xffe6e6e6))
+        }
+    }
+}
+
+@Composable
+fun AddNumber(
+    navController: NavController,
+    text: String,
+    setShowDialog: (Boolean) -> Unit
+) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .clickable { setShowDialog(true) }
+    ) {
+        Text(
+            modifier = Modifier
+                .padding(start = 16.dp)
+                .padding(top = 16.dp),
+            text = text,
+            color = Color.Black,
+            textAlign = TextAlign.Start,
+            lineHeight = 24.sp,
+            style = TextStyle(
+                fontSize = 16.sp
+            )
+        )
+
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Bottom
+        ) {
+            Divider(color = Color(0xffe6e6e6))
+        }
+    }
+}
+
+@Composable
+fun SettingsItemWithIcon(
+    navController: NavController,
+    text: String,
+    rout: String,
+    iconName: String,
+) {
+    val context = LocalContext.current
+    val iconId = remember(iconName) {
+        context.resources.getIdentifier(
+            iconName,
+            "drawable",
+            context.packageName
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp)
+                .padding(top = 16.dp)
+        ) {
+            Text(
+                text = text,
+                color = Color.Black,
+                textAlign = TextAlign.Start,
+                lineHeight = 24.sp,
+                style = TextStyle(
+                    fontSize = 16.sp
+                )
+            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End
+            ) {
+                Icon(
+                    painter = painterResource(id = iconId),
+                    contentDescription = iconName,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .clickable { navController.navigate(rout) }
+                )
+            }
+        }
+
+//        Column(
+//            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Bottom
+//        ) {
+//            Divider(color = Color(0xffe6e6e6))
+//        }
+    }
+}
+
+
+@Composable
+fun SettingsNumberElement(
+    name: String,
+    number: Int,
+    edit: Boolean
+) {
+    val textName = remember { mutableStateOf(TextFieldValue(name)) }
+    val textNumber = remember { mutableStateOf(TextFieldValue(number.toString())) }
+
+
+    if (!edit) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(60.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp)
+                    .padding(top = 16.dp)
+            ) {
+                Text(
+                    text = name,
+                    color = Color.Black,
+                    textAlign = TextAlign.Start,
+                    lineHeight = 24.sp,
+                    style = TextStyle(
+                        fontSize = 16.sp
+                    )
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(end = 20.dp),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Text(
+                        modifier = Modifier.padding(start = 20.dp),
+                        text = number.toString(),
+                        color = Color.Black,
+                        textAlign = TextAlign.Start,
+                        lineHeight = 24.sp,
+                        style = TextStyle(
+                            fontSize = 16.sp
+                        )
+                    )
+                }
+
+            }
+        }
+    } else {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                TextField(
+                    modifier = Modifier.width(240.dp),
+                    value = textName.value,
+                    onValueChange = { textName.value = it },
+                    textStyle = TextStyle(
+                        fontSize = 16.sp
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color(0xFFF5F5F5),
+                        unfocusedIndicatorColor = Color.Transparent
+                    )
+                )
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalAlignment = Alignment.End
+                ) {
+                    TextField(
+                        value = textNumber.value,
+                        onValueChange = { textNumber.value = it },
+                        textStyle = TextStyle(
+                            fontSize = 16.sp
+                        ),
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color(0xFFF5F5F5),
+                            unfocusedIndicatorColor = Color.Transparent
+                        ),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number
+                        )
+                    )
+                }
+            }
+        }
+    }
+
+
 }
 
 @Composable
@@ -662,7 +972,8 @@ fun MedicalDataItemUpd(title: String, text: String) {
                 .padding(horizontal = 5.dp)
         ) {
             Text(text = title, fontSize = 16.sp, fontWeight = FontWeight.Medium)
-            TextField(modifier = Modifier.fillMaxWidth(),
+            TextField(
+                modifier = Modifier.fillMaxWidth(),
                 value = textRem.value,
                 onValueChange = { textRem.value = it },
                 textStyle = TextStyle(
@@ -741,6 +1052,22 @@ fun FloatingButton() {
     }
 }
 
+@Composable
+fun PopupButton(text: String) {
+    Button(
+        onClick = { },
+        shape = RoundedCornerShape(5.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            style = TextStyle(
+                fontSize = 12.sp))
+    }
+}
+
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
 @Composable
 fun SignUpViewPreview() {
@@ -764,13 +1091,13 @@ fun SignUpViewPreview() {
 //            ChooseRoleSection(sharedViewModel)
 //            IconTextButton(navController, text = "Text", iconName = "google", "")
 //            InputField(placeholder = "Text", onValueChange = {}, viewModelVariable = mutableStateOf(""))
-            InputFieldLabelIcon(
-                text = "Text",
-                onValueChange = {},
-                fieldLabel = "Label",
-                "alternate_email",
-                viewModelVariable = remember { mutableStateOf("") }
-            )
+//            InputFieldLabelIcon(
+//                text = "Text",
+//                onValueChange = {},
+//                fieldLabel = "Label",
+//                "alternate_email",
+//                viewModelVariable = remember { mutableStateOf("") }
+//            )
             InputFieldLabelIcon(
                 text = "Text",
                 onValueChange = {},
@@ -778,30 +1105,40 @@ fun SignUpViewPreview() {
                 "",
                 viewModelVariable = remember { mutableStateOf("") }
             )
-            TextFilledButton(navController, "Text", "")
-            UserCard(
-                navController = navController,
-                name = "Piotr Kowalski",
-                emial = "piotr.kowalski@gmail.com"
-            )
+//            TextFilledButton(navController, "Text", "")
+//            UserCard(
+//                navController = navController,
+//                name = "Piotr Kowalski",
+//                emial = "piotr.kowalski@gmail.com"
+//            )
 //            Input()
-            RoundSmallButton(navController = navController, iconName = "menu", isDrawer = false)
-            StatusWidget(
-                navController, title = "Najbliższe wydarzenie:",
-                text = "Wizyta u lekarza\nData: 12.05.22 - godzina: 08:00",
-                iconName = "calendar_month"
+            RoundSmallButton(
+                navController = navController,
+                iconName = "menu",
+                rout = ""
             )
+            TopBarSettings(navController = navController, "Ustawienia - Piotr Kowalski")
+            SettingsItem(navController, "Przycisk SOS", "")
+            SettingsItemWithIcon(navController, "Przycisk SOS", "", "edit")
+            SettingsNumberElement("Paweł", 123456789, false)
+            SettingsNumberElement("Paweł", 123456789, true)
+//            StatusWidget(
+//                navController, title = "Najbliższe wydarzenie:",
+//                text = "Wizyta u lekarza\nData: 12.05.22 - godzina: 08:00",
+//                iconName = "calendar_month"
+//            )
             TopBar(navController, scope, scaffoldState)
-            MedicalDataItem(
-                "Przyjmowane leki:",
-                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
-            )
-            MedicalDataItemUpd(
-                "Przyjmowane leki:",
-                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
-            )
+//            MedicalDataItem(
+//                "Przyjmowane leki:",
+//                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
+//            )
+//            MedicalDataItemUpd(
+//                "Przyjmowane leki:",
+//                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
+//            )
 //            NotificationItem(title = "IBUPROM", howOften = "Codziennie", listOfTime = listOfTime)
 //            FloatingButton()
+            PopupButton("Text")
         }
 
     }

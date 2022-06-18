@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.os.CountDownTimer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -142,7 +143,86 @@ fun TemplateViewPreview() {
 }
 
 @Composable
-fun SosButton(
+fun SosCascadeStartButton(
+    navController: NavController,
+    text: String,
+    iconName: String,
+    rout: String,
+    color: String,
+    sharedViewModel: SharedViewModel
+) {
+    val backgroundColor: Color
+
+    backgroundColor = when (color) {
+        "main" -> {
+            Color(0xffcaaaf9)
+        }
+        "red" -> {
+            Color.Red
+        }
+        else -> {
+            Color.White
+        }
+    }
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(86.dp)
+            .clickable {
+                navController.navigate(rout)},
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(1.dp, Color.Black),
+        color = backgroundColor
+    ) {
+        val context = LocalContext.current
+        val iconId = remember(iconName) {
+            context.resources.getIdentifier(
+                iconName,
+                "drawable",
+                context.packageName
+            )
+        }
+
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 29.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = text,
+                    color = Color(0xff070707),
+                    textAlign = TextAlign.Start,
+                    lineHeight = 36.sp,
+                    style = TextStyle(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            }
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.End
+            ) {
+                Icon(
+                    painter = painterResource(id = iconId),
+                    contentDescription = iconName,
+                    tint = Color.Black
+                )
+            }
+
+        }
+    }
+}
+
+
+
+@Composable
+fun SosCascadeStop(
     navController: NavController,
     sharedViewModel: SharedViewModel,
     text: String,
@@ -167,7 +247,9 @@ fun SosButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(86.dp)
-            .clickable { sharedViewModel.sosButtonClicked.value = true },
+            .clickable {
+                sharedViewModel.sosCascadeIndex.value = -3; navController.navigate("SeniorMainScreen");sharedViewModel.sosCascadeTimer.cancel()
+            },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor

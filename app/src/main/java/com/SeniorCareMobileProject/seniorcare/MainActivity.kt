@@ -81,6 +81,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val requestCall = 1
+
     private val sharedViewModel: SharedViewModel by viewModels()
     private var foregroundOnlyLocationServiceBound = false
     private var currentOnlyLocationService: CurrentLocationService? = null
@@ -149,13 +150,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
-        sharedViewModel.sosButtonClicked.observe(this, Observer { value ->
-            if (value == true) {
-                makePhoneCall("123456789")
-                sharedViewModel.sosButtonClicked.value = false
+        sharedViewModel.sosCascadeIndex.observe(this, Observer{
+            value -> if(value >=0) {
+            makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])
+            if(sharedViewModel.sosCascadeIndex.value!!>=sharedViewModel.sosCascadePhoneNumbers.size-1){
+                sharedViewModel.sosCascadeIndex.value = -1
             }
-        })
-
+        }
+        }
+        )
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
@@ -175,6 +178,8 @@ class MainActivity : ComponentActivity() {
                 val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
                 val items = listOf(
+                    listOf("Imię", "Grzegorz"),
+                    listOf("Nazwisko", "Brzęczyszczykiewicz"),
                     listOf("Data urodzenia", "17.06.1943 (79 lat)"),
                     listOf("Choroby", "Demencja"),
                     listOf("Grupa krwi", "A+"),
@@ -357,20 +362,39 @@ class MainActivity : ComponentActivity() {
                     composable(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name) {
                         CarerMedicalInfoDataUpdateView(
                             navController,
-                            sharedViewModel,
                             scope,
                             scaffoldState,
                             items
-                        )}
+                        )
+                    }
                     composable(NavigationScreens.SeniorSettingsScreen.name) {
                         SeniorSettingsView(navController)
 
                     }
+
+                    composable(NavigationScreens.SosCascadeView.name) {
+                        SosCascadeView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsListScreen.name) {
+                        CarerSettingsListView(navController)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSOSScreen.name) {
+                        CarerSettingsSOSView(navController)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSOSUpdateScreen.name) {
+                        CarerSettingsSOSUpdateView(navController)
+
+                    }
+
+
                 }
             }
-        }
-    }
-
 
     private fun createNotificationChannel(context: Context?) {
         // Create the NotificationChannel, but only on API 26+ because
@@ -423,6 +447,8 @@ class MainActivity : ComponentActivity() {
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(1, mBuilder.build())
     }
+
+
 
 
     fun makePhoneCall(number: String) {
@@ -580,13 +606,19 @@ class MainActivity : ComponentActivity() {
         if (provideRationale) {
             ActivityCompat.requestPermissions(
                 this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.CALL_PHONE),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.CALL_PHONE
+                ),
                 REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
         } else {
             ActivityCompat.requestPermissions(
                 this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.CALL_PHONE),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.CALL_PHONE
+                ),
                 REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
         }
