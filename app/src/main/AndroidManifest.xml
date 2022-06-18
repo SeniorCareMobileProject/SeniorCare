@@ -21,6 +21,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SeniorCare">
 
+        <activity
+            android:name=".WidgetActivity"
+            android:exported="false" />
+
         <meta-data
             android:name="com.google.android.geo.API_KEY"
             android:value="AIzaSyChHYPORUyPsdzhqgDhA2HvUn97oAAsK_o" />

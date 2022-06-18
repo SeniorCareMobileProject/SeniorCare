@@ -1,6 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
 import android.location.Location
+import android.os.CountDownTimer
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.*
@@ -74,7 +75,17 @@ class SharedViewModel : ViewModel(), KoinComponent {
     var codeInput = mutableStateOf("")
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
     // sos button
-    val sosButtonClicked: MutableLiveData<Boolean> = MutableLiveData(false)
+    val sosCascadeIndex: MutableLiveData<Int> = MutableLiveData(-2)
+    val sosCascadePhoneNumbers = listOf("111111111","222222222","333333333","444444444")
+    val sosCascadeInterval:Long = 10000
+    val sosCascadeTimer = object: CountDownTimer(sosCascadeInterval, 1000) {
+        override fun onTick(millisUntilFinished: Long) {
+        }
+
+        override fun onFinish() {
+            sosCascadeIndex.value = sosCascadeIndex.value!!.plus(1)
+        }
+    }
 
     private val repository = Repository()
 
