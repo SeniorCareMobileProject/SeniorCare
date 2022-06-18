@@ -1,9 +1,10 @@
-package com.SeniorCareMobileProject.seniorcare.ui
+package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -13,35 +14,29 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.PairingScreenCodeView
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 
 
 @Composable
-fun TemplateView3(navController: NavController) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color.White)
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = null,
-            modifier = Modifier
-                .width(48.dp)
-                .height(48.dp)
-                .clickable { navController.navigate(NavigationScreens.ChooseLoginMethodScreen.name) }
-        )
+fun CarerSettingsListView(navController: NavController) {
+    Scaffold(
+        topBar = { TopBarSettings(navController, "Ustawienia - Piotr Kowalski") }) {
+        Column(modifier = Modifier.fillMaxSize()) {
+            SettingsItem(navController, "Przycisk SOS", "CarerSettingsSOSScreen")
+            SettingsItem(navController, "Lokalizacja", "")
+            SettingsItem(navController, "Rozłącz się z seniorem", "")
+        }
     }
 }
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun TemplateView3Preview() {
+fun CarerSettingsListViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        TemplateView3(navController)
+        CarerSettingsListView(navController)
     }
 }

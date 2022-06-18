@@ -20,20 +20,16 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
-import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun Header(
-    navController: NavController,
-    items: List<List<String>>
-) {
+fun HeaderUpd() {
     val context = LocalContext.current
-    val iconId = remember("edit") {
+    val iconId = remember("done") {
         context.resources.getIdentifier(
-            "edit",
+            "done",
             "drawable",
             context.packageName
         )
@@ -63,49 +59,28 @@ fun Header(
         ) {
             Icon(
                 painter = painterResource(id = iconId),
-                contentDescription = "edit",
+                contentDescription = "done",
                 tint = Color.Black,
-                modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .clickable {
-                        navController.navigate(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name)
-                    }
+                modifier = Modifier.padding(horizontal = 8.dp)
             )
         }
-
     }
 }
 
 @Composable
-fun ItemsList(items: List<List<String>>) {
+fun ItemsListUpd(items: List<List<String>>) {
     items.forEach { item ->
-        MedicalDataItem(title = item.elementAt(0) + ":", text = item.elementAt(1))
+        MedicalDataItemUpd(title = item.elementAt(0) + ":", text = item.elementAt(1))
     }
 }
 
 @Composable
-fun CarerMedicalInfoView(
+fun CarerMedicalInfoDataUpdateView(
     navController: NavController,
     scope: CoroutineScope,
-    scaffoldState: ScaffoldState
+    scaffoldState: ScaffoldState,
+    items: List<List<String>>
 ) {
-    val items = listOf(
-        listOf("Imię", "Grzegorz"),
-        listOf("Nazwisko", "Brzęczyszczykiewicz"),
-        listOf("Data urodzenia", "17.06.1943 (79 lat)"),
-        listOf("Choroby", "Demencja"),
-        listOf("Grupa krwi", "A+"),
-        listOf("Alergie", "Orzechy"),
-        listOf(
-            "Przyjmowane leki",
-            "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
-        ),
-        listOf("Wzrost", "168"),
-        listOf("Waga", "58"),
-        listOf("Główny język", "Polski"),
-        listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
-    )
-
     Scaffold(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
@@ -117,33 +92,50 @@ fun CarerMedicalInfoView(
                 scaffoldState = scaffoldState,
                 navController = navController
             )
-        }) {innerPadding ->
-        val scrollState = remember { ScrollState(0) }
+        }) { innerPadding ->
+        Box(modifier = Modifier.padding(bottom = innerPadding.calculateBottomPadding())) {
+            val scrollState = remember { ScrollState(0) }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .fillMaxHeight()
-                .background(Color.White)
-                .verticalScroll(scrollState)
-                .padding(bottom = innerPadding.calculateBottomPadding())
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .background(Color.White)
+                    .captionBarPadding()
+                    .verticalScroll(scrollState)
 
-        ) {
-
-            Header(navController, items)
-            ItemsList(items)
+            ) {
+                HeaderUpd()
+                ItemsListUpd(items)
+            }
         }
+
     }
 }
 
 @Preview(showBackground = true)
 @Composable
-fun CarerMedicalInfoViewPreview() {
+fun CarerMedicalInfoDataUpdateViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
-        CarerMedicalInfoView(navController, scope, scaffoldState)
+        val items = listOf(
+            listOf("Data urodzenia", "17.06.1943 (79 lat)"),
+            listOf("Choroby", "Demencja"),
+            listOf("Grupa krwi", "A+"),
+            listOf("Alergie", "Orzechy"),
+            listOf(
+                "Przyjmowane leki",
+                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
+            ),
+            listOf("Wzrost", "168"),
+            listOf("Waga", "58"),
+            listOf("Główny język", "Polski"),
+            listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
+        )
+
+        CarerMedicalInfoDataUpdateView(navController, scope, scaffoldState, items)
     }
 }

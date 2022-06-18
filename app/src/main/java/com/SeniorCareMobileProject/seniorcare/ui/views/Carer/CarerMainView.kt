@@ -1,6 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
 import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.LiveData
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.data.Database
@@ -57,25 +60,34 @@ fun CarerMainView(
             )
         }) {
         val scrollState = remember { ScrollState(0) }
-        Column(
+
+        Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-            TopBarLocation(
-                navController = navController,
-                scope = scope,
-                scaffoldState = scaffoldState
-            )
-            Column(Modifier.height(225.dp) ) {
-                MapWindowComponent(sharedViewModel = sharedViewModel)
-            }
 
+            // 376.dp, 394.dp
+            Box(modifier = Modifier
+                .height(394.dp)
+//                .zIndex(-1f)
+            ) {
+                MapWindowComponent(sharedViewModel = sharedViewModel)
+                TopBarLocation(
+                    navController = navController,
+                    scope = scope,
+                    scaffoldState = scaffoldState
+                )
+            }
 
             Column(
                 modifier = Modifier
                     .fillMaxHeight()
-                    .verticalScroll(scrollState),
+                    .padding(top = 376.dp)
+                    .verticalScroll(scrollState)
+                    .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                    .background(Color.Transparent)
+                    ,
                 verticalArrangement = Arrangement.Bottom
             ) {
                 Column(
@@ -86,7 +98,9 @@ fun CarerMainView(
                             width = 1.dp,
                             color = Color(0xFFE6E6E6),
                             shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                        ),
+                        )
+                        .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                        .background(Color.White),
                     verticalArrangement = Arrangement.spacedBy(18.dp),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -124,6 +138,7 @@ fun CarerMainView(
 
         }
     }
+
 
 }
 
