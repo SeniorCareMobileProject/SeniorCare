@@ -30,7 +30,7 @@ fun SeniorButton(
     text: String,
     iconName: String,
     rout: String,
-    color: String
+    color: String = ""
 ) {
     val backgroundColor: Color
 

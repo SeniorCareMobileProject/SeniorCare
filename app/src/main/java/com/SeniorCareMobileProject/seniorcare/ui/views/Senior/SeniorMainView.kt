@@ -64,13 +64,13 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 rout = "",
                 color = "main"
             )
-            SeniorButton(
-                navController = navController,
-                text = "Detektor upadku",
-                iconName = "clear",
-                rout = "",
-                color = "main"
-            )
+//            SeniorButton(
+//                navController = navController,
+//                text = "Detektor upadku",
+//                iconName = "clear",
+//                rout = "",
+//                color = "main"
+//            )
             /*SeniorButton(
                 navController = navController,
                 text = "SOS",
@@ -90,7 +90,6 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 text = "Ustawienia",
                 iconName = "settings",
                 rout = "SeniorSettingsScreen",
-                color = ""
             )
         }
     }

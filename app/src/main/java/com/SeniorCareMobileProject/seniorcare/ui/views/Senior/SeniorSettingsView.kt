@@ -39,31 +39,27 @@ fun SeniorSettingsView(navController: NavController) {
 
             SeniorButton(
                 navController = navController,
-                text = "Detektor upadku",
-                iconName = "clear",
-                rout = "",
-                color = ""
-            )
-            SeniorButton(
-                navController = navController,
                 text = "Dodaj opiekuna",
                 iconName = "add_circle",
                 rout = "",
-                color = ""
             )
             SeniorButton(
                 navController = navController,
-                text = "Usuń opiekuna",
-                iconName = "clear",
+                text = "Detektor upadku",
+                iconName = "elderly",
                 rout = "",
-                color = ""
+            )
+            SeniorButton(
+                navController = navController,
+                text = "Lista opiekónów",
+                iconName = "format_list_bulleted",
+                rout = "",
             )
             SeniorButton(
                 navController = navController,
                 text = "Wyloguj się",
                 iconName = "logout",
                 rout = "",
-                color = ""
             )
         }
     }

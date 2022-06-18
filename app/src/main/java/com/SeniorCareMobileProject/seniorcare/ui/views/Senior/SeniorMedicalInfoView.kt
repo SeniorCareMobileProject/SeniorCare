@@ -88,6 +88,8 @@ fun SeniorMedicalInfoView(navController: NavController) {
     val scrollState = remember { ScrollState(0) }
 
     val items = listOf(
+        listOf("Imię", "Grzegorz"),
+        listOf("Nazwisko", "Brzęczyszczykiewicz"),
         listOf("Data urodzenia", "17.06.1943 (79 lat)"),
         listOf("Choroby", "Demencja"),
         listOf("Grupa krwi", "A+"),
