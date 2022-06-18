@@ -11,12 +11,17 @@ import android.net.Uri
 import android.widget.RemoteViews
 import android.widget.Toast
 import androidx.core.content.ContextCompat
+import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.WidgetActivity
 
 /**
  * Implementation of App Widget functionality.
  */
+
+
 class SosButtonWidget : AppWidgetProvider() {
+
     override fun onUpdate(
         context: Context,
         appWidgetManager: AppWidgetManager,
@@ -39,12 +44,16 @@ internal fun updateAppWidget(context: Context,
         Toast.makeText(context, "Odmowa dostępu", Toast.LENGTH_SHORT).show()
     }
     else {
-
         var number: String? = "123456789"
-        val intent = Intent(Intent.ACTION_CALL)
-        intent.data = Uri.parse("tel:$number")
 
+        /**val intent = Intent(Intent.ACTION_CALL)
+        intent.data = Uri.parse("tel:$number")
+        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)**/
+
+        val intent = Intent(context, WidgetActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)
+
+
 
         remoteViews.setOnClickPendingIntent(R.id.button2, pendingIntent)
 

@@ -77,6 +77,7 @@ class MainActivity : ComponentActivity() {
     }
 
     private val requestCall = 1
+
     private val sharedViewModel: SharedViewModel by viewModels()
     private var foregroundOnlyLocationServiceBound = false
     private var currentOnlyLocationService: CurrentLocationService? = null
@@ -133,13 +134,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
-        sharedViewModel.sosButtonClicked.observe(this, Observer { value ->
-            if (value == true) {
-                makePhoneCall("123456789")
-                sharedViewModel.sosButtonClicked.value = false
+        sharedViewModel.sosCascadeIndex.observe(this, Observer{
+            value -> if(value >=0) {
+            makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])
+            if(sharedViewModel.sosCascadeIndex.value!!>=sharedViewModel.sosCascadePhoneNumbers.size-1){
+                sharedViewModel.sosCascadeIndex.value = -1
             }
-        })
-
+        }
+        }
+        )
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
@@ -353,6 +356,11 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.SosCascadeView.name) {
+                        SosCascadeView(navController, sharedViewModel)
+
+                    }
+
                     composable(NavigationScreens.CarerSettingsListScreen.name) {
                         CarerSettingsListView(navController)
 
@@ -373,6 +381,8 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
+
 
     fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {
