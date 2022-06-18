@@ -226,12 +226,7 @@ fun GoogleMapView(
 
 
     }
-            TextButton(
-                onClick = {
-                      sharedViewModel.onGeofenceRequest.value = true }
-            ) {
-                Text(text = "DODAJ GEOFENCE", textAlign = TextAlign.Center)
-            }
+
 
 
 }

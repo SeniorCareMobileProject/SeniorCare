@@ -36,6 +36,7 @@ import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
 import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
+import com.SeniorCareMobileProject.seniorcare.ui.common.MapsAddGeofenceComponent
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.BottomNavItem
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -128,14 +129,15 @@ class MainActivity : ComponentActivity() {
         val disabled = sharedPreferences.getBoolean(
             SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
         )
-//todo delete \/
-        if (foregroundPermissionApproved()) {
-            currentOnlyLocationService?.subscribeToLocationUpdates()
-                ?: Log.d("TAG", "Service Not Bound")
-        } else {
-            requestForegroundPermissions()
-        }
-//todo delete /\
+        //TODO : na potrzeby testowania geofencingu i map, odkomentowanie poniższego kodu sprawi że trackujemy lokalizacje opiekuna a nie seniora
+////todo delete \/
+//        if (foregroundPermissionApproved()) {
+//            currentOnlyLocationService?.subscribeToLocationUpdates()
+//                ?: Log.d("TAG", "Service Not Bound")
+//        } else {
+//            requestForegroundPermissions()
+//        }
+////todo delete /\
         sharedViewModel.userData.observe(this, Observer { value ->
             if (value.function == "Senior") {
                 if (disabled) {
@@ -150,13 +152,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
-        sharedViewModel.sosCascadeIndex.observe(this, Observer{
-            value -> if(value >=0) {
-            makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])
-            if(sharedViewModel.sosCascadeIndex.value!!>=sharedViewModel.sosCascadePhoneNumbers.size-1){
-                sharedViewModel.sosCascadeIndex.value = -1
+        sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
+            if (value >= 0) {
+                makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])
+                if (sharedViewModel.sosCascadeIndex.value!! >= sharedViewModel.sosCascadePhoneNumbers.size - 1) {
+                    sharedViewModel.sosCascadeIndex.value = -1
+                }
             }
-        }
         }
         )
 
@@ -224,6 +226,10 @@ class MainActivity : ComponentActivity() {
 
                     composable(NavigationScreens.LoadingSeniorDataView.name) {
                         LoadingSeniorDataView(navController, sharedViewModel)
+                    }
+
+                    composable(NavigationScreens.MapsAddGeofenceComponent.name) {
+                        MapsAddGeofenceComponent(sharedViewModel)
                     }
 
 //                    composable(NavigationScreens.ChooseRoleScreen.name) {
@@ -408,6 +414,8 @@ class MainActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
 
     private fun createNotificationChannel(context: Context?) {
         // Create the NotificationChannel, but only on API 26+ because
@@ -529,16 +537,16 @@ class MainActivity : ComponentActivity() {
 
     private fun handleGeofence() {
         Log.d("CreateGeofence", "Main")
-        createGeoFence(sharedViewModel.seniorLocalization.value, geofencingClient)
+        createGeoFence(sharedViewModel.newGeofenceLocation.value,sharedViewModel.newGeofenceRadius.value, geofencingClient)
         sharedViewModel.onGeofenceRequest.value = false
-        sharedViewModel.geofenceLocation.value = sharedViewModel.seniorLocalization.value
-        sharedViewModel.geofenceRadius.value = GEOFENCE_RADIUS
+        sharedViewModel.geofenceLocation.value = sharedViewModel.newGeofenceLocation.value
+        sharedViewModel.geofenceRadius.value = sharedViewModel.newGeofenceRadius.value
     }
 
-    private fun createGeoFence(location: LatLng, geofencingClient: GeofencingClient) {
+    private fun createGeoFence(location: LatLng, radius: Int, geofencingClient: GeofencingClient) {
         val geofence = Geofence.Builder()
             .setRequestId(GEOFENCE_ID)
-            .setCircularRegion(location.latitude, location.longitude, GEOFENCE_RADIUS.toFloat())
+            .setCircularRegion(location.latitude, location.longitude, radius.toFloat())
             .setExpirationDuration(GEOFENCE_EXPIRATION.toLong())
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
             .build()
@@ -701,7 +709,6 @@ class MainActivity : ComponentActivity() {
 }
 
 
-const val GEOFENCE_RADIUS = 200
 const val GEOFENCE_ID = "SENIOR_GEOFENCE"
 const val GEOFENCE_EXPIRATION = 10 * 24 * 60 * 60 * 1000 // 10 days
 const val GEOFENCE_LOCATION_REQUEST_CODE = 12345

@@ -41,7 +41,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val geofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
     val geofenceRadius = mutableStateOf(1)
     val newGeofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
-    val newGeofenceRadius = mutableStateOf(1)
+    val newGeofenceRadius = mutableStateOf(20)
 
 
     // for getting input

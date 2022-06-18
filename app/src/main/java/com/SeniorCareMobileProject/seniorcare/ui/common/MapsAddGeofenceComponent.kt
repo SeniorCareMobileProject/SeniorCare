@@ -25,7 +25,7 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 
 @Composable
-fun MapsAddGeofenceComponent(sharedViewModel: SharedViewModel){
+fun MapsAddGeofenceComponent(sharedViewModel: SharedViewModel) {
 
     var isMapLoaded by remember { mutableStateOf(false) }
     // Observing and controlling the camera's state can be done with a CameraPositionState
@@ -36,19 +36,32 @@ fun MapsAddGeofenceComponent(sharedViewModel: SharedViewModel){
     val resetCamera by remember { sharedViewModel.resetCamera }
 
     val cameraPositionState = rememberCameraPositionState {
-        position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, sharedViewModel.seniorLocalizationZoom.value)
+        position = CameraPosition.fromLatLngZoom(
+            sharedViewModel.seniorLocalization.value,
+            sharedViewModel.seniorLocalizationZoom.value
+        )
     }
 
-    if(resetCamera){
+    if (resetCamera) {
         sharedViewModel.seniorLocalizationZoom.value = 17f
-        cameraPositionState.position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, sharedViewModel.seniorLocalizationZoom.value)
+        cameraPositionState.position = CameraPosition.fromLatLngZoom(
+            sharedViewModel.seniorLocalization.value,
+            sharedViewModel.seniorLocalizationZoom.value
+        )
         sharedViewModel.resetCamera.value = false
     }
 
 
-    if (sharedViewModel.seniorLocalization.value != LatLng(52.408839, 16.906782) && !isLocationLoaded.value!!){
+    if (sharedViewModel.seniorLocalization.value != LatLng(
+            52.408839,
+            16.906782
+        ) && !isLocationLoaded.value!!
+    ) {
         isLocationLoaded.value = true
-        cameraPositionState.position = CameraPosition.fromLatLngZoom(sharedViewModel.seniorLocalization.value, sharedViewModel.seniorLocalizationZoom.value)
+        cameraPositionState.position = CameraPosition.fromLatLngZoom(
+            sharedViewModel.seniorLocalization.value,
+            sharedViewModel.seniorLocalizationZoom.value
+        )
     }
 
 
@@ -81,7 +94,7 @@ fun MapsAddGeofenceComponent(sharedViewModel: SharedViewModel){
 
 
 @Composable
-fun GoogleMapViewAddGeofence(
+private fun GoogleMapViewAddGeofence(
     modifier: Modifier,
     cameraPositionState: CameraPositionState,
     onMapLoaded: () -> Unit,
@@ -90,15 +103,15 @@ fun GoogleMapViewAddGeofence(
     val TAG = "tag"
     val circleCenter by remember { mutableStateOf(sharedViewModel.seniorLocalization) }
     val uiSettings = remember {
-            mutableStateOf(
-                MapUiSettings(
-                    compassEnabled = false,
-                    zoomControlsEnabled = false,
-                    tiltGesturesEnabled = false,
-                    scrollGesturesEnabledDuringRotateOrZoom = false
-                )
+        mutableStateOf(
+            MapUiSettings(
+                compassEnabled = false,
+                zoomControlsEnabled = false,
+                tiltGesturesEnabled = false,
+                scrollGesturesEnabledDuringRotateOrZoom = false
             )
-        }
+        )
+    }
 
 
     val mapProperties by remember {
@@ -108,8 +121,6 @@ fun GoogleMapViewAddGeofence(
 
     val geofenceLocation by remember { mutableStateOf(sharedViewModel.geofenceLocation) }
     val geofenceRadius by remember { mutableStateOf(sharedViewModel.geofenceRadius) }
-
-
 
 
 
@@ -124,21 +135,29 @@ fun GoogleMapViewAddGeofence(
                 Log.d(TAG, "POI clicked: ${it.name}")
             }
         ) {
-            val geofenceCirclePosition by remember { mutableStateOf(cameraPositionState.position) }
 
-            sharedViewModel.newGeofenceLocation.value = geofenceCirclePosition.target
+            sharedViewModel.newGeofenceLocation.value = cameraPositionState.position.target
 
-            if (sharedViewModel.newGeofenceRadius.value!=1 && sharedViewModel.newGeofenceLocation.value.latitude != 1.0){
-                Log.d("geofenceLocation $geofenceLocation", "geofenceRadius $geofenceRadius")
+
+            Log.d(
+                "newGeofenceLocation ${sharedViewModel.newGeofenceLocation.value}",
+                "newGeofenceRadius ${sharedViewModel.newGeofenceRadius.value}"
+            )
+
+            if (sharedViewModel.newGeofenceRadius.value != 1 && sharedViewModel.newGeofenceLocation.value.latitude != 1.0) {
+                Log.d(
+                    "geofenceLocation ${geofenceLocation.value}",
+                    "geofenceRadius ${geofenceRadius.value}"
+                )
                 Circle(
-                    center = geofenceLocation.value,
+                    center = sharedViewModel.newGeofenceLocation.value,
                     fillColor = Color.Transparent,
                     strokeColor = Color.Black,
                     strokeWidth = 5f,
-                    radius = geofenceRadius.value.toDouble(),
+                    radius = sharedViewModel.newGeofenceRadius.value.toDouble(),
                 )
             }
-            if (sharedViewModel.seniorLocalizationZoom.value >= 16 ) {
+            if (sharedViewModel.seniorLocalizationZoom.value >= 16) {
                 Circle(
                     center = circleCenter.value,
                     fillColor = MaterialTheme.colors.secondary,
@@ -154,8 +173,12 @@ fun GoogleMapViewAddGeofence(
                     radius = 5.0,
                 )
                 //  Log.d("geofenceLocation ${geofenceLocation!!}", "geofenceRadius ${geofenceRadius}")
-            } else{
-                Marker(state = MarkerState(position = circleCenter.value) ,tag = "Lokalizacja Seniora", draggable = false)
+            } else {
+                Marker(
+                    state = MarkerState(position = circleCenter.value),
+                    tag = "Lokalizacja Seniora",
+                    draggable = false
+                )
             }
 
         }
@@ -167,14 +190,20 @@ fun GoogleMapViewAddGeofence(
             ) {
                 val coroutineScope = rememberCoroutineScope()
 
-                    MapButton(text = "+", onClick = { coroutineScope.launch {
+                MapButton(text = "+", onClick = {
+                    coroutineScope.launch {
                         cameraPositionState.animate(CameraUpdateFactory.zoomIn())
-                        sharedViewModel.seniorLocalizationZoom.value = cameraPositionState.position.zoom
-                    } })
-                    MapButton(text = "-", onClick = { coroutineScope.launch {
+                        sharedViewModel.seniorLocalizationZoom.value =
+                            cameraPositionState.position.zoom
+                    }
+                })
+                MapButton(text = "-", onClick = {
+                    coroutineScope.launch {
                         cameraPositionState.animate(CameraUpdateFactory.zoomOut())
-                        sharedViewModel.seniorLocalizationZoom.value = cameraPositionState.position.zoom
-                    } })
+                        sharedViewModel.seniorLocalizationZoom.value =
+                            cameraPositionState.position.zoom
+                    }
+                })
 
             }
             Column(
@@ -182,12 +211,16 @@ fun GoogleMapViewAddGeofence(
                     .fillMaxSize()
                     .wrapContentSize(align = Alignment.BottomEnd)
             ) {
-                    MapButton(
-                        text = "+10",
-                        onClick = { sharedViewModel.newGeofenceRadius.value += 10 })
-                    MapButton(
-                        text = "-10",
-                        onClick = { sharedViewModel.newGeofenceRadius.value -= 10 })
+                MapButton(
+                    text = "+10",
+                    onClick = { increaseRadius(sharedViewModel) })
+                MapButton(
+                    text = "-10",
+                    onClick = { decreaseRadius(sharedViewModel) })
+                MapButton(
+                    text = "o",
+                    onClick = { sharedViewModel.resetCamera.value = true })
+
             }
         }
 
@@ -195,11 +228,33 @@ fun GoogleMapViewAddGeofence(
     }
     TextButton(
         onClick = {
-            sharedViewModel.onGeofenceRequest.value = true }
+            sharedViewModel.onGeofenceRequest.value = true
+        }
     ) {
         Text(text = "DODAJ GEOFENCE", textAlign = TextAlign.Center)
     }
 
+}
+
+private fun addGeofence(sharedViewModel: SharedViewModel){
+
+
+
+    sharedViewModel.onGeofenceRequest.value = true
+}
+
+private fun decreaseRadius(sharedViewModel: SharedViewModel) {
+    val radius = sharedViewModel.newGeofenceRadius.value
+    if (radius >= 20) {
+        sharedViewModel.newGeofenceRadius.value -= 10
+    }
+}
+
+private fun increaseRadius(sharedViewModel: SharedViewModel) {
+    val radius = sharedViewModel.newGeofenceRadius.value
+    if (radius < 250) {
+        sharedViewModel.newGeofenceRadius.value += 10
+    }
 }
 
 @Composable
