@@ -139,6 +139,8 @@ private fun GoogleMapViewAddGeofence(
 
             sharedViewModel.newGeofenceLocation.value = cameraPositionState.position.target
 
+            sharedViewModel.seniorLocalizationZoom.value =
+                cameraPositionState.position.zoom
 
             Log.d(
                 "newGeofenceLocation ${sharedViewModel.newGeofenceLocation.value}",

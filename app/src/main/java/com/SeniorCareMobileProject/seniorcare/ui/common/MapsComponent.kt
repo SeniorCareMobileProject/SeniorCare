@@ -196,6 +196,9 @@ fun GoogleMapView(
                 )
             }
 
+            sharedViewModel.seniorLocalizationZoom.value =
+                cameraPositionState.position.zoom
+
         }
         Box() {
             Column(
