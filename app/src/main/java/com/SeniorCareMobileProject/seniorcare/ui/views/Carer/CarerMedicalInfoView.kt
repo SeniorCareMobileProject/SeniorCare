@@ -3,7 +3,6 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.draggable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -86,6 +85,7 @@ fun ItemsList(items: List<List<String>>) {
 @Composable
 fun CarerMedicalInfoView(
     navController: NavController,
+    sharedViewModel: SharedViewModel,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
@@ -110,7 +110,7 @@ fun CarerMedicalInfoView(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         topBar = { TopBar(navController, scope, scaffoldState) },
-        bottomBar = { BottomNavigationBarView(navController) },
+        bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(
                 scope = scope,
@@ -141,9 +141,10 @@ fun CarerMedicalInfoView(
 fun CarerMedicalInfoViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
+        val sharedViewModel = SharedViewModel()
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
-        CarerMedicalInfoView(navController, scope, scaffoldState)
+        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
     }
 }

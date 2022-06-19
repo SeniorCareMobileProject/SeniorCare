@@ -2,8 +2,7 @@ package com.SeniorCareMobileProject.seniorcare.ui
 
 import android.location.Location
 import android.os.CountDownTimer
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
@@ -24,6 +23,9 @@ import kotlinx.coroutines.tasks.await
 import org.koin.core.component.KoinComponent
 
 class SharedViewModel : ViewModel(), KoinComponent {
+
+    // Bottom navigation bar
+    val navBarIndex = mutableStateOf(0)
 
     //location
     val onGeofenceRequest = MutableLiveData<Boolean>(false)

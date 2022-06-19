@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
@@ -132,13 +133,16 @@ fun Header() {
 
 @Composable
 fun SeniorsList(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
+    val context = LocalContext.current
+
     val items = listOf(
         NavDrawerItem.User1,
         NavDrawerItem.User2
     )
     Column(
         modifier = Modifier
-            .height(448.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
             .padding(top = 30.dp)
     ) {
         Text(
@@ -149,29 +153,40 @@ fun SeniorsList(scope: CoroutineScope, scaffoldState: ScaffoldState, navControll
         // List of navigation items
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
+        /**
+         * Ten kod jest tymczasowy, kod niżej musi być użyty (skomentowany)
+         */
         items.forEach { item ->
-            DrawerItem(item = item, selected = currentRoute == item.route, onItemClick = {
-                navController.navigate(item.route) {
-                    // Pop up to the start destination of the graph to
-                    // avoid building up a large stack of destinations
-                    // on the back stack as users select items
-                    navController.graph.startDestinationRoute?.let { route ->
-                        popUpTo(route) {
-                            saveState = true
-                        }
-                    }
-                    // Avoid multiple copies of the same destination when
-                    // reselecting the same item
-                    launchSingleTop = true
-                    // Restore state when reselecting a previously selected item
-                    restoreState = true
-                }
-                // Close drawer
-                scope.launch {
-                    scaffoldState.drawerState.close()
-                }
-            })
+            DrawerItem(
+                item = item,
+                selected = currentRoute == item.route,
+                onItemClick = { inProgressToastView(context) })
         }
+
+
+//        items.forEach { item ->
+//            DrawerItem(item = item, selected = currentRoute == item.route, onItemClick = {
+//                navController.navigate(item.route) {
+//                    // Pop up to the start destination of the graph to
+//                    // avoid building up a large stack of destinations
+//                    // on the back stack as users select items
+//                    navController.graph.startDestinationRoute?.let { route ->
+//                        popUpTo(route) {
+//                            saveState = true
+//                        }
+//                    }
+//                    // Avoid multiple copies of the same destination when
+//                    // reselecting the same item
+//                    launchSingleTop = true
+//                    // Restore state when reselecting a previously selected item
+//                    restoreState = true
+//                }
+//                // Close drawer
+//                scope.launch {
+//                    scaffoldState.drawerState.close()
+//                }
+//            })
+//        }
     }
 }
 
@@ -193,7 +208,7 @@ fun BottomButton(
 
     Button(
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFF1ECF8)),
-        onClick = { navController.navigate(rout) }
+        onClick = {if (rout != "") navController.navigate(rout)  else inProgressToastView(context)}
     ) {
         Row(
             modifier = Modifier
@@ -220,7 +235,9 @@ fun BottomButton(
 @Composable
 fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
         verticalArrangement = Arrangement.Bottom
     ) {
         Divider(
@@ -285,12 +302,19 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
         )
 
         SeniorsList(scope, scaffoldState, navController)
-
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color(0xFFF1ECF8)),
+        verticalArrangement = Arrangement.Bottom
+    ) {
         BottomButtons(navController, scaffoldState)
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true, heightDp = 800)
 @Composable
 fun DrawerPreview() {
     val scope = rememberCoroutineScope()

@@ -60,8 +60,8 @@ fun SeniorButton(
     }
 
     var iconId = -1
+    val context = LocalContext.current
     if (iconName != "") {
-        val context = LocalContext.current
         iconId = remember(iconName) {
             context.resources.getIdentifier(
                 iconName,
@@ -76,7 +76,7 @@ fun SeniorButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(86.dp)
-            .clickable { navController.navigate(rout) },
+            .clickable {if (rout != "") navController.navigate(rout)  else inProgressToastView(context)},
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor
@@ -305,7 +305,8 @@ fun SosCascadeStartButton(
             .fillMaxWidth()
             .height(86.dp)
             .clickable {
-                navController.navigate(rout)},
+                navController.navigate(rout)
+            },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor
@@ -355,7 +356,6 @@ fun SosCascadeStartButton(
 }
 
 
-
 @Composable
 fun SosCascadeStop(
     navController: NavController,
@@ -383,7 +383,8 @@ fun SosCascadeStop(
             .fillMaxWidth()
             .height(86.dp)
             .clickable {
-                sharedViewModel.sosCascadeIndex.value = -3; navController.navigate("SeniorMainScreen");sharedViewModel.sosCascadeTimer.cancel()
+                sharedViewModel.sosCascadeIndex.value =
+                    -3; navController.navigate("SeniorMainScreen");sharedViewModel.sosCascadeTimer.cancel()
             },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
