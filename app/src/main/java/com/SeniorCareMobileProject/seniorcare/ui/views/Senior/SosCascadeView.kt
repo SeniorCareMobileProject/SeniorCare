@@ -26,31 +26,31 @@ fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewMode
         modifier = Modifier
             .onPlaced { sharedViewModel.sosCascadeTimer.start() }
             .fillMaxWidth()
-            .background(Color.Green)
+            .background(Color.White)
             .fillMaxHeight()
             .wrapContentHeight(Alignment.CenterVertically)
-
     ) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight()
-                .padding(top = 54.dp),
+                .fillMaxHeight(),
+//                .padding(top = 54.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-
+            verticalArrangement = Arrangement.Center
         ) {
-
             Column(
                 modifier = Modifier.padding(horizontal = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp),
             ) {
 
-                Text(
+                Text(modifier = Modifier.padding(horizontal = 12.dp),
                     text = "W ciągu 10 sekund wykona się kolejne połączenie",
                     fontWeight = FontWeight.Medium,
                     fontSize = 36.sp,
                 )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                
                 SosCascadeStop(
                     navController = navController,
                     text = "Zakończ połączenia",

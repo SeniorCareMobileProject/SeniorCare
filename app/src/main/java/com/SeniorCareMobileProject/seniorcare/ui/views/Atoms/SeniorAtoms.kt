@@ -305,7 +305,8 @@ fun SosCascadeStartButton(
             .fillMaxWidth()
             .height(86.dp)
             .clickable {
-                navController.navigate(rout)},
+                navController.navigate(rout)
+            },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor
@@ -355,7 +356,6 @@ fun SosCascadeStartButton(
 }
 
 
-
 @Composable
 fun SosCascadeStop(
     navController: NavController,
@@ -383,7 +383,8 @@ fun SosCascadeStop(
             .fillMaxWidth()
             .height(86.dp)
             .clickable {
-                sharedViewModel.sosCascadeIndex.value = -3; navController.navigate("SeniorMainScreen");sharedViewModel.sosCascadeTimer.cancel()
+                sharedViewModel.sosCascadeIndex.value =
+                    -3; navController.navigate("SeniorMainScreen");sharedViewModel.sosCascadeTimer.cancel()
             },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
