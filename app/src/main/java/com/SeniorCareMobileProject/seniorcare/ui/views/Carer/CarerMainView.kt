@@ -46,7 +46,7 @@ fun CarerMainView(
 ) {
     Scaffold(
         bottomBar = { BottomNavigationBarView(navController) },
-        topBar = {  TopBar(navController, scope, scaffoldState)},
+        topBar = { TopBar(navController, scope, scaffoldState) },
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         drawerContent = {
@@ -55,16 +55,17 @@ fun CarerMainView(
                 scaffoldState = scaffoldState,
                 navController = navController
             )
-        }) {
-        innerPadding ->
+        }) { innerPadding ->
         val scrollState = remember { ScrollState(0) }
 
-        var mapModifier by remember { mutableStateOf(Modifier.height(350.dp))}
+        var mapModifier by remember { mutableStateOf(Modifier.height(350.dp)) }
         val fullScreen by remember { sharedViewModel.mapFullscreen }
-        mapModifier = if (fullScreen){
-            Modifier.fillMaxSize().padding(bottom = innerPadding.calculateBottomPadding())
+        mapModifier = if (fullScreen) {
+            Modifier
+                .fillMaxSize()
+                .padding(bottom = innerPadding.calculateBottomPadding())
         } else {
-            Modifier.height(350.dp)
+            Modifier.height(349.dp)
         }
         Box(
             modifier = Modifier
@@ -77,7 +78,6 @@ fun CarerMainView(
             Box(modifier = mapModifier
 //                .zIndex(-1f)
             ) {
-
                 MapWindowComponent(sharedViewModel = sharedViewModel)
             }
 
@@ -86,16 +86,17 @@ fun CarerMainView(
                 Column(
                     modifier = Modifier
                         .fillMaxHeight()
-                        .padding(top = 376.dp)
+                        .padding(top = 349.dp)
                         .verticalScroll(scrollState)
                         .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
-                        .background(Color.Transparent),
+                        .background(Color.Transparent)
+                        .padding(bottom = innerPadding.calculateBottomPadding()),
                     verticalArrangement = Arrangement.Bottom
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(375.dp)
+                            .wrapContentHeight()
                             .border(
                                 width = 1.dp,
                                 color = Color(0xFFE6E6E6),
@@ -115,7 +116,8 @@ fun CarerMainView(
 //                        fontWeight = FontWeight.Medium,
 //                        color = MaterialTheme.colors.primary
 //                    )
-                        Spacer(modifier = Modifier.padding(top = 22.dp))
+                        Spacer(modifier = Modifier.height(12.dp))
+
                         StatusWidget(
                             navController = navController,
                             title = "Stan baterii:",
@@ -135,6 +137,8 @@ fun CarerMainView(
                                     "Data: 12.05.22 - godzina: 08:00",
                             iconName = "calendar_month"
                         )
+
+                        Spacer(modifier = Modifier.height(12.dp))
 
                     }
                 }

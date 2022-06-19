@@ -26,7 +26,7 @@ fun CarerSettingsListView(navController: NavController) {
         topBar = { TopBarSettings(navController, "Ustawienia - Piotr Kowalski") }) {
         Column(modifier = Modifier.fillMaxSize()) {
             SettingsItem(navController, "Przycisk SOS", "CarerSettingsSOSScreen")
-            SettingsItem(navController, "Lokalizacja", "MapsAddGeofenceComponent")
+            SettingsItem(navController, "Lokalizacja", "CarerSettingsSafeZoneScreen")
             SettingsItem(navController, "Rozłącz się z seniorem", "")
         }
     }

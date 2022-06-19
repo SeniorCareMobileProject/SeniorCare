@@ -5,18 +5,18 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.MutableLiveData
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.MapsRoundSmallButton
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.MapsZooming
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
@@ -67,7 +67,8 @@ fun MapsAddGeofenceComponent(sharedViewModel: SharedViewModel) {
 
     Box(Modifier.fillMaxSize()) {
         GoogleMapViewAddGeofence(
-            modifier = Modifier.matchParentSize(),
+            modifier = Modifier
+                .fillMaxWidth(),
             cameraPositionState = cameraPositionState,
             onMapLoaded = {
                 isMapLoaded = true
@@ -187,38 +188,32 @@ private fun GoogleMapViewAddGeofence(
                 Modifier
                     .fillMaxSize()
                     .wrapContentSize(align = Alignment.BottomStart)
+                    .padding(start = 6.dp, bottom = 6.dp)
             ) {
                 val coroutineScope = rememberCoroutineScope()
 
-                MapButton(text = "+", onClick = {
+                MapsZooming(onClickZoomIn = {
                     coroutineScope.launch {
                         cameraPositionState.animate(CameraUpdateFactory.zoomIn())
                         sharedViewModel.seniorLocalizationZoom.value =
                             cameraPositionState.position.zoom
                     }
-                })
-                MapButton(text = "-", onClick = {
+                }, onClickZoomOut = {
                     coroutineScope.launch {
                         cameraPositionState.animate(CameraUpdateFactory.zoomOut())
                         sharedViewModel.seniorLocalizationZoom.value =
                             cameraPositionState.position.zoom
                     }
                 })
-
             }
+
             Column(
                 Modifier
                     .fillMaxSize()
                     .wrapContentSize(align = Alignment.BottomEnd)
+                    .padding(end = 6.dp, bottom = 6.dp)
             ) {
-                MapButton(
-                    text = "+10",
-                    onClick = { increaseRadius(sharedViewModel) })
-                MapButton(
-                    text = "-10",
-                    onClick = { decreaseRadius(sharedViewModel) })
-                MapButton(
-                    text = "o",
+                MapsRoundSmallButton(iconName = "my_location",
                     onClick = { sharedViewModel.resetCamera.value = true })
 
             }
@@ -236,21 +231,20 @@ private fun GoogleMapViewAddGeofence(
 
 }
 
-private fun addGeofence(sharedViewModel: SharedViewModel){
-
+private fun addGeofence(sharedViewModel: SharedViewModel) {
 
 
     sharedViewModel.onGeofenceRequest.value = true
 }
 
-private fun decreaseRadius(sharedViewModel: SharedViewModel) {
+fun decreaseRadius(sharedViewModel: SharedViewModel) {
     val radius = sharedViewModel.newGeofenceRadius.value
     if (radius >= 20) {
         sharedViewModel.newGeofenceRadius.value -= 10
     }
 }
 
-private fun increaseRadius(sharedViewModel: SharedViewModel) {
+fun increaseRadius(sharedViewModel: SharedViewModel) {
     val radius = sharedViewModel.newGeofenceRadius.value
     if (radius < 250) {
         sharedViewModel.newGeofenceRadius.value += 10

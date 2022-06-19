@@ -412,6 +412,11 @@ class MainActivity : ComponentActivity() {
                         SeniorCarersListView(navController)
 
                     }
+
+                    composable(NavigationScreens.CarerSettingsSafeZoneScreen.name) {
+                        CarerSettingsSafeZoneView(navController, sharedViewModel)
+
+                    }
                 }
             }
         }
