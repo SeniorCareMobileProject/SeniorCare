@@ -138,7 +138,8 @@ fun SeniorsList(scope: CoroutineScope, scaffoldState: ScaffoldState, navControll
     )
     Column(
         modifier = Modifier
-            .height(448.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
             .padding(top = 30.dp)
     ) {
         Text(
@@ -220,7 +221,9 @@ fun BottomButton(
 @Composable
 fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
         verticalArrangement = Arrangement.Bottom
     ) {
         Divider(
@@ -285,12 +288,19 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
         )
 
         SeniorsList(scope, scaffoldState, navController)
-
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color(0xFFF1ECF8)),
+        verticalArrangement = Arrangement.Bottom
+    ) {
         BottomButtons(navController, scaffoldState)
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true, heightDp = 800)
 @Composable
 fun DrawerPreview() {
     val scope = rememberCoroutineScope()
