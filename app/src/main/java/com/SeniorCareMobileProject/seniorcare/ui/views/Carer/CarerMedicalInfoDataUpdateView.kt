@@ -77,6 +77,7 @@ fun ItemsListUpd(items: List<List<String>>) {
 @Composable
 fun CarerMedicalInfoDataUpdateView(
     navController: NavController,
+    sharedViewModel: SharedViewModel,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState,
     items: List<List<String>>
@@ -85,7 +86,7 @@ fun CarerMedicalInfoDataUpdateView(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         topBar = { TopBar(navController, scope, scaffoldState) },
-        bottomBar = { BottomNavigationBarView(navController) },
+        bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(
                 scope = scope,
@@ -118,6 +119,7 @@ fun CarerMedicalInfoDataUpdateView(
 fun CarerMedicalInfoDataUpdateViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
+        val sharedViewModel = SharedViewModel()
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
@@ -136,6 +138,6 @@ fun CarerMedicalInfoDataUpdateViewPreview() {
             listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
         )
 
-        CarerMedicalInfoDataUpdateView(navController, scope, scaffoldState, items)
+        CarerMedicalInfoDataUpdateView(navController, sharedViewModel, scope, scaffoldState, items)
     }
 }

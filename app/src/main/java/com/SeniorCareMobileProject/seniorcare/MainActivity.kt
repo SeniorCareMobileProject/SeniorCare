@@ -21,6 +21,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -172,7 +175,6 @@ class MainActivity : ComponentActivity() {
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
         }
 
-
         setContent {
             SeniorCareTheme() {
                 val navController = rememberNavController()
@@ -209,7 +211,7 @@ class MainActivity : ComponentActivity() {
                         CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
                     }
                     composable(BottomNavItem.MedInfo.route) {
-                        CarerMedicalInfoView(navController, scope, scaffoldState)
+                        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
                     }
                     composable(BottomNavItem.Notifications.route) {
                         CarerNotificationsView(navController, sharedViewModel, scope, scaffoldState)
@@ -368,6 +370,7 @@ class MainActivity : ComponentActivity() {
                     composable(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name) {
                         CarerMedicalInfoDataUpdateView(
                             navController,
+                            sharedViewModel,
                             scope,
                             scaffoldState,
                             items

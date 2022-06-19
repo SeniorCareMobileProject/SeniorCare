@@ -63,6 +63,6 @@ fun BottomNavigationBarViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
 
-        BottomNavigationBarView(navController)
+//        BottomNavigationBarView(navController)
     }
 }
