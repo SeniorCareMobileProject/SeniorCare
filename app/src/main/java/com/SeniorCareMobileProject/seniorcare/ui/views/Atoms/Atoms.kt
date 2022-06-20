@@ -1,5 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.body_16
@@ -650,17 +653,20 @@ fun TopBarSettings(
     }
 }
 
+
 @Composable
 fun SettingsItem(
     navController: NavController,
     text: String,
     rout: String
 ) {
+    val context = LocalContext.current
+
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .clickable { navController.navigate(rout) }
+            .clickable {if (rout != "") navController.navigate(rout)  else inProgressToastView(context)}
     ) {
         Text(
             modifier = Modifier
@@ -1039,9 +1045,11 @@ fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) 
 
 @Composable
 fun FloatingButton() {
+    val context = LocalContext.current
+
     FloatingActionButton(
         modifier = Modifier.size(48.dp),
-        onClick = { /*TODO*/ },
+        onClick = { inProgressToastView(context) },
         backgroundColor = Color.Blue,
     ) {
         Icon(
@@ -1066,6 +1074,10 @@ fun PopupButton(text: String) {
             style = TextStyle(
                 fontSize = 12.sp))
     }
+}
+
+fun inProgressToastView(context: Context) {
+    Toast.makeText(context, "W budowie",Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)

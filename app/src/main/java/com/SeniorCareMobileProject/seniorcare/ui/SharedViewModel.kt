@@ -2,8 +2,7 @@ package com.SeniorCareMobileProject.seniorcare.ui
 
 import android.location.Location
 import android.os.CountDownTimer
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.*
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
@@ -25,15 +24,26 @@ import org.koin.core.component.KoinComponent
 
 class SharedViewModel : ViewModel(), KoinComponent {
 
+    // Bottom navigation bar
+    val navBarIndex = mutableStateOf(0)
+
     //location
     val onGeofenceRequest = MutableLiveData<Boolean>(false)
     val seniorLocalization = mutableStateOf(LatLng(52.408839, 16.906782))
     val localizationAccuracy = mutableStateOf(50f)
     val location = mutableStateOf<Location?>(null)
+    val seniorLocalizationZoom = mutableStateOf(17f)
+    val mapFullscreen = mutableStateOf(false)
+    val resetCamera = mutableStateOf(false)
+    val locationBeforeFreeingCam = mutableStateOf(LatLng(52.408839, 16.906782))
+
+    val onNotficationShow = MutableLiveData<Boolean>(false)
 
     //geofence
     val geofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
     val geofenceRadius = mutableStateOf(1)
+    val newGeofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
+    val newGeofenceRadius = mutableStateOf(20)
 
 
     // for getting input

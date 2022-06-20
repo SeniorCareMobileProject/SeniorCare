@@ -18,8 +18,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -32,6 +36,7 @@ import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
 import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
+import com.SeniorCareMobileProject.seniorcare.ui.common.MapsAddGeofenceComponent
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.BottomNavItem
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -109,6 +114,11 @@ class MainActivity : ComponentActivity() {
             if (value) handleGeofence()
         })
 
+        sharedViewModel.onNotficationShow.observe(this, Observer { value ->
+            if (value) showNotification(this, "title", "text")
+        })
+
+
         geofencingClient = LocationServices.getGeofencingClient(this)
         geofencePendingIntent.send()
 
@@ -119,7 +129,15 @@ class MainActivity : ComponentActivity() {
         val disabled = sharedPreferences.getBoolean(
             SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
         )
-
+        //TODO : na potrzeby testowania geofencingu i map, odkomentowanie poniższego kodu sprawi że trackujemy lokalizacje opiekuna a nie seniora
+////todo delete \/
+//        if (foregroundPermissionApproved()) {
+//            currentOnlyLocationService?.subscribeToLocationUpdates()
+//                ?: Log.d("TAG", "Service Not Bound")
+//        } else {
+//            requestForegroundPermissions()
+//        }
+////todo delete /\
         sharedViewModel.userData.observe(this, Observer { value ->
             if (value.function == "Senior") {
                 if (disabled) {
@@ -134,13 +152,13 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
-        sharedViewModel.sosCascadeIndex.observe(this, Observer{
-            value -> if(value >=0) {
-            makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])
-            if(sharedViewModel.sosCascadeIndex.value!!>=sharedViewModel.sosCascadePhoneNumbers.size-1){
-                sharedViewModel.sosCascadeIndex.value = -1
+        sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
+            if (value >= 0) {
+                makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])
+                if (sharedViewModel.sosCascadeIndex.value!! >= sharedViewModel.sosCascadePhoneNumbers.size - 1) {
+                    sharedViewModel.sosCascadeIndex.value = -1
+                }
             }
-        }
         }
         )
 
@@ -153,7 +171,6 @@ class MainActivity : ComponentActivity() {
         } else {
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
         }
-
 
         setContent {
             SeniorCareTheme() {
@@ -191,7 +208,7 @@ class MainActivity : ComponentActivity() {
                         CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
                     }
                     composable(BottomNavItem.MedInfo.route) {
-                        CarerMedicalInfoView(navController, scope, scaffoldState)
+                        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
                     }
                     composable(BottomNavItem.Notifications.route) {
                         CarerNotificationsView(navController, sharedViewModel, scope, scaffoldState)
@@ -208,6 +225,10 @@ class MainActivity : ComponentActivity() {
 
                     composable(NavigationScreens.LoadingSeniorDataView.name) {
                         LoadingSeniorDataView(navController, sharedViewModel)
+                    }
+
+                    composable(NavigationScreens.MapsAddGeofenceComponent.name) {
+                        MapsAddGeofenceComponent(sharedViewModel)
                     }
 
 //                    composable(NavigationScreens.ChooseRoleScreen.name) {
@@ -346,6 +367,7 @@ class MainActivity : ComponentActivity() {
                     composable(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name) {
                         CarerMedicalInfoDataUpdateView(
                             navController,
+                            sharedViewModel,
                             scope,
                             scaffoldState,
                             items
@@ -376,11 +398,82 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.SeniorGoingOutInfoScreen.name) {
+                        SeniorGoingOutInfoView(navController)
 
+                    }
+
+                    composable(NavigationScreens.SettingsFallDetectorScreen.name) {
+                        SettingsFallDetectorView(navController)
+
+                    }
+
+                    composable(NavigationScreens.SeniorCarersListScreen.name) {
+                        SeniorCarersListView(navController)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSafeZoneScreen.name) {
+                        CarerSettingsSafeZoneView(navController, sharedViewModel)
+
+                    }
                 }
             }
         }
     }
+
+    private fun createNotificationChannel(context: Context?) {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val name = "Channel Name"
+            val descriptionText = "getString(R.string.channel_description)"
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel("CHANNEL_ID", name, importance).apply {
+                description = descriptionText
+            }
+            // Register the channel with the system
+            val notificationManager: NotificationManager =
+                context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            notificationManager.createNotificationChannel(channel)
+        }
+    }
+
+
+    fun showNotification(context: Context?, title: String, text: String) {
+
+        createNotificationChannel(context)
+        Log.d("Notification", "showing")
+
+        var mBuilder = NotificationCompat.Builder(context!!, "CHANNEL_ID")
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle(title)
+            .setContentText(text)
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+
+        val contentIntent =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(
+                context,
+                0,
+                Intent(context, GeofenceBroadcastReceiver::class.java),
+                PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getActivity(
+                context, 0,
+                Intent(context, GeofenceBroadcastReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+
+        mBuilder.setContentIntent(contentIntent)
+
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND)
+        mBuilder.setAutoCancel(true)
+        val mNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        mNotificationManager.notify(1, mBuilder.build())
+    }
+
 
 
 
@@ -449,17 +542,16 @@ class MainActivity : ComponentActivity() {
 
     private fun handleGeofence() {
         Log.d("CreateGeofence", "Main")
-        createGeoFence(sharedViewModel.seniorLocalization.value, geofencingClient)
+        createGeoFence(sharedViewModel.newGeofenceLocation.value,sharedViewModel.newGeofenceRadius.value, geofencingClient)
         sharedViewModel.onGeofenceRequest.value = false
-        sharedViewModel.geofenceLocation.value = sharedViewModel.seniorLocalization.value
-        sharedViewModel.geofenceRadius.value = GEOFENCE_RADIUS
-        // ZAPIS DO BAZY DANYCH
+        sharedViewModel.geofenceLocation.value = sharedViewModel.newGeofenceLocation.value
+        sharedViewModel.geofenceRadius.value = sharedViewModel.newGeofenceRadius.value
     }
 
-    private fun createGeoFence(location: LatLng, geofencingClient: GeofencingClient) {
+    private fun createGeoFence(location: LatLng, radius: Int, geofencingClient: GeofencingClient) {
         val geofence = Geofence.Builder()
             .setRequestId(GEOFENCE_ID)
-            .setCircularRegion(location.latitude, location.longitude, GEOFENCE_RADIUS.toFloat())
+            .setCircularRegion(location.latitude, location.longitude, radius.toFloat())
             .setExpirationDuration(GEOFENCE_EXPIRATION.toLong())
             .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
             .build()
@@ -622,7 +714,6 @@ class MainActivity : ComponentActivity() {
 }
 
 
-const val GEOFENCE_RADIUS = 200
 const val GEOFENCE_ID = "SENIOR_GEOFENCE"
 const val GEOFENCE_EXPIRATION = 10 * 24 * 60 * 60 * 1000 // 10 days
 const val GEOFENCE_LOCATION_REQUEST_CODE = 12345

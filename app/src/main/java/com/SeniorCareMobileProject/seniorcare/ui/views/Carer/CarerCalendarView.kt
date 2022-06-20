@@ -16,7 +16,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavigationBarView
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavBarView
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBar
 import kotlinx.coroutines.CoroutineScope
@@ -32,7 +32,7 @@ fun CarerCalendarView(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         topBar = { TopBar(navController, scope, scaffoldState) },
-        bottomBar = { BottomNavigationBarView(navController) },
+        bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(
                 scope = scope,
