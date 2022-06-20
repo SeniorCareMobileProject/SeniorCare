@@ -11,6 +11,7 @@ import android.os.Build
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.services.AuthenticationCheckService
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
@@ -32,6 +33,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
                         showNotification(context, "SENIOR POZA OBSZAREM", "SKONTAKTUJ SIE Z SENIOREM")
 
+                        checkAuthStatus(context)
 
                         Log.d("GEOFENCE ACTIVATED", "GEOFENCE ACTIVATED")
                     }
@@ -41,6 +43,11 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             }
         }
 
+    }
+
+    private fun checkAuthStatus(context: Context?) {
+        val authCheckIntent = Intent(context, AuthenticationCheckService::class.java)
+        context?.startService(authCheckIntent)
     }
 
     private fun createNotificationChannel(context: Context?) {

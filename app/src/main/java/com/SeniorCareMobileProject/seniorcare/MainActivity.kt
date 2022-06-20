@@ -453,6 +453,7 @@ class MainActivity : ComponentActivity() {
         sharedViewModel.onGeofenceRequest.value = false
         sharedViewModel.geofenceLocation.value = sharedViewModel.seniorLocalization.value
         sharedViewModel.geofenceRadius.value = GEOFENCE_RADIUS
+        // ZAPIS DO BAZY DANYCH
     }
 
     private fun createGeoFence(location: LatLng, geofencingClient: GeofencingClient) {
