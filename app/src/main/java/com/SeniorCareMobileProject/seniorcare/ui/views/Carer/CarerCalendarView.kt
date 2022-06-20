@@ -1,10 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -44,12 +41,12 @@ fun CarerCalendarView(
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .background(Color.Green)
                 .fillMaxHeight()
                 .wrapContentHeight(Alignment.CenterVertically)
+                .wrapContentWidth(Alignment.CenterHorizontally)
 
         ) {
-            Text(text = "Calendar")
+            Text(text = "Funkcjonalność w budowie")
         }
     }
 }
