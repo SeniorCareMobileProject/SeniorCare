@@ -366,4 +366,38 @@ class Repository {
         }
         reference.addValueEventListener(userListener)
     }
+
+    // GEOFENCE
+    fun saveGeofenceStatusToFirebase(){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val databaseReference = databaseUserReference.child(userId).child("location").child("geofence")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    databaseReference.setValue("true").await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveGeofenceStatusToFirebase", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun saveGeofenceToFirebase(sharedViewModel: SharedViewModel){
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("geofence")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    //reference.setValue(location).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("LocationFirebase", e.message.toString())
+                }
+            }
+        }
+    }
 }
