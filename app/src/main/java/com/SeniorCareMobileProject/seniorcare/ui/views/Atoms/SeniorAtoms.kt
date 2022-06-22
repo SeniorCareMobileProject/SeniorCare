@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.app.Activity
 import android.os.CountDownTimer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -22,11 +23,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.app.ActivityCompat.finishAffinity
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun SeniorButton(
@@ -76,7 +80,17 @@ fun SeniorButton(
         modifier = Modifier
             .fillMaxWidth()
             .height(86.dp)
-            .clickable {if (rout != "") navController.navigate(rout)  else inProgressToastView(context)},
+            .clickable {
+                if ((rout != "") && (rout != "sign out")){
+                    navController.navigate(rout)
+                }
+                else if (rout == "sign out") {
+                    FirebaseAuth.getInstance().signOut()
+                    val activity = context as Activity
+                    activity.finish()
+                }
+                else inProgressToastView(context)
+                       },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor

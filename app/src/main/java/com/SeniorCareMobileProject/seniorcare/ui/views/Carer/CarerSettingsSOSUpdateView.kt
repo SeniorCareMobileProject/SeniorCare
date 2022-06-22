@@ -27,9 +27,9 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBarSettings
 
 
 @Composable
-fun CarerSettingsSOSUpdateView(navController: NavController) {
+fun CarerSettingsSOSUpdateView(navController: NavController, sharedViewModel: SharedViewModel) {
     Scaffold(
-        topBar = { TopBarSettings(navController, "Przycisk Sos - Piotr Kowalski") }) {
+        topBar = { TopBarSettings(navController, sharedViewModel) }) {
         Column(modifier = Modifier.fillMaxSize()) {
             SettingsItem(navController, "Dodaj numer", "")
             SettingsItemWithIcon(
@@ -49,6 +49,7 @@ fun CarerSettingsSOSUpdateView(navController: NavController) {
 fun CarerSettingsSOSUpdateViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        CarerSettingsSOSUpdateView(navController)
+        val sharedViewModel = SharedViewModel()
+        CarerSettingsSOSUpdateView(navController, sharedViewModel)
     }
 }

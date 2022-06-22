@@ -51,7 +51,7 @@ fun SeniorSettingsView(navController: NavController) {
             )
             SeniorButton(
                 navController = navController,
-                text = "Lista opiekónów",
+                text = "Lista opiekunów",
                 iconName = "format_list_bulleted",
                 rout = "SeniorCarersListScreen",
             )
@@ -59,7 +59,7 @@ fun SeniorSettingsView(navController: NavController) {
                 navController = navController,
                 text = "Wyloguj się",
                 iconName = "logout",
-                rout = "",
+                rout = "sign out",
             )
         }
     }

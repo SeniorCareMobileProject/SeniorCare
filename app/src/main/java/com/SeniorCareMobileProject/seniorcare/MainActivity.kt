@@ -121,8 +121,9 @@ class MainActivity : ComponentActivity() {
 
         sharedViewModel.hasSeniorData.observe(this, Observer { value ->
             if (value){
-                createGeoFence(sharedViewModel.newGeofenceLocation.value,sharedViewModel.newGeofenceRadius.value, geofencingClient)
+                createGeoFence(sharedViewModel.geofenceLocation.value,sharedViewModel.geofenceRadius.value, geofencingClient)
                 sharedViewModel.hasSeniorData.value = false
+                Log.d("Create GeoFence", "Utworzono geofence")
             }
         })
 
@@ -396,17 +397,17 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(NavigationScreens.CarerSettingsListScreen.name) {
-                        CarerSettingsListView(navController)
+                        CarerSettingsListView(navController, sharedViewModel)
 
                     }
 
                     composable(NavigationScreens.CarerSettingsSOSScreen.name) {
-                        CarerSettingsSOSView(navController)
+                        CarerSettingsSOSView(navController, sharedViewModel)
 
                     }
 
                     composable(NavigationScreens.CarerSettingsSOSUpdateScreen.name) {
-                        CarerSettingsSOSUpdateView(navController)
+                        CarerSettingsSOSUpdateView(navController, sharedViewModel)
 
                     }
 
