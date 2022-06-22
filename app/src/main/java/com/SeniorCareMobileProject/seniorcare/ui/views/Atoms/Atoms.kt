@@ -12,6 +12,9 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Password
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +26,9 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -306,12 +311,65 @@ fun InputField(
 }
 
 @Composable
+fun PasswordInputField(
+    placeholder: String,
+    onValueChange: (String) -> Unit,
+    viewModelVariable: MutableState<String>
+) {
+    val text = viewModelVariable.value
+    var passwordVisibility: Boolean by remember { mutableStateOf(false) }
+
+    OutlinedTextField(
+        value = text,
+        colors = TextFieldDefaults.textFieldColors(
+            textColor = Color.Black,
+            backgroundColor = Color.White,
+            disabledIndicatorColor = MaterialTheme.colors.primary,
+            unfocusedIndicatorColor = MaterialTheme.colors.primary,
+            focusedIndicatorColor = MaterialTheme.colors.primary,
+        ),
+        shape = RoundedCornerShape(20.dp),
+        onValueChange = { newText -> viewModelVariable.value = newText },
+        placeholder = { Text(placeholder) },
+        textStyle = TextStyle(
+            fontSize = 14.sp
+        ),
+        singleLine = true,
+        modifier = Modifier.fillMaxWidth(),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        visualTransformation = if (passwordVisibility) VisualTransformation.None else PasswordVisualTransformation(),
+        trailingIcon = {
+            val image = if (passwordVisibility)
+                Icons.Default.Visibility
+            else Icons.Default.VisibilityOff
+
+            IconButton(onClick = {
+                passwordVisibility = !passwordVisibility
+            }) {
+                Icon(
+                    imageVector = image, contentDescription = null,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .width(24.dp)
+                        .height(24.dp)
+                )
+
+                IconButton(onClick = {passwordVisibility = !passwordVisibility}){
+                    Icon(imageVector  = image, null)
+                }
+            }
+        }
+    )
+}
+
+@Composable
 fun InputFieldLabelIcon(
     text: String,
     onValueChange: (String) -> Unit,
     fieldLabel: String,
     iconName: String,
-    viewModelVariable: MutableState<String>
+    viewModelVariable: MutableState<String>,
+    isPassword: Boolean = false
 ) {
     var iconId = -1
 
@@ -346,7 +404,12 @@ fun InputFieldLabelIcon(
             }
         }
 
-        InputField(text, onValueChange, viewModelVariable)
+        if (!isPassword) {
+            InputField(text, onValueChange, viewModelVariable)
+
+        } else {
+            PasswordInputField(text, onValueChange, viewModelVariable)
+        }
 
     }
 }
@@ -666,7 +729,11 @@ fun SettingsItem(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .clickable {if (rout != "") navController.navigate(rout)  else inProgressToastView(context)}
+            .clickable {
+                if (rout != "") navController.navigate(rout) else inProgressToastView(
+                    context
+                )
+            }
     ) {
         Text(
             modifier = Modifier
@@ -1072,12 +1139,14 @@ fun PopupButton(text: String) {
             color = Color.White,
             textAlign = TextAlign.Center,
             style = TextStyle(
-                fontSize = 12.sp))
+                fontSize = 12.sp
+            )
+        )
     }
 }
 
 fun inProgressToastView(context: Context) {
-    Toast.makeText(context, "W budowie",Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, "W budowie", Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
@@ -1117,6 +1186,15 @@ fun SignUpViewPreview() {
                 "",
                 viewModelVariable = remember { mutableStateOf("") }
             )
+            InputFieldLabelIcon(
+                text = "Text",
+                onValueChange = {},
+                fieldLabel = "Label",
+                "",
+                viewModelVariable = remember { mutableStateOf("") },
+                isPassword = true
+            )
+
 //            TextFilledButton(navController, "Text", "")
 //            UserCard(
 //                navController = navController,

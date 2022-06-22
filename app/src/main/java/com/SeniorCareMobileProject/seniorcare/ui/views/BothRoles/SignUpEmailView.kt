@@ -86,7 +86,8 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
                 onValueChange = {},
                 fieldLabel = "Hasło",
                 iconName = "lock",
-                viewModelVariable = sharedViewModel.password
+                viewModelVariable = sharedViewModel.password,
+                isPassword = true
             )
             InputFieldLabelIcon(
                 text = "Wprowadź swoje na imię",
