@@ -5,10 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
-import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
-import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.data.dao.*
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.google.android.gms.maps.model.LatLng
@@ -145,11 +142,20 @@ class Repository {
         val userReference = database.getReference("users/" + sharedViewModel.listOfAllSeniors[0])
         val userListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
-                val user = snapshot.getValue<User>()
+                val user = snapshot.getValue<SeniorAllDAO>()
                 if (user != null) {
-                    sharedViewModel.currentSeniorData.value = user
-                    sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(user))
-                    getSeniorLocation(sharedViewModel)
+                    sharedViewModel.currentSeniorData.value = User(user.email, user.firstName, user.lastName, user.function)
+                    if (user.location != null){
+                        sharedViewModel.seniorLocalization.value = LatLng(user.location.latitude!!, user.location.longitude!!)
+                        sharedViewModel.localizationAccuracy.value = user.location.accuracy!!
+                    }
+                    if (user.geofence != null){
+                        sharedViewModel.geofenceLocation.value = LatLng(user.geofence.latitude!!, user.geofence.longitude!!)
+                        sharedViewModel.geofenceRadius.value = user.geofence.radius!!
+                    }
+                    //getSeniorLocation(sharedViewModel)
+                    sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
+
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -371,7 +377,7 @@ class Repository {
     // GEOFENCE
     fun saveGeofenceStatusToFirebase(){
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
-        val databaseReference = databaseUserReference.child(userId).child("geofence")
+        val databaseReference = databaseUserReference.child(userId).child("geofence").child("status")
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
@@ -400,5 +406,28 @@ class Repository {
                 }
             }
         }
+    }
+
+    fun getGeofenceForSenior(sharedViewModel: SharedViewModel){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("geofence")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val geofence = snapshot.getValue<GeofenceDAO>()
+                if (geofence != null) {
+                    sharedViewModel.geofenceLocation.value = LatLng(geofence.latitude!!, geofence.longitude!!)
+                    sharedViewModel.geofenceRadius.value = geofence.radius!!
+                    Log.d("Wspolrzedne geofence", "${sharedViewModel.geofenceLocation.value.latitude} ${sharedViewModel.geofenceLocation.value.longitude}")
+
+                    sharedViewModel.hasSeniorData.value = true
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorLocation:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
     }
 }

@@ -119,7 +119,8 @@ fun GoogleMapView(
                     compassEnabled = false,
                     zoomControlsEnabled = false,
                     tiltGesturesEnabled = false,
-                    scrollGesturesEnabledDuringRotateOrZoom = false
+                    scrollGesturesEnabledDuringRotateOrZoom = false,
+                    zoomGesturesEnabled = false
                 )
             )
         }
@@ -196,8 +197,8 @@ fun GoogleMapView(
                 )
             }
 
-            sharedViewModel.seniorLocalizationZoom.value =
-                cameraPositionState.position.zoom
+            //sharedViewModel.seniorLocalizationZoom.value =
+            //    cameraPositionState.position.zoom
 
         }
         Box() {

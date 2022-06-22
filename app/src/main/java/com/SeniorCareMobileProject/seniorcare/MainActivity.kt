@@ -119,6 +119,13 @@ class MainActivity : ComponentActivity() {
             if (value) handleGeofence()
         })
 
+        sharedViewModel.hasSeniorData.observe(this, Observer { value ->
+            if (value){
+                createGeoFence(sharedViewModel.newGeofenceLocation.value,sharedViewModel.newGeofenceRadius.value, geofencingClient)
+                sharedViewModel.hasSeniorData.value = false
+            }
+        })
+
         sharedViewModel.onNotficationShow.observe(this, Observer { value ->
             if (value) showNotification(this, "title", "text")
         })
@@ -547,7 +554,6 @@ class MainActivity : ComponentActivity() {
 
     private fun handleGeofence() {
         Log.d("CreateGeofence", "Main")
-        createGeoFence(sharedViewModel.newGeofenceLocation.value,sharedViewModel.newGeofenceRadius.value, geofencingClient)
         sharedViewModel.onGeofenceRequest.value = false
         sharedViewModel.geofenceLocation.value = sharedViewModel.newGeofenceLocation.value
         sharedViewModel.geofenceRadius.value = sharedViewModel.newGeofenceRadius.value

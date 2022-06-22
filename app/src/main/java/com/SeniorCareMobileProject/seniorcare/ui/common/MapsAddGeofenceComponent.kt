@@ -109,7 +109,8 @@ private fun GoogleMapViewAddGeofence(
                 compassEnabled = false,
                 zoomControlsEnabled = false,
                 tiltGesturesEnabled = false,
-                scrollGesturesEnabledDuringRotateOrZoom = false
+                scrollGesturesEnabledDuringRotateOrZoom = false,
+                zoomGesturesEnabled = false
             )
         )
     }

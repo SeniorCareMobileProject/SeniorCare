@@ -67,6 +67,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val userDataStatus: LiveData<Resource<User>> = _userDataStatus
     val _currentSeniorDataStatus = MutableLiveData<Resource<User>>()
     val currentSeniorDataStatus: LiveData<Resource<User>> = _currentSeniorDataStatus
+    val hasSeniorData: MutableLiveData<Boolean> = MutableLiveData(false)
 
 
     // user data
@@ -193,5 +194,9 @@ class SharedViewModel : ViewModel(), KoinComponent {
     // GEOFENCE
     fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO){
         repository.saveGeofenceToFirebase(geoFenceLocation, this)
+    }
+
+    fun getGeofenceForSenior(){
+        repository.getGeofenceForSenior(this)
     }
 }
