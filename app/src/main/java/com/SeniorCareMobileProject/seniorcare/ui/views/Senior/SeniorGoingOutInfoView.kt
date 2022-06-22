@@ -42,7 +42,10 @@ fun SeniorGoingOutInfoView(navController: NavController) {
                 .clickable { navController.navigate(NavigationScreens.SeniorMainScreen.name) }
         )
         Column(
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier
+                .padding(16.dp)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Center
         ) {
             Surface(
                 modifier = Modifier
@@ -52,7 +55,7 @@ fun SeniorGoingOutInfoView(navController: NavController) {
                 Column(
                     modifier = Modifier
                         .padding(horizontal = 20.dp)
-                        .padding(vertical = 112.dp),
+                        .padding(vertical = 44.dp),
                 ) {
                     Text(
                         text = "Poinformowaliśmy twojego opiekuna o wyjściu z domu. Proszę wciśnij poniższy przycisk w momencie, gdy wrócisz do swojego domu.",

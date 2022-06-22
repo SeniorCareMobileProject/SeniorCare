@@ -16,8 +16,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -55,9 +58,9 @@ fun CarerMainView(
                 .fillMaxSize()
                 .padding(bottom = innerPadding.calculateBottomPadding())
         } else {
-            Modifier.height(349.dp)
+            Modifier
         }
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
@@ -65,7 +68,7 @@ fun CarerMainView(
 
 
             // 376.dp, 394.dp
-            Box(modifier = mapModifier
+            Column(modifier = mapModifier.weight(1f)
 //                .zIndex(-1f)
             ) {
                 MapWindowComponent(sharedViewModel = sharedViewModel)
@@ -75,24 +78,24 @@ fun CarerMainView(
 
                 Column(
                     modifier = Modifier
-                        .fillMaxHeight()
-                        .padding(top = 349.dp)
+                        .weight(1f)
+//                        .fillMaxHeight()
+//                        .padding(top = 349.dp)
                         .verticalScroll(scrollState)
+                        .border(
+                            width = 1.dp,
+                            color = Color(0xFFE6E6E6),
+                            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
+                        )
                         .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                         .background(Color.Transparent)
                         .padding(bottom = innerPadding.calculateBottomPadding()),
-                    verticalArrangement = Arrangement.Bottom
+                    verticalArrangement = Arrangement.Center
                 ) {
                     Column(
                         modifier = Modifier
                             .fillMaxWidth()
                             .wrapContentHeight()
-                            .border(
-                                width = 1.dp,
-                                color = Color(0xFFE6E6E6),
-                                shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                            )
-                            .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                             .background(Color.White),
                         verticalArrangement = Arrangement.spacedBy(18.dp),
                         horizontalAlignment = Alignment.CenterHorizontally

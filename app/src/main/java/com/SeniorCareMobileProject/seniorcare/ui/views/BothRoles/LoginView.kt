@@ -94,7 +94,8 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 onValueChange = {},
                 fieldLabel = "Hasło",
                 iconName = "lock",
-                viewModelVariable = sharedViewModel.password
+                viewModelVariable = sharedViewModel.password,
+                isPassword = true
             )
         }
 
