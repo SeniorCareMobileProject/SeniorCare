@@ -110,6 +110,10 @@ class Repository {
                     sharedViewModel._userData.value = user
                     sharedViewModel._userDataStatus.postValue(Resource.Success(user))
                 }
+                else {
+                    sharedViewModel._userDataStatus.postValue(Resource.Error("empty data"))
+                    sharedViewModel.isDataEmpty.value = true
+                }
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("Database", "loadPost:onCancelled", databaseError.toException())

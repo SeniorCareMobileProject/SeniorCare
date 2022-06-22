@@ -65,6 +65,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val userSignUpStatus: LiveData<Resource<AuthResult>> = _userSignUpStatus
     val _userDataStatus = MutableLiveData<Resource<User>>()
     val userDataStatus: LiveData<Resource<User>> = _userDataStatus
+    val isDataEmpty = MutableLiveData(false)
     val _currentSeniorDataStatus = MutableLiveData<Resource<User>>()
     val currentSeniorDataStatus: LiveData<Resource<User>> = _currentSeniorDataStatus
     val hasSeniorData: MutableLiveData<Boolean> = MutableLiveData(false)
@@ -173,6 +174,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     }
 
     val loadingGoogleSignInState = MutableStateFlow(LoadingState.IDLE)
+    val loadingGoogleLogInState = MutableStateFlow(LoadingState.IDLE)
 
     fun signWithCredential(credential: AuthCredential) = viewModelScope.launch {
         try {
@@ -181,6 +183,16 @@ class SharedViewModel : ViewModel(), KoinComponent {
             loadingGoogleSignInState.emit(LoadingState.LOADED)
         } catch (e: Exception) {
             loadingGoogleSignInState.emit(LoadingState.error(e.localizedMessage))
+        }
+    }
+
+    fun loginWithCredential(credential: AuthCredential) = viewModelScope.launch {
+        try {
+            loadingGoogleLogInState.emit(LoadingState.LOADING)
+            Firebase.auth.signInWithCredential(credential).await()
+            loadingGoogleLogInState.emit(LoadingState.LOADED)
+        } catch (e: Exception) {
+            loadingGoogleLogInState.emit(LoadingState.error(e.localizedMessage))
         }
     }
 
