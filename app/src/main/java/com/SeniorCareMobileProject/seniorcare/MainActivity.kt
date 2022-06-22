@@ -33,6 +33,8 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
+import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
@@ -549,6 +551,10 @@ class MainActivity : ComponentActivity() {
         sharedViewModel.onGeofenceRequest.value = false
         sharedViewModel.geofenceLocation.value = sharedViewModel.newGeofenceLocation.value
         sharedViewModel.geofenceRadius.value = sharedViewModel.newGeofenceRadius.value
+
+        // Zapis Geofence do firebase pod adres seniora
+        val geoFenceLocation = GeofenceDAO(sharedViewModel.geofenceLocation.value.latitude, sharedViewModel.geofenceLocation.value.longitude, sharedViewModel.geofenceRadius.value)
+        sharedViewModel.saveGeofenceToFirebase(geoFenceLocation)
     }
 
     private fun createGeoFence(location: LatLng, radius: Int, geofencingClient: GeofencingClient) {

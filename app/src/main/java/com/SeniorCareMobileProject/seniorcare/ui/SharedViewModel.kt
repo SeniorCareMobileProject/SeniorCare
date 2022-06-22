@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.compose.runtime.*
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
@@ -183,10 +184,14 @@ class SharedViewModel : ViewModel(), KoinComponent {
     }
 
     // LOCATION
-
     fun saveLocationToFirebase(){
         val locationAll = this@SharedViewModel.location.value
         val location = LocationDAO(locationAll?.latitude, locationAll?.longitude, locationAll?.accuracy)
         repository.saveLocationToFirebase(location)
+    }
+
+    // GEOFENCE
+    fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO){
+        repository.saveGeofenceToFirebase(geoFenceLocation, this)
     }
 }

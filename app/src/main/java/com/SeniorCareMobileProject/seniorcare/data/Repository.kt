@@ -5,6 +5,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
+import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
@@ -370,7 +371,7 @@ class Repository {
     // GEOFENCE
     fun saveGeofenceStatusToFirebase(){
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
-        val databaseReference = databaseUserReference.child(userId).child("location").child("geofence")
+        val databaseReference = databaseUserReference.child(userId).child("geofence")
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
@@ -384,14 +385,14 @@ class Repository {
         }
     }
 
-    fun saveGeofenceToFirebase(sharedViewModel: SharedViewModel){
+    fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO, sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
             .child(sharedViewModel.listOfAllSeniors[0])
             .child("geofence")
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
-                    //reference.setValue(location).await()
+                    reference.setValue(geoFenceLocation).await()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
