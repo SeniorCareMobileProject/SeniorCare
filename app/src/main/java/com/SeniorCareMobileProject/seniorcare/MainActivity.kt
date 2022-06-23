@@ -33,6 +33,7 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
@@ -128,7 +129,7 @@ class MainActivity : ComponentActivity() {
         })
 
         sharedViewModel.onNotficationShow.observe(this, Observer { value ->
-            if (value) showNotification(this, "title", "text")
+            if (value == "true") showNotification(context, "SENIOR POZA OBSZAREM", "SKONTAKTUJ SIE Z SENIOREM")
         })
 
 
@@ -562,6 +563,8 @@ class MainActivity : ComponentActivity() {
         // Zapis Geofence do firebase pod adres seniora
         val geoFenceLocation = GeofenceDAO(sharedViewModel.geofenceLocation.value.latitude, sharedViewModel.geofenceLocation.value.longitude, sharedViewModel.geofenceRadius.value)
         sharedViewModel.saveGeofenceToFirebase(geoFenceLocation)
+        sharedViewModel.deleteShowAlarm()
+        sharedViewModel.listenToGeofenceStatus()
     }
 
     private fun createGeoFence(location: LatLng, radius: Int, geofencingClient: GeofencingClient) {
@@ -713,16 +716,17 @@ class MainActivity : ComponentActivity() {
                 "${locations?.latitude}, ${locations?.longitude}"
             )
             if (location != null) {
-                locations = location
-                sharedViewModel.seniorLocalization.value =
-                    LatLng(location.latitude, location.longitude)
-                sharedViewModel.localizationAccuracy.value = location.accuracy
-                sharedViewModel.location.value = locations
-
                 val firebaseAuth = FirebaseAuth.getInstance()
                 val currentUser = firebaseAuth.currentUser?.uid
                 if (currentUser != null) {
-                    sharedViewModel.saveLocationToFirebase()
+                    if (sharedViewModel.userData.value?.function == "Senior"){
+                        locations = location
+                        sharedViewModel.seniorLocalization.value =
+                            LatLng(location.latitude, location.longitude)
+                        sharedViewModel.localizationAccuracy.value = location.accuracy
+                        sharedViewModel.location.value = locations
+                        sharedViewModel.saveLocationToFirebase()
+                    }
                 }
             }
         }
