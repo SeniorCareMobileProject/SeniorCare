@@ -641,7 +641,8 @@ fun TopBarLocation(
 fun TopBar(
     navController: NavController,
     scope: CoroutineScope,
-    scaffoldState: ScaffoldState
+    scaffoldState: ScaffoldState,
+    sharedViewModel: SharedViewModel
 ) {
     TopAppBar(backgroundColor = Color(0xFFCAAAF9)) {
         Row(
@@ -667,7 +668,7 @@ fun TopBar(
             }
 
             Text(
-                text = "Grzegorz Brzęczyszczykiewicz",
+                text = "${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -689,7 +690,7 @@ fun TopBar(
 @Composable
 fun TopBarSettings(
     navController: NavController,
-    text: String
+    sharedViewModel: SharedViewModel
 ) {
     TopAppBar(backgroundColor = Color(0xFFCAAAF9)) {
         Row(
@@ -708,7 +709,7 @@ fun TopBarSettings(
             }
 
             Text(
-                text = text,
+                text = "Ustawienia - ${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}",
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -1154,7 +1155,7 @@ fun inProgressToastView(context: Context) {
 fun SignUpViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-//        val sharedViewModel = SharedViewModel()
+        val sharedViewModel = SharedViewModel()
 
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
@@ -1207,7 +1208,7 @@ fun SignUpViewPreview() {
                 iconName = "menu",
                 rout = ""
             )
-            TopBarSettings(navController = navController, "Ustawienia - Piotr Kowalski")
+            TopBarSettings(navController = navController, sharedViewModel = sharedViewModel)
             SettingsItem(navController, "Przycisk SOS", "")
             SettingsItemWithIcon(navController, "Przycisk SOS", "", "edit")
             SettingsNumberElement("Paweł", 123456789, false)
@@ -1217,7 +1218,7 @@ fun SignUpViewPreview() {
 //                text = "Wizyta u lekarza\nData: 12.05.22 - godzina: 08:00",
 //                iconName = "calendar_month"
 //            )
-            TopBar(navController, scope, scaffoldState)
+            TopBar(navController, scope, scaffoldState, sharedViewModel)
 //            MedicalDataItem(
 //                "Przyjmowane leki:",
 //                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"

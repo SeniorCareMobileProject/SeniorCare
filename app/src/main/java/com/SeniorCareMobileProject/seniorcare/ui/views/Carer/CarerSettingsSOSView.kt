@@ -24,11 +24,11 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 
 
 @Composable
-fun CarerSettingsSOSView(navController: NavController) {
+fun CarerSettingsSOSView(navController: NavController, sharedViewModel: SharedViewModel) {
     val showDialog = remember { mutableStateOf(false) }
 
     Scaffold(
-        topBar = { TopBarSettings(navController, "Przycisk Sos - Piotr Kowalski") }) {
+        topBar = { TopBarSettings(navController, sharedViewModel) }) {
 
         if (showDialog.value) {
             NewContactPopupView(setShowDialog = { showDialog.value = it })
@@ -57,6 +57,7 @@ fun CarerSettingsSOSView(navController: NavController) {
 fun CarerSettingsSOSViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        CarerSettingsSOSView(navController)
+        val sharedViewModel = SharedViewModel()
+        CarerSettingsSOSView(navController, sharedViewModel)
     }
 }

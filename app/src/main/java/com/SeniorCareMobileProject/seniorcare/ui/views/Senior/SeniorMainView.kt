@@ -32,7 +32,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
 
     ) {
         Text(
-            text = "Witaj Piotr",
+            text = "Witaj ${sharedViewModel.userData.value?.firstName}",
             fontWeight = FontWeight.Medium,
             fontSize = 36.sp,
             color = MaterialTheme.colors.primary

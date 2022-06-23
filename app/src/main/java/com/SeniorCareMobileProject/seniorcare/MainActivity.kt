@@ -33,6 +33,9 @@ import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
+import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
+import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
@@ -117,8 +120,16 @@ class MainActivity : ComponentActivity() {
             if (value) handleGeofence()
         })
 
+        sharedViewModel.hasSeniorData.observe(this, Observer { value ->
+            if (value){
+                createGeoFence(sharedViewModel.geofenceLocation.value,sharedViewModel.geofenceRadius.value, geofencingClient)
+                sharedViewModel.hasSeniorData.value = false
+                Log.d("Create GeoFence", "Utworzono geofence")
+            }
+        })
+
         sharedViewModel.onNotficationShow.observe(this, Observer { value ->
-            if (value) showNotification(this, "title", "text")
+            if (value == "true") showNotification(context, "SENIOR POZA OBSZAREM", "SKONTAKTUJ SIE Z SENIOREM")
         })
 
 
@@ -387,17 +398,17 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(NavigationScreens.CarerSettingsListScreen.name) {
-                        CarerSettingsListView(navController)
+                        CarerSettingsListView(navController, sharedViewModel)
 
                     }
 
                     composable(NavigationScreens.CarerSettingsSOSScreen.name) {
-                        CarerSettingsSOSView(navController)
+                        CarerSettingsSOSView(navController, sharedViewModel)
 
                     }
 
                     composable(NavigationScreens.CarerSettingsSOSUpdateScreen.name) {
-                        CarerSettingsSOSUpdateView(navController)
+                        CarerSettingsSOSUpdateView(navController, sharedViewModel)
 
                     }
 
@@ -545,10 +556,15 @@ class MainActivity : ComponentActivity() {
 
     private fun handleGeofence() {
         Log.d("CreateGeofence", "Main")
-        createGeoFence(sharedViewModel.newGeofenceLocation.value,sharedViewModel.newGeofenceRadius.value, geofencingClient)
         sharedViewModel.onGeofenceRequest.value = false
         sharedViewModel.geofenceLocation.value = sharedViewModel.newGeofenceLocation.value
         sharedViewModel.geofenceRadius.value = sharedViewModel.newGeofenceRadius.value
+
+        // Zapis Geofence do firebase pod adres seniora
+        val geoFenceLocation = GeofenceDAO(sharedViewModel.geofenceLocation.value.latitude, sharedViewModel.geofenceLocation.value.longitude, sharedViewModel.geofenceRadius.value)
+        sharedViewModel.saveGeofenceToFirebase(geoFenceLocation)
+        sharedViewModel.deleteShowAlarm()
+        sharedViewModel.listenToGeofenceStatus()
     }
 
     private fun createGeoFence(location: LatLng, radius: Int, geofencingClient: GeofencingClient) {
@@ -700,16 +716,17 @@ class MainActivity : ComponentActivity() {
                 "${locations?.latitude}, ${locations?.longitude}"
             )
             if (location != null) {
-                locations = location
-                sharedViewModel.seniorLocalization.value =
-                    LatLng(location.latitude, location.longitude)
-                sharedViewModel.localizationAccuracy.value = location.accuracy
-                sharedViewModel.location.value = locations
-
                 val firebaseAuth = FirebaseAuth.getInstance()
                 val currentUser = firebaseAuth.currentUser?.uid
                 if (currentUser != null) {
-                    sharedViewModel.saveLocationToFirebase()
+                    if (sharedViewModel.userData.value?.function == "Senior"){
+                        locations = location
+                        sharedViewModel.seniorLocalization.value =
+                            LatLng(location.latitude, location.longitude)
+                        sharedViewModel.localizationAccuracy.value = location.accuracy
+                        sharedViewModel.location.value = locations
+                        sharedViewModel.saveLocationToFirebase()
+                    }
                 }
             }
         }

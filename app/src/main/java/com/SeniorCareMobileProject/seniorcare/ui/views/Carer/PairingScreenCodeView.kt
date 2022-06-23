@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -30,6 +31,7 @@ import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.google.android.material.progressindicator.CircularProgressIndicator
 
 
 @Composable
@@ -157,7 +159,14 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
                 .padding(top = 57.dp)
                 .padding(horizontal = 117.dp)
         ) {
-            PairingCodeText(sharedViewModel.pairingCode)
+            val pairingCode by sharedViewModel.pairingCode.observeAsState()
+            when (pairingCode){
+                "" -> {
+                    CircularProgressIndicator()
+                    sharedViewModel.createPairingCode()
+                }
+                else -> PairingCodeText(sharedViewModel.pairingCode)
+            }
         }
     }
 

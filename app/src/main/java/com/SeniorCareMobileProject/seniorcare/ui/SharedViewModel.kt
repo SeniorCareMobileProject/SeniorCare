@@ -5,6 +5,7 @@ import android.os.CountDownTimer
 import androidx.compose.runtime.*
 import androidx.lifecycle.*
 import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
@@ -37,7 +38,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val resetCamera = mutableStateOf(false)
     val locationBeforeFreeingCam = mutableStateOf(LatLng(52.408839, 16.906782))
 
-    val onNotficationShow = MutableLiveData<Boolean>(false)
+    val onNotficationShow = MutableLiveData<String>("false")
 
     //geofence
     val geofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
@@ -64,8 +65,10 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val userSignUpStatus: LiveData<Resource<AuthResult>> = _userSignUpStatus
     val _userDataStatus = MutableLiveData<Resource<User>>()
     val userDataStatus: LiveData<Resource<User>> = _userDataStatus
+    val isDataEmpty = MutableLiveData(false)
     val _currentSeniorDataStatus = MutableLiveData<Resource<User>>()
     val currentSeniorDataStatus: LiveData<Resource<User>> = _currentSeniorDataStatus
+    val hasSeniorData: MutableLiveData<Boolean> = MutableLiveData(false)
 
 
     // user data
@@ -86,7 +89,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
     // sos button
     val sosCascadeIndex: MutableLiveData<Int> = MutableLiveData(-2)
-    val sosCascadePhoneNumbers = listOf("111111111","222222222","333333333","444444444")
+    val sosCascadePhoneNumbers = listOf("604346348","734419423","883235958","444444444")
     val sosCascadeInterval:Long = 10000
     val sosCascadeTimer = object: CountDownTimer(sosCascadeInterval, 1000) {
         override fun onTick(millisUntilFinished: Long) {
@@ -171,6 +174,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     }
 
     val loadingGoogleSignInState = MutableStateFlow(LoadingState.IDLE)
+    val loadingGoogleLogInState = MutableStateFlow(LoadingState.IDLE)
 
     fun signWithCredential(credential: AuthCredential) = viewModelScope.launch {
         try {
@@ -182,11 +186,37 @@ class SharedViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    // LOCATION
+    fun loginWithCredential(credential: AuthCredential) = viewModelScope.launch {
+        try {
+            loadingGoogleLogInState.emit(LoadingState.LOADING)
+            Firebase.auth.signInWithCredential(credential).await()
+            loadingGoogleLogInState.emit(LoadingState.LOADED)
+        } catch (e: Exception) {
+            loadingGoogleLogInState.emit(LoadingState.error(e.localizedMessage))
+        }
+    }
 
+    // LOCATION
     fun saveLocationToFirebase(){
         val locationAll = this@SharedViewModel.location.value
         val location = LocationDAO(locationAll?.latitude, locationAll?.longitude, locationAll?.accuracy)
         repository.saveLocationToFirebase(location)
+    }
+
+    // GEOFENCE
+    fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO){
+        repository.saveGeofenceToFirebase(geoFenceLocation, this)
+    }
+
+    fun getGeofenceForSenior(){
+        repository.getGeofenceForSenior(this)
+    }
+
+    fun listenToGeofenceStatus(){
+        repository.listenToGeofenceStatus(this)
+    }
+
+    fun deleteShowAlarm(){
+        repository.deleteShowAlarm(this)
     }
 }

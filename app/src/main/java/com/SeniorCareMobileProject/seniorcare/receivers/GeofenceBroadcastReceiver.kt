@@ -31,7 +31,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             } else {
                 try {
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-                        showNotification(context, "SENIOR POZA OBSZAREM", "SKONTAKTUJ SIE Z SENIOREM")
+                        //showNotification(context, "SENIOR POZA OBSZAREM", "SKONTAKTUJ SIE Z SENIOREM")
 
                         checkAuthStatus(context)
 

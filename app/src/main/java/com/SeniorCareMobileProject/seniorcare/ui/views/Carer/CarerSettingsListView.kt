@@ -21,9 +21,9 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 
 
 @Composable
-fun CarerSettingsListView(navController: NavController) {
+fun CarerSettingsListView(navController: NavController, sharedViewModel: SharedViewModel) {
     Scaffold(
-        topBar = { TopBarSettings(navController, "Ustawienia - Piotr Kowalski") }) {
+        topBar = { TopBarSettings(navController, sharedViewModel) }) {
         Column(modifier = Modifier.fillMaxSize()) {
             SettingsItem(navController, "Przycisk SOS", "CarerSettingsSOSScreen")
             SettingsItem(navController, "Lokalizacja", "CarerSettingsSafeZoneScreen")
@@ -37,6 +37,7 @@ fun CarerSettingsListView(navController: NavController) {
 fun CarerSettingsListViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        CarerSettingsListView(navController)
+        val sharedViewModel = SharedViewModel()
+        CarerSettingsListView(navController, sharedViewModel)
     }
 }

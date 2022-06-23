@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.app.Activity
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -35,6 +36,8 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -87,7 +90,7 @@ fun DrawerItem(item: NavDrawerItem, selected: Boolean, onItemClick: (NavDrawerIt
 }
 
 @Composable
-fun Header() {
+fun Header(sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -120,9 +123,9 @@ fun Header() {
                     .height(64.dp)
             )
             Column() {
-                Text(text = "Karol Nowak", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                Text(text = "${sharedViewModel.userData.value?.firstName} ${sharedViewModel.userData.value?.lastName}", fontSize = 16.sp, fontWeight = FontWeight.Medium)
                 Text(
-                    text = "karol.nowak@gmail.com",
+                    text = "${sharedViewModel.userData.value?.email}",
                     fontSize = 14.sp,
                     textDecoration = TextDecoration.Underline
                 )
@@ -208,7 +211,17 @@ fun BottomButton(
 
     Button(
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFF1ECF8)),
-        onClick = {if (rout != "") navController.navigate(rout)  else inProgressToastView(context)}
+        onClick = {
+            if ((rout != "") && (rout != "sign out")){
+                navController.navigate(rout)
+            }
+            else if (rout == "sign out") {
+                FirebaseAuth.getInstance().signOut()
+                val activity = context as Activity
+                activity.finish()
+            }
+            else inProgressToastView(context)
+        }
     ) {
         Row(
             modifier = Modifier
@@ -270,14 +283,14 @@ fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState) {
             navController = navController,
             iconName = "clear",
             text = "Wyloguj się",
-            rout = ""
+            rout = "sign out"
         )
 
     }
 }
 
 @Composable
-fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
+fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController, sharedViewModel: SharedViewModel) {
     if (scaffoldState.drawerState.isOpen) {
         BackHandler {
             scope.launch {
@@ -293,7 +306,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             .background(Color(0xFFF1ECF8))
             .verticalScroll(scrollState)
     ) {
-        Header()
+        Header(sharedViewModel)
 
         Divider(
             modifier = Modifier.fillMaxWidth(),
@@ -320,5 +333,6 @@ fun DrawerPreview() {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val navController = rememberNavController()
-    Drawer(scope = scope, scaffoldState = scaffoldState, navController = navController)
+    val sharedViewModel  = SharedViewModel()
+    Drawer(scope = scope, scaffoldState = scaffoldState, navController = navController, sharedViewModel = sharedViewModel)
 }

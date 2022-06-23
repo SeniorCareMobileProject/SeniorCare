@@ -109,13 +109,14 @@ fun CarerMedicalInfoView(
     Scaffold(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
-        topBar = { TopBar(navController, scope, scaffoldState) },
+        topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
         bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(
                 scope = scope,
                 scaffoldState = scaffoldState,
-                navController = navController
+                navController = navController,
+                sharedViewModel = sharedViewModel
             )
         }) {innerPadding ->
         val scrollState = remember { ScrollState(0) }

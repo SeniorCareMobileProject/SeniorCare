@@ -38,14 +38,15 @@ fun CarerMainView(
 ) {
     Scaffold(
         bottomBar = { BottomNavBarView(navController, sharedViewModel) },
-        topBar = { TopBar(navController, scope, scaffoldState) },
+        topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         drawerContent = {
             Drawer(
                 scope = scope,
                 scaffoldState = scaffoldState,
-                navController = navController
+                navController = navController,
+                sharedViewModel = sharedViewModel
             )
         }) { innerPadding ->
         val scrollState = remember { ScrollState(0) }
