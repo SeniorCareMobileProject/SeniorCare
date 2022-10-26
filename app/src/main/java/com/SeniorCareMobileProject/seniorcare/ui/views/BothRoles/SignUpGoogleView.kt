@@ -42,6 +42,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -132,8 +133,9 @@ fun SignUpGoogleView(navController: NavController, sharedViewModel: SharedViewMo
     when(state.status) {
         LoadingState.Status.SUCCESS -> {
             LaunchedEffect(""){
-                sharedViewModel.writeNewUserFromGoogle(sharedViewModel.userData)
-                sharedViewModel.isAfterRegistration = true
+                if (sharedViewModel.isNewUser.value == true){
+                    sharedViewModel.writeNewUserFromGoogle(sharedViewModel.userData)
+                }
                 sharedViewModel.getUserData()
                 navController.navigate("LoadingDataView")
             }
