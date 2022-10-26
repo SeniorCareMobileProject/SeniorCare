@@ -1,6 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.app.Activity
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -34,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -219,6 +221,8 @@ fun BottomButton(
                 FirebaseAuth.getInstance().signOut()
                 val activity = context as Activity
                 activity.finish()
+                val intent = Intent(context, MainActivity::class.java)
+                activity.startActivity(intent)
             }
             else inProgressToastView(context)
         }

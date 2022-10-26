@@ -431,10 +431,12 @@ class MainActivity : ComponentActivity() {
                         CarerSettingsSafeZoneView(navController, sharedViewModel)
 
                     }
+
                 }
             }
         }
     }
+
 
     private fun createNotificationChannel(context: Context?) {
         // Create the NotificationChannel, but only on API 26+ because

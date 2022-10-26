@@ -1,10 +1,12 @@
 package com.SeniorCareMobileProject.seniorcare.data
 
-import android.location.Location
+import android.content.Context
+import android.provider.Settings.Secure.getString
 import android.util.Log
 import android.widget.Toast
 import androidx.lifecycle.LiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.dao.*
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -17,7 +19,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -159,7 +160,9 @@ class Repository {
                     }
                     //getSeniorLocation(sharedViewModel)
                     sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
-
+                }
+                else {
+                    sharedViewModel._currentSeniorDataStatus.postValue(Resource.Error("no connected senior"))
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -244,7 +247,7 @@ class Repository {
         return random
     }
 
-    fun pairingStatusListener(sharedViewModel: SharedViewModel){
+    private fun pairingStatusListener(sharedViewModel: SharedViewModel){
         val pairingDataReference = database
             .getReference("pairing")
             .child("data")
@@ -311,7 +314,9 @@ class Repository {
                 val data = snapshot.getValue<String>()
                 if (data != null){
                     sharedViewModel.pairingSeniorID.value = data
-                    sharedViewModel.writeNewConnectionStatus.postValue(Resource.Success(data))
+                    if (sharedViewModel.pairingSeniorID.value != firebaseAuth.currentUser!!.uid){
+                        sharedViewModel.writeNewConnectionStatus.postValue(Resource.Success(data))
+                    }
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
