@@ -1,6 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.app.Activity
+import android.content.Intent
 import android.os.CountDownTimer
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -88,6 +89,8 @@ fun SeniorButton(
                     FirebaseAuth.getInstance().signOut()
                     val activity = context as Activity
                     activity.finish()
+                    val intent = Intent(context, MainActivity::class.java)
+                    activity.startActivity(intent)
                 }
                 else inProgressToastView(context)
                        },
