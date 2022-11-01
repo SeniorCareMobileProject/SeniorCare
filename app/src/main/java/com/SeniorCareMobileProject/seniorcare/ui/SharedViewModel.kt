@@ -2,17 +2,22 @@ package com.SeniorCareMobileProject.seniorcare.ui
 
 import android.location.Location
 import android.os.CountDownTimer
-import androidx.compose.runtime.*
-import androidx.lifecycle.*
+import androidx.compose.runtime.mutableStateOf
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.SeniorCareMobileProject.seniorcare.data.CalendarEvent
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
-import com.google.firebase.auth.AuthCredential
 import com.google.android.gms.maps.model.LatLng
+import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
@@ -21,6 +26,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 
 class SharedViewModel : ViewModel(), KoinComponent {
@@ -58,7 +65,7 @@ class SharedViewModel : ViewModel(), KoinComponent {
     var emailForgotPassword = mutableStateOf("")
 
     // for checking if user is after logging in or after the register screen
-    var isAfterRegistration : Boolean = false
+    var isAfterRegistration: Boolean = false
 
     // for checking request state
     val _userSignUpStatus = MutableLiveData<Resource<AuthResult>>()
@@ -84,14 +91,16 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val pairingStatus: MutableLiveData<Boolean> = MutableLiveData(false)
     val pairingSeniorID: MutableLiveData<String> = MutableLiveData("")
     val writeNewConnectionStatus = MutableLiveData<Resource<String>>()
+
     // senior
     var codeInput = mutableStateOf("")
     val pairingDataStatus = MutableLiveData<Resource<PairingData>>()
+
     // sos button
     val sosCascadeIndex: MutableLiveData<Int> = MutableLiveData(-2)
-    val sosCascadePhoneNumbers = listOf("604346348","734419423","883235958","444444444")
-    val sosCascadeInterval:Long = 10000
-    val sosCascadeTimer = object: CountDownTimer(sosCascadeInterval, 1000) {
+    val sosCascadePhoneNumbers = listOf("604346348", "734419423", "883235958", "444444444")
+    val sosCascadeInterval: Long = 10000
+    val sosCascadeTimer = object : CountDownTimer(sosCascadeInterval, 1000) {
         override fun onTick(millisUntilFinished: Long) {
         }
 
@@ -99,6 +108,67 @@ class SharedViewModel : ViewModel(), KoinComponent {
             sosCascadeIndex.value = sosCascadeIndex.value!!.plus(1)
         }
     }
+
+    //Calendar events
+    //Stores data about new element
+    var newEvent = emptyEvent.copy()
+    //Stores original data about element that is being changed
+    var modifiedEvent = emptyEvent.copy()
+    var duringAddingOrEditing = mutableStateOf(false)
+    var createNewEvent = mutableStateOf(false)
+    var updateEvent = mutableStateOf(false)
+    var removeEvent = mutableStateOf(false)
+    var calendarEvents: MutableList<CalendarEvent> = mutableListOf(
+        CalendarEvent(
+            LocalDate(2022, 10, 31),
+            LocalTime(11, 30),
+            LocalTime(13, 0),
+            "Lekarz",
+            "Opis wydarzenia"
+        ),
+        CalendarEvent(
+            LocalDate(2022, 10, 31),
+            LocalTime(10, 0),
+            LocalTime(11, 30),
+            "Sambo",
+            "Opis"
+        ),
+        CalendarEvent(
+            LocalDate(2022, 10, 31),
+            LocalTime(16, 0),
+            LocalTime(18, 30),
+            "Lekarz",
+            "Opis wydarzenia"
+        ),
+        CalendarEvent(
+            LocalDate(2022, 11, 2),
+            LocalTime(10, 0),
+            LocalTime(11, 30),
+            "Lekarz",
+            "Opis wydarzenia"
+        ),
+        CalendarEvent(
+            LocalDate(2022, 11, 2),
+            LocalTime(13, 0),
+            LocalTime(15, 30),
+            "Lekasghasfdgasdarz",
+            "Opis wydaasdgadsrzenia"
+        ),
+        CalendarEvent(
+            LocalDate(2022, 11, 5),
+            LocalTime(10, 0),
+            LocalTime(11, 30),
+            "Opis wydarzenia",
+            ""
+        ),
+        CalendarEvent(
+            LocalDate(2022, 11, 5),
+            LocalTime(16, 0),
+            LocalTime(18, 30),
+            "Lekgsjfgarz",
+            "Opis wydasgfjdgfrzenia"
+        )
+    )
 
     private val repository = Repository()
 
@@ -109,67 +179,81 @@ class SharedViewModel : ViewModel(), KoinComponent {
         }
     }
 
-    fun registerUser(sharedViewModel: SharedViewModel, userEmailAddress: String, userLoginPassword: String, userFirstName: String, userLastName: String, userFunction: String){
+    fun registerUser(
+        sharedViewModel: SharedViewModel,
+        userEmailAddress: String,
+        userLoginPassword: String,
+        userFirstName: String,
+        userLastName: String,
+        userFunction: String
+    ) {
         _userSignUpStatus.postValue(Resource.Loading())
         viewModelScope.launch(Dispatchers.Main) {
-            repository.registerUser(this@SharedViewModel, userEmailAddress, userLoginPassword, userFirstName, userLastName, userFunction)
+            repository.registerUser(
+                this@SharedViewModel,
+                userEmailAddress,
+                userLoginPassword,
+                userFirstName,
+                userLastName,
+                userFunction
+            )
         }
     }
 
-    fun getUserData(){
+    fun getUserData() {
         viewModelScope.launch(Dispatchers.Main) {
             _userDataStatus.postValue(Resource.Loading())
             repository.getUserData(this@SharedViewModel)
         }
     }
 
-    fun getCurrentSeniorData(){
+    fun getCurrentSeniorData() {
         viewModelScope.launch(Dispatchers.Main) {
             _currentSeniorDataStatus.postValue(Resource.Loading())
             repository.getListOfSeniors(this@SharedViewModel)
         }
     }
 
-    fun getSeniorIDForPairing(){
+    fun getSeniorIDForPairing() {
         repository.getSeniorIDForPairing(this)
     }
 
-    fun createPairingCode(){
+    fun createPairingCode() {
         repository.createPairingCodeAndWriteToFirebase(this)
     }
 
-    fun deletePairingCode(){
+    fun deletePairingCode() {
         repository.removePairingCode(this)
     }
 
-    fun getPairingData(){
+    fun getPairingData() {
         viewModelScope.launch(Dispatchers.Main) {
             pairingDataStatus.postValue(Resource.Loading())
             repository.getPairingData(this@SharedViewModel)
         }
     }
 
-    fun writeSeniorIDForPairing(){
+    fun writeSeniorIDForPairing() {
         repository.writeSeniorIDForPairing(this)
     }
 
-    fun writeNewConnectionWith(carerID: String){
+    fun writeNewConnectionWith(carerID: String) {
         repository.writeNewConnectedWith(FirebaseAuth.getInstance().currentUser!!.uid, carerID)
     }
 
-    fun updatePairingStatus(){
+    fun updatePairingStatus() {
         repository.updatePairingStatus(this)
     }
 
     // GOOGLE SIGN IN
-    fun userDataFromGoogle(email: String, displayName: String){
+    fun userDataFromGoogle(email: String, displayName: String) {
         val fullName = displayName.split(" ")
         val firstName = fullName[0]
         val lastName = fullName[1]
         _userData.value = User(email, firstName, lastName, this.function.value)
     }
 
-    fun writeNewUserFromGoogle(userData: LiveData<User>){
+    fun writeNewUserFromGoogle(userData: LiveData<User>) {
         repository.writeNewUserFromGoogle(userData)
     }
 
@@ -197,26 +281,27 @@ class SharedViewModel : ViewModel(), KoinComponent {
     }
 
     // LOCATION
-    fun saveLocationToFirebase(){
+    fun saveLocationToFirebase() {
         val locationAll = this@SharedViewModel.location.value
-        val location = LocationDAO(locationAll?.latitude, locationAll?.longitude, locationAll?.accuracy)
+        val location =
+            LocationDAO(locationAll?.latitude, locationAll?.longitude, locationAll?.accuracy)
         repository.saveLocationToFirebase(location)
     }
 
     // GEOFENCE
-    fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO){
+    fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO) {
         repository.saveGeofenceToFirebase(geoFenceLocation, this)
     }
 
-    fun getGeofenceForSenior(){
+    fun getGeofenceForSenior() {
         repository.getGeofenceForSenior(this)
     }
 
-    fun listenToGeofenceStatus(){
+    fun listenToGeofenceStatus() {
         repository.listenToGeofenceStatus(this)
     }
 
-    fun deleteShowAlarm(){
+    fun deleteShowAlarm() {
         repository.deleteShowAlarm(this)
     }
 }

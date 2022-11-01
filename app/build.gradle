@@ -7,12 +7,12 @@ plugins {
 }
 
 android {
-    compileSdk 31
+    compileSdk 32
 
     defaultConfig {
         applicationId "com.SeniorCareMobileProject.seniorcare"
         minSdk 23
-        targetSdk 31
+        targetSdk 32
         versionCode 1
         versionName "1.0"
 
@@ -102,5 +102,7 @@ dependencies {
 
     // Icons
     implementation "androidx.compose.material:material-icons-extended:$compose_version"
+
+    implementation("com.himanshoe:kalendar:1.2.0")
 
 }
