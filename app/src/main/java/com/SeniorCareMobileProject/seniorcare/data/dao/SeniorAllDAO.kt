@@ -9,5 +9,6 @@ data class SeniorAllDAO (
     val lastName: String? = null,
     val function: String? = null,
     val location: LocationDAO? = null,
-    val geofence: GeofenceDAO? = null
+    val geofence: GeofenceDAO? = null,
+    val medicalInformation: MedInfoDAO? = null,
         )

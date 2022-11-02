@@ -1033,7 +1033,7 @@ fun MedicalDataItem(title: String, text: String) {
 }
 
 @Composable
-fun MedicalDataItemUpd(title: String, text: String) {
+fun MedicalDataItemUpd(title: String, text: String, sharedViewModel: SharedViewModel, index: Int) {
 //    val titleRem = remember { mutableStateOf(TextFieldValue(title)) }
     val textRem = remember { mutableStateOf(TextFieldValue(text)) }
 
@@ -1072,6 +1072,20 @@ fun MedicalDataItemUpd(title: String, text: String) {
 //            Text(text = text, fontSize = 14.sp)
         }
         Divider(thickness = 1.dp, color = Color(0xFFF5F5F5))
+
+        when (index) {
+            0 -> sharedViewModel.medInfo.value!!.firstName = textRem.value.text
+            1 -> sharedViewModel.medInfo.value!!.lastName = textRem.value.text
+            2 -> sharedViewModel.medInfo.value!!.birthday = textRem.value.text
+            3 -> sharedViewModel.medInfo.value!!.illnesses = textRem.value.text
+            4 -> sharedViewModel.medInfo.value!!.bloodType = textRem.value.text
+            5 -> sharedViewModel.medInfo.value!!.allergies = textRem.value.text
+            6 -> sharedViewModel.medInfo.value!!.medication = textRem.value.text
+            7 -> sharedViewModel.medInfo.value!!.height = textRem.value.text
+            8 -> sharedViewModel.medInfo.value!!.weight = textRem.value.text
+            9 -> sharedViewModel.medInfo.value!!.languages = textRem.value.text
+            10 -> sharedViewModel.medInfo.value!!.others = textRem.value.text
+        }
     }
 }
 

@@ -10,10 +10,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.SeniorCareMobileProject.seniorcare.data.CalendarEvent
 import com.SeniorCareMobileProject.seniorcare.data.Repository
-import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
-import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.data.dao.*
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
@@ -110,6 +107,9 @@ class SharedViewModel : ViewModel(), KoinComponent {
             sosCascadeIndex.value = sosCascadeIndex.value!!.plus(1)
         }
     }
+
+    // MEDICAL INFORMATION
+    val medInfo: MutableLiveData<MedInfoDAO> = MutableLiveData()
 
     //Calendar events
     //Stores data about new element
@@ -309,5 +309,14 @@ class SharedViewModel : ViewModel(), KoinComponent {
 
     fun deleteShowAlarm() {
         repository.deleteShowAlarm(this)
+    }
+
+    // MEDICAL INFO
+    fun saveMedicalInfoToFirebase(){
+        repository.saveMedicalInfo(this)
+    }
+
+    fun getMedicalInformationForSenior() {
+        repository.getMedicalInformationForSenior(this)
     }
 }
