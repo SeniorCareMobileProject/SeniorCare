@@ -20,10 +20,7 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SettingsItem
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SettingsItemWithIcon
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SettingsNumberElement
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBarSettings
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 
 
 @Composable
@@ -38,8 +35,9 @@ fun CarerSettingsSOSUpdateView(navController: NavController, sharedViewModel: Sh
                 "CarerSettingsSOSUpdateScreen",
                 "edit"
             )
-            SettingsNumberElement("Paweł", 123456789, true)
-            SettingsNumberElement("Agnieszka", 123456789, true)
+            for(i in 0 until sharedViewModel.sosCascadePhoneNumbers.size){
+                SettingsEditNumberElement(index = i, sharedViewModel = sharedViewModel)
+            }
         }
     }
 }
