@@ -196,15 +196,18 @@ fun ChooseRoleSection(sharedViewModel: SharedViewModel) {
 
     Column(
         modifier = Modifier
-            .padding(top = 20.dp)
+            .padding(top = 12.dp)
             .padding(horizontal = 16.dp)
     ) {
         Text(
-            modifier = Modifier.padding(bottom = 12.dp),
+            modifier = Modifier.padding(bottom = 8.dp),
             text = "Rola",
             fontWeight = FontWeight.Medium
         )
-        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.Center
+        ) {
             SmallButton(text = "Opiekun", firstPressed)
             SmallButton(text = "Podopieczny", secondPressed)
         }
@@ -354,8 +357,8 @@ fun PasswordInputField(
                         .height(24.dp)
                 )
 
-                IconButton(onClick = {passwordVisibility = !passwordVisibility}){
-                    Icon(imageVector  = image, null)
+                IconButton(onClick = { passwordVisibility = !passwordVisibility }) {
+                    Icon(imageVector = image, null)
                 }
             }
         }
