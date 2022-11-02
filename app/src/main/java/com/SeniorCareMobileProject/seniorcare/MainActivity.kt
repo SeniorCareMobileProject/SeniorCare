@@ -1,10 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare
 
 import android.Manifest
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.PendingIntent
+import android.app.*
 import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.*
@@ -40,6 +37,7 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
 import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
+import com.SeniorCareMobileProject.seniorcare.services.MainForegroundService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapsAddGeofenceComponent
@@ -56,17 +54,16 @@ import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 
 private const val TAG = "MainActivity"
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 private var locations: Location? = null
 
 class MainActivity : ComponentActivity() {
+
+    companion object {
+        const val ACTION_STOP_FOREGROUND = "${BuildConfig.APPLICATION_ID}.stop"
+    }
 
     private val geofencePendingIntent: PendingIntent by lazy {
         val intent = Intent(MyApplication.context, GeofenceBroadcastReceiver::class.java)
@@ -94,6 +91,7 @@ class MainActivity : ComponentActivity() {
     private var currentOnlyLocationService: CurrentLocationService? = null
     private lateinit var foregroundOnlyBroadcastReceiver: ForegroundOnlyBroadcastReceiver
     private lateinit var sharedPreferences: SharedPreferences
+
     private val foregroundOnlyServiceConnection = object : ServiceConnection {
         override fun onServiceConnected(name: ComponentName, service: IBinder) {
             val binder = service as CurrentLocationService.LocalBinder
@@ -115,6 +113,8 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         scheduleJob()
+        startForegroundService(Intent(this, MainForegroundService::class.java))
+
 
         sharedViewModel.onGeofenceRequest.observe(this, Observer { value ->
             if (value) handleGeofence()
@@ -670,6 +670,21 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
+    fun stopService(){
+        val intentStop = Intent(this, MainForegroundService::class.java)
+        intentStop.action = ACTION_STOP_FOREGROUND
+        startService(intentStop)
+    }
+
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+        for (service in manager.getRunningServices(Int.MAX_VALUE)) {
+            if (serviceClass.name == service.service.className) {
+                return true
+            }
+        }
+        return false
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -733,6 +748,7 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
+
 }
 
 

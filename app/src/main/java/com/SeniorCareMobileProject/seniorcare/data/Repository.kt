@@ -43,6 +43,7 @@ class Repository {
                         val userId = firebaseAuth.currentUser!!.uid
                         val newUser = User(userEmailAddress, userFirstName, userLastName, userFunction)
                         databaseUserReference.child(userId).setValue(newUser).await()
+
                         sharedViewModel._userSignUpStatus.postValue(Resource.Success(response))
                         Log.d("Rejestracja", "Udało się zarejestrować!")
                     }
