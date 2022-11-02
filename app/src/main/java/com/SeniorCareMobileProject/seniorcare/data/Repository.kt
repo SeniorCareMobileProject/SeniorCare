@@ -498,4 +498,35 @@ class Repository {
             }
         }
     }
+
+    fun getMedicalInformationForSenior(sharedViewModel: SharedViewModel) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("medicalInformation")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val medInfo = snapshot.getValue<MedInfoDAO>()
+                if (medInfo != null) {
+                    sharedViewModel.medInfo.value = MedInfoDAO(
+                        medInfo.firstName,
+                        medInfo.lastName,
+                        medInfo.birthday,
+                        medInfo.illnesses,
+                        medInfo.bloodType,
+                        medInfo.allergies,
+                        medInfo.medication,
+                        medInfo.height,
+                        medInfo.weight,
+                        medInfo.languages,
+                        medInfo.others
+                    )
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorMedInfo:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
+    }
 }

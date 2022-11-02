@@ -315,4 +315,8 @@ class SharedViewModel : ViewModel(), KoinComponent {
     fun saveMedicalInfoToFirebase(){
         repository.saveMedicalInfo(this)
     }
+
+    fun getMedicalInformationForSenior() {
+        repository.getMedicalInformationForSenior(this)
+    }
 }

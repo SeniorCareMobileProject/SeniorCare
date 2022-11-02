@@ -298,7 +298,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(NavigationScreens.SeniorMedicalInfoScreen.name) {
-                        SeniorMedicalInfoView(navController)
+                        SeniorMedicalInfoView(navController, sharedViewModel)
 
                     }
 

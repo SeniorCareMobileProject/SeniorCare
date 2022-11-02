@@ -17,12 +17,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorMedicalDataItem
@@ -98,24 +101,21 @@ fun SeniorTopBar(navController: NavController) {
 }
 
 @Composable
-fun SeniorMedicalInfoView(navController: NavController) {
+fun SeniorMedicalInfoView(navController: NavController, sharedViewModel: SharedViewModel) {
     val scrollState = remember { ScrollState(0) }
 
     val items = listOf(
-        listOf("Imię", "Grzegorz"),
-        listOf("Nazwisko", "Brzęczyszczykiewicz"),
-        listOf("Data urodzenia", "17.06.1943 (79 lat)"),
-        listOf("Choroby", "Demencja"),
-        listOf("Grupa krwi", "A+"),
-        listOf("Alergie", "Orzechy"),
-        listOf(
-            "Przyjmowane leki",
-            "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
-        ),
-        listOf("Wzrost", "168"),
-        listOf("Waga", "58"),
-        listOf("Główny język", "Polski"),
-        listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
+        listOf(stringResource(R.string.first_name), sharedViewModel.medInfo.value!!.firstName),
+        listOf(stringResource(R.string.last_name), sharedViewModel.medInfo.value!!.lastName),
+        listOf(stringResource(R.string.birthday), sharedViewModel.medInfo.value!!.birthday),
+        listOf(stringResource(R.string.illnesses), sharedViewModel.medInfo.value!!.illnesses),
+        listOf(stringResource(R.string.blood_type), sharedViewModel.medInfo.value!!.bloodType),
+        listOf(stringResource(R.string.allergies), sharedViewModel.medInfo.value!!.allergies),
+        listOf(stringResource(R.string.medication), sharedViewModel.medInfo.value!!.medication),
+        listOf(stringResource(R.string.height), sharedViewModel.medInfo.value!!.height),
+        listOf(stringResource(R.string.weight), sharedViewModel.medInfo.value!!.weight),
+        listOf(stringResource(R.string.languages), sharedViewModel.medInfo.value!!.languages),
+        listOf(stringResource(R.string.others), sharedViewModel.medInfo.value!!.others),
     )
 
     Scaffold(topBar = { SeniorTopBar(navController = navController) }) {
@@ -138,7 +138,7 @@ fun SeniorMedicalInfoView(navController: NavController) {
 fun SeniorMedicalInfoViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-//        val sharedViewModel = SharedViewModel()
-        SeniorMedicalInfoView(navController)
+        val sharedViewModel = SharedViewModel()
+        SeniorMedicalInfoView(navController, sharedViewModel = sharedViewModel)
     }
 }
