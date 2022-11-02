@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
+import android.content.SharedPreferences
 import android.location.Location
 import android.os.CountDownTimer
 import androidx.compose.runtime.mutableStateOf
@@ -29,6 +30,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
+
 
 class SharedViewModel : ViewModel(), KoinComponent {
 
@@ -77,10 +79,10 @@ class SharedViewModel : ViewModel(), KoinComponent {
     val currentSeniorDataStatus: LiveData<Resource<User>> = _currentSeniorDataStatus
     val hasSeniorData: MutableLiveData<Boolean> = MutableLiveData(false)
 
-
     // user data
     val _userData: MutableLiveData<User> = MutableLiveData()
     val userData: LiveData<User> = _userData
+    val isNewUser: MutableLiveData<Boolean> = MutableLiveData(false)
     val functionLiveData: MutableLiveData<String> = MutableLiveData(userData.value?.function)
     val listOfAllSeniors = mutableListOf<String>()
     val currentSeniorData: MutableLiveData<User> = MutableLiveData()
@@ -263,7 +265,11 @@ class SharedViewModel : ViewModel(), KoinComponent {
     fun signWithCredential(credential: AuthCredential) = viewModelScope.launch {
         try {
             loadingGoogleSignInState.emit(LoadingState.LOADING)
-            Firebase.auth.signInWithCredential(credential).await()
+            Firebase.auth.signInWithCredential(credential).addOnCompleteListener{
+                signInTask -> if(signInTask.isSuccessful){
+                    isNewUser.value = signInTask.result.additionalUserInfo?.isNewUser
+                }
+            }.await()
             loadingGoogleSignInState.emit(LoadingState.LOADED)
         } catch (e: Exception) {
             loadingGoogleSignInState.emit(LoadingState.error(e.localizedMessage))

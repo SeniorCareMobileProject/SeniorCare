@@ -151,7 +151,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 navController,
                 stringResource(R.string.continue_with_Google),
                 "google",
-                "CarerMainScreen",
+                "",
                 sharedViewModel,
                 launcher
             )

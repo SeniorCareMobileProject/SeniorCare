@@ -1,5 +1,8 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -26,6 +29,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MainActivity
+import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -163,7 +168,6 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
             when (pairingCode){
                 "" -> {
                     CircularProgressIndicator()
-                    sharedViewModel.createPairingCode()
                 }
                 else -> PairingCodeText(sharedViewModel.pairingCode)
             }
@@ -198,6 +202,14 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
                 }
             }
         }
+    }
+
+    BackHandler() {
+        sharedViewModel.deletePairingCode()
+        navController.navigate("LoadingDataView"){
+            popUpTo("PairingScreenCodeScreen") {inclusive = true}
+        }
+        sharedViewModel.pairingCode.value = ""
     }
 }
 

@@ -41,7 +41,7 @@ fun LoadingSeniorDataView(navController: NavController, sharedViewModel: SharedV
             is Resource.Loading<*> -> {
                 CircularProgressIndicator()
             }
-            else -> {Log.d("Error", "Error getting senior data")}
+            else -> {}
         }
     }
 }

@@ -35,6 +35,9 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
             is Resource.Success<*> -> {
                 Log.d("Funkcja", sharedViewModel.userData.value!!.function.toString())
                 LaunchedEffect(userDataState){
+                    if (sharedViewModel.userData.value?.connectedWith == null){
+                        sharedViewModel.isAfterRegistration = true
+                    }
                     if (sharedViewModel.userData.value!!.function == "Carer"){
                         if (sharedViewModel.isAfterRegistration){
                             // CREATE PAIRING
