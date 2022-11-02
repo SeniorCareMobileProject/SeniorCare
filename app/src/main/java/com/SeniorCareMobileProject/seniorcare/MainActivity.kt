@@ -37,7 +37,6 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
 import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
-import com.SeniorCareMobileProject.seniorcare.services.MainForegroundService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapsAddGeofenceComponent
@@ -113,7 +112,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         scheduleJob()
-        startForegroundService(Intent(this, MainForegroundService::class.java))
+     //   startForegroundService(Intent(this, MainForegroundService::class.java))
 
 
         sharedViewModel.onGeofenceRequest.observe(this, Observer { value ->
@@ -456,7 +455,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
-    fun showNotification(context: Context?, title: String, text: String) {
+    private fun showNotification(context: Context?, title: String, text: String) {
 
         createNotificationChannel(context)
         Log.d("Notification", "showing")
@@ -670,11 +669,11 @@ class MainActivity : ComponentActivity() {
             )
         }
     }
-    fun stopService(){
-        val intentStop = Intent(this, MainForegroundService::class.java)
-        intentStop.action = ACTION_STOP_FOREGROUND
-        startService(intentStop)
-    }
+//    fun stopService(){
+//        val intentStop = Intent(this, MainForegroundService::class.java)
+//        intentStop.action = ACTION_STOP_FOREGROUND
+//        startService(intentStop)
+//    }
 
     private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
         val manager = getSystemService(ACTIVITY_SERVICE) as ActivityManager

@@ -20,31 +20,31 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import java.util.concurrent.TimeUnit
 
-class MainForegroundService: Service() {
+class MainForegroundService2: Service() {
     override fun onBind(intent: Intent?): IBinder? {
         return null
     }
 
-    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
-    private lateinit var locationRequest: LocationRequest
-    private var currentLocation: Location? = null
-    private lateinit var locationCallback: LocationCallback
+//    private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
+//    private lateinit var locationRequest: LocationRequest
+//    private var currentLocation: Location? = null
+//    private lateinit var locationCallback: LocationCallback
 
 
     override fun onCreate() {
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        locationRequest = LocationRequest.create().apply {
-            interval = TimeUnit.SECONDS.toMillis(5)
-            fastestInterval = TimeUnit.SECONDS.toMillis(4)
-            maxWaitTime = TimeUnit.SECONDS.toMillis(10)
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-            }
-        }
-        subscribeToLocationUpdates()
+//        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+//        locationRequest = LocationRequest.create().apply {
+//            interval = TimeUnit.SECONDS.toMillis(5)
+//            fastestInterval = TimeUnit.SECONDS.toMillis(4)
+//            maxWaitTime = TimeUnit.SECONDS.toMillis(10)
+//            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+//        }
+//        locationCallback = object : LocationCallback() {
+//            override fun onLocationResult(locationResult: LocationResult) {
+//                super.onLocationResult(locationResult)
+//            }
+//        }
+//        subscribeToLocationUpdates()
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
@@ -57,7 +57,7 @@ class MainForegroundService: Service() {
 
             showNotification("SERVICE", "KILLED", false)
         }
-        subscribeToLocationUpdates()
+      //  subscribeToLocationUpdates()
         SystemClock.sleep(50000)
         return START_STICKY
     }
@@ -69,37 +69,37 @@ class MainForegroundService: Service() {
         super.onDestroy()
     }
 
-    private fun subscribeToLocationUpdates() {
-        try {
-            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
-                Log.d("Current Location Update", "${location?.latitude}, ${location?.longitude}")
-                showNotification("Senior", "${location?.latitude}, ${location?.longitude}", false)
-            }
-            fusedLocationProviderClient.requestLocationUpdates(
-                locationRequest, locationCallback, Looper.getMainLooper())
-        } catch (unlikely: SecurityException) {
-            Log.d("Problem", unlikely.toString())
-            SharedPreferenceUtil.saveLocationTrackingPref(this, false)
-        }
-        startService(Intent(this, MainForegroundService::class.java))
-    }
-
-    fun unSubscribeToLocationUpdates() {
-        try {
-            showNotification("SERVICE", "KILLED", false)
-            val removeTask = fusedLocationProviderClient.removeLocationUpdates(locationCallback)
-            removeTask.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    stopSelf()
-                } else {
-                    Log.d("TAG", "Failed to remove Location callback")
-                }
-            }
-            SharedPreferenceUtil.saveLocationTrackingPref(this, false)
-        } catch (unlikely: SecurityException) {
-            SharedPreferenceUtil.saveLocationTrackingPref(this, true)
-        }
-    }
+//    private fun subscribeToLocationUpdates() {
+//        try {
+//            fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
+//                Log.d("Current Location Update", "${location?.latitude}, ${location?.longitude}")
+//                showNotification("Senior", "${location?.latitude}, ${location?.longitude}", false)
+//            }
+//            fusedLocationProviderClient.requestLocationUpdates(
+//                locationRequest, locationCallback, Looper.getMainLooper())
+//        } catch (unlikely: SecurityException) {
+//            Log.d("Problem", unlikely.toString())
+//            SharedPreferenceUtil.saveLocationTrackingPref(this, false)
+//        }
+//       // startService(Intent(this, MainForegroundService::class.java))
+//    }
+//
+//    fun unSubscribeToLocationUpdates() {
+//        try {
+//            showNotification("SERVICE", "KILLED", false)
+//            val removeTask = fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+//            removeTask.addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    stopSelf()
+//                } else {
+//                    Log.d("TAG", "Failed to remove Location callback")
+//                }
+//            }
+//            SharedPreferenceUtil.saveLocationTrackingPref(this, false)
+//        } catch (unlikely: SecurityException) {
+//            SharedPreferenceUtil.saveLocationTrackingPref(this, true)
+//        }
+//    }
 
 
     val NOTIFICATION_CHANNEL_ID = "Senior Care"
