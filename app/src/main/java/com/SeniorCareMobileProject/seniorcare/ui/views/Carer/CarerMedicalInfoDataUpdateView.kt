@@ -15,17 +15,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun HeaderUpd() {
+fun HeaderUpd(navController: NavController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val iconId = remember("done") {
         context.resources.getIdentifier(
@@ -61,16 +64,28 @@ fun HeaderUpd() {
                 painter = painterResource(id = iconId),
                 contentDescription = "done",
                 tint = Color.Black,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .clickable {
+                        sharedViewModel.saveMedicalInfoToFirebase()
+                        navController.navigate(Screen.MedInfo.route){
+                            popUpTo(Screen.MedInfo.route) {inclusive = true}
+                        }
+                    }
             )
         }
     }
 }
 
 @Composable
-fun ItemsListUpd(items: List<List<String>>) {
+fun ItemsListUpd(items: List<List<String>>, sharedViewModel: SharedViewModel) {
     items.forEach { item ->
-        MedicalDataItemUpd(title = item.elementAt(0) + ":", text = item.elementAt(1))
+        MedicalDataItemUpd(
+            title = item.elementAt(0) + ":",
+            text = item.elementAt(1),
+            sharedViewModel = sharedViewModel,
+            index = items.indexOf(item)
+        )
     }
 }
 
@@ -79,9 +94,23 @@ fun CarerMedicalInfoDataUpdateView(
     navController: NavController,
     sharedViewModel: SharedViewModel,
     scope: CoroutineScope,
-    scaffoldState: ScaffoldState,
-    items: List<List<String>>
+    scaffoldState: ScaffoldState
 ) {
+
+    val items = listOf(
+        listOf(stringResource(R.string.first_name), sharedViewModel.medInfo.value!!.firstName),
+        listOf(stringResource(R.string.last_name), sharedViewModel.medInfo.value!!.lastName),
+        listOf(stringResource(R.string.birthday), sharedViewModel.medInfo.value!!.birthday),
+        listOf(stringResource(R.string.illnesses), sharedViewModel.medInfo.value!!.illnesses),
+        listOf(stringResource(R.string.blood_type), sharedViewModel.medInfo.value!!.bloodType),
+        listOf(stringResource(R.string.allergies), sharedViewModel.medInfo.value!!.allergies),
+        listOf(stringResource(R.string.medication), sharedViewModel.medInfo.value!!.medication),
+        listOf(stringResource(R.string.height), sharedViewModel.medInfo.value!!.height),
+        listOf(stringResource(R.string.weight), sharedViewModel.medInfo.value!!.weight),
+        listOf(stringResource(R.string.languages), sharedViewModel.medInfo.value!!.languages),
+        listOf(stringResource(R.string.others), sharedViewModel.medInfo.value!!.others),
+    )
+
     Scaffold(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
@@ -107,8 +136,8 @@ fun CarerMedicalInfoDataUpdateView(
                     .verticalScroll(scrollState)
 
             ) {
-                HeaderUpd()
-                ItemsListUpd(items)
+                HeaderUpd(navController, sharedViewModel)
+                ItemsListUpd(items, sharedViewModel)
             }
         }
 
@@ -124,21 +153,6 @@ fun CarerMedicalInfoDataUpdateViewPreview() {
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
-        val items = listOf(
-            listOf("Data urodzenia", "17.06.1943 (79 lat)"),
-            listOf("Choroby", "Demencja"),
-            listOf("Grupa krwi", "A+"),
-            listOf("Alergie", "Orzechy"),
-            listOf(
-                "Przyjmowane leki",
-                "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
-            ),
-            listOf("Wzrost", "168"),
-            listOf("Waga", "58"),
-            listOf("Główny język", "Polski"),
-            listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
-        )
-
-        CarerMedicalInfoDataUpdateView(navController, sharedViewModel, scope, scaffoldState, items)
+        CarerMedicalInfoDataUpdateView(navController, sharedViewModel, scope, scaffoldState)
     }
 }

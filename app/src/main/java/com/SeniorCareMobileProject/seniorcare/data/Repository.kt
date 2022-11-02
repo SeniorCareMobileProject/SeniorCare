@@ -158,6 +158,21 @@ class Repository {
                         sharedViewModel.geofenceLocation.value = LatLng(user.geofence.latitude!!, user.geofence.longitude!!)
                         sharedViewModel.geofenceRadius.value = user.geofence.radius!!
                     }
+                    if (user.medicalInformation != null){
+                        sharedViewModel.medInfo.value = MedInfoDAO(
+                            user.medicalInformation.firstName,
+                            user.medicalInformation.lastName,
+                            user.medicalInformation.birthday,
+                            user.medicalInformation.illnesses,
+                            user.medicalInformation.bloodType,
+                            user.medicalInformation.allergies,
+                            user.medicalInformation.medication,
+                            user.medicalInformation.height,
+                            user.medicalInformation.weight,
+                            user.medicalInformation.languages,
+                            user.medicalInformation.others
+                        )
+                    }
                     //getSeniorLocation(sharedViewModel)
                     sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
                 }
@@ -465,5 +480,22 @@ class Repository {
             .child("geofence")
             .child("showAlarm")
         reference.removeValue()
+    }
+
+    fun saveMedicalInfo(sharedViewModel: SharedViewModel){
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("medicalInformation")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(sharedViewModel.medInfo.value).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("LocationFirebase", e.message.toString())
+                }
+            }
+        }
     }
 }

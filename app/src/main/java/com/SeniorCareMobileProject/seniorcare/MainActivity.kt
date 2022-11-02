@@ -36,6 +36,7 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
+import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
@@ -191,23 +192,7 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 val scope = rememberCoroutineScope()
                 val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-
-                val items = listOf(
-                    listOf("Imię", "Grzegorz"),
-                    listOf("Nazwisko", "Brzęczyszczykiewicz"),
-                    listOf("Data urodzenia", "17.06.1943 (79 lat)"),
-                    listOf("Choroby", "Demencja"),
-                    listOf("Grupa krwi", "A+"),
-                    listOf("Alergie", "Orzechy"),
-                    listOf(
-                        "Przyjmowane leki",
-                        "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
-                    ),
-                    listOf("Wzrost", "168"),
-                    listOf("Waga", "58"),
-                    listOf("Główny język", "Polski"),
-                    listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
-                )
+                setMedInfoToNotBeNull()
 
                 NavHost(
                     navController,
@@ -383,8 +368,7 @@ class MainActivity : ComponentActivity() {
                             navController,
                             sharedViewModel,
                             scope,
-                            scaffoldState,
-                            items
+                            scaffoldState
                         )
                     }
                     composable(NavigationScreens.SeniorSettingsScreen.name) {
@@ -437,6 +421,20 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun setMedInfoToNotBeNull(){
+        sharedViewModel.medInfo.value = MedInfoDAO(
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        )
+    }
 
     private fun createNotificationChannel(context: Context?) {
         // Create the NotificationChannel, but only on API 26+ because
