@@ -1,5 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.app.Activity
+import android.content.Intent
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -33,7 +35,11 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MainActivity
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.launch
 
@@ -86,7 +92,7 @@ fun DrawerItem(item: NavDrawerItem, selected: Boolean, onItemClick: (NavDrawerIt
 }
 
 @Composable
-fun Header() {
+fun Header(sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -119,9 +125,9 @@ fun Header() {
                     .height(64.dp)
             )
             Column() {
-                Text(text = "Karol Nowak", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                Text(text = "${sharedViewModel.userData.value?.firstName} ${sharedViewModel.userData.value?.lastName}", fontSize = 16.sp, fontWeight = FontWeight.Medium)
                 Text(
-                    text = "karol.nowak@gmail.com",
+                    text = "${sharedViewModel.userData.value?.email}",
                     fontSize = 14.sp,
                     textDecoration = TextDecoration.Underline
                 )
@@ -132,13 +138,16 @@ fun Header() {
 
 @Composable
 fun SeniorsList(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
+    val context = LocalContext.current
+
     val items = listOf(
         NavDrawerItem.User1,
         NavDrawerItem.User2
     )
     Column(
         modifier = Modifier
-            .height(448.dp)
+            .fillMaxWidth()
+            .wrapContentHeight()
             .padding(top = 30.dp)
     ) {
         Text(
@@ -149,29 +158,40 @@ fun SeniorsList(scope: CoroutineScope, scaffoldState: ScaffoldState, navControll
         // List of navigation items
         val navBackStackEntry by navController.currentBackStackEntryAsState()
         val currentRoute = navBackStackEntry?.destination?.route
+        /**
+         * Ten kod jest tymczasowy, kod niżej musi być użyty (skomentowany)
+         */
         items.forEach { item ->
-            DrawerItem(item = item, selected = currentRoute == item.route, onItemClick = {
-                navController.navigate(item.route) {
-                    // Pop up to the start destination of the graph to
-                    // avoid building up a large stack of destinations
-                    // on the back stack as users select items
-                    navController.graph.startDestinationRoute?.let { route ->
-                        popUpTo(route) {
-                            saveState = true
-                        }
-                    }
-                    // Avoid multiple copies of the same destination when
-                    // reselecting the same item
-                    launchSingleTop = true
-                    // Restore state when reselecting a previously selected item
-                    restoreState = true
-                }
-                // Close drawer
-                scope.launch {
-                    scaffoldState.drawerState.close()
-                }
-            })
+            DrawerItem(
+                item = item,
+                selected = currentRoute == item.route,
+                onItemClick = { inProgressToastView(context) })
         }
+
+
+//        items.forEach { item ->
+//            DrawerItem(item = item, selected = currentRoute == item.route, onItemClick = {
+//                navController.navigate(item.route) {
+//                    // Pop up to the start destination of the graph to
+//                    // avoid building up a large stack of destinations
+//                    // on the back stack as users select items
+//                    navController.graph.startDestinationRoute?.let { route ->
+//                        popUpTo(route) {
+//                            saveState = true
+//                        }
+//                    }
+//                    // Avoid multiple copies of the same destination when
+//                    // reselecting the same item
+//                    launchSingleTop = true
+//                    // Restore state when reselecting a previously selected item
+//                    restoreState = true
+//                }
+//                // Close drawer
+//                scope.launch {
+//                    scaffoldState.drawerState.close()
+//                }
+//            })
+//        }
     }
 }
 
@@ -193,7 +213,19 @@ fun BottomButton(
 
     Button(
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFF1ECF8)),
-        onClick = { navController.navigate(rout) }
+        onClick = {
+            if ((rout != "") && (rout != "sign out")){
+                navController.navigate(rout)
+            }
+            else if (rout == "sign out") {
+                FirebaseAuth.getInstance().signOut()
+                val activity = context as Activity
+                activity.finish()
+                val intent = Intent(context, MainActivity::class.java)
+                activity.startActivity(intent)
+            }
+            else inProgressToastView(context)
+        }
     ) {
         Row(
             modifier = Modifier
@@ -220,7 +252,9 @@ fun BottomButton(
 @Composable
 fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState) {
     Column(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight(),
         verticalArrangement = Arrangement.Bottom
     ) {
         Divider(
@@ -253,14 +287,14 @@ fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState) {
             navController = navController,
             iconName = "clear",
             text = "Wyloguj się",
-            rout = ""
+            rout = "sign out"
         )
 
     }
 }
 
 @Composable
-fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
+fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController, sharedViewModel: SharedViewModel) {
     if (scaffoldState.drawerState.isOpen) {
         BackHandler {
             scope.launch {
@@ -276,7 +310,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             .background(Color(0xFFF1ECF8))
             .verticalScroll(scrollState)
     ) {
-        Header()
+        Header(sharedViewModel)
 
         Divider(
             modifier = Modifier.fillMaxWidth(),
@@ -285,16 +319,24 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
         )
 
         SeniorsList(scope, scaffoldState, navController)
-
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .fillMaxHeight()
+            .background(Color(0xFFF1ECF8)),
+        verticalArrangement = Arrangement.Bottom
+    ) {
         BottomButtons(navController, scaffoldState)
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true, heightDp = 800)
 @Composable
 fun DrawerPreview() {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val navController = rememberNavController()
-    Drawer(scope = scope, scaffoldState = scaffoldState, navController = navController)
+    val sharedViewModel  = SharedViewModel()
+    Drawer(scope = scope, scaffoldState = scaffoldState, navController = navController, sharedViewModel = sharedViewModel)
 }

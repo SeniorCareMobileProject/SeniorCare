@@ -48,7 +48,7 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
-            .verticalScroll(scrollState)
+//            .verticalScroll(scrollState)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
@@ -61,97 +61,107 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
 
         Column(
             modifier = Modifier
-                .padding(top = 50.dp)
-                .padding(horizontal = 24.dp)
+                .fillMaxHeight(),
+            verticalArrangement = Arrangement.Center
         ) {
-            Text(text = "Rejestracja", color = MaterialTheme.colors.primary, style = h1)
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color.White)
-                .padding(top = 5.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            InputFieldLabelIcon(
-                text = "Twój adres email",
-                onValueChange = {},
-                fieldLabel = "Email",
-                iconName = "alternate_email",
-                viewModelVariable = sharedViewModel.email
-            )
-            InputFieldLabelIcon(
-                text = "Twoje hasło",
-                onValueChange = {},
-                fieldLabel = "Hasło",
-                iconName = "lock",
-                viewModelVariable = sharedViewModel.password
-            )
-            InputFieldLabelIcon(
-                text = "Wprowadź swoje na imię",
-                onValueChange = {},
-                fieldLabel = "Imię",
-                iconName = "",
-                viewModelVariable = sharedViewModel.firstName
-            )
-            InputFieldLabelIcon(
-                text = "Wprowadź swoje nazwisko",
-                onValueChange = {},
-                fieldLabel = "Nazwiko",
-                iconName = "",
-                viewModelVariable = sharedViewModel.lastName
-            )
-        }
-
-        ChooseRoleSection(sharedViewModel)
-
-        Column(
-            modifier = Modifier
-                .padding(top = 40.dp)
-                .padding(horizontal = 12.dp)
-        ) {
-            RegisterButton(navController, "Zarejestruj", sharedViewModel, context)
-
-            Row(
-                Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            Column(
+                modifier = Modifier
+//                .padding(top = 50.dp)
+                    .padding(horizontal = 24.dp)
             ) {
-                Text(text = "Już masz konto?", modifier = Modifier.padding(horizontal = 8.dp))
-                Text(
-                    text = "Zaloguj się",
-                    fontSize = 16.sp,
-                    color = MaterialTheme.colors.primary,
-                    style = TextStyle(textDecoration = TextDecoration.Underline),
-                    fontWeight = FontWeight.Medium,
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .clickable { navController.navigate("LoginScreen") }
+                Text(text = "Rejestracja", color = MaterialTheme.colors.primary, style = h1)
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color.White)
+                    .padding(top = 5.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                InputFieldLabelIcon(
+                    text = "Twój adres email",
+                    onValueChange = {},
+                    fieldLabel = "Email",
+                    iconName = "alternate_email",
+                    viewModelVariable = sharedViewModel.email
+                )
+                InputFieldLabelIcon(
+                    text = "Twoje hasło",
+                    onValueChange = {},
+                    fieldLabel = "Hasło",
+                    iconName = "lock",
+                    viewModelVariable = sharedViewModel.password,
+                    isPassword = true
+                )
+                InputFieldLabelIcon(
+                    text = "Wprowadź swoje na imię",
+                    onValueChange = {},
+                    fieldLabel = "Imię",
+                    iconName = "",
+                    viewModelVariable = sharedViewModel.firstName
+                )
+                InputFieldLabelIcon(
+                    text = "Wprowadź swoje nazwisko",
+                    onValueChange = {},
+                    fieldLabel = "Nazwiko",
+                    iconName = "",
+                    viewModelVariable = sharedViewModel.lastName
                 )
             }
-        }
 
+            ChooseRoleSection(sharedViewModel)
+
+            Column(
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .padding(horizontal = 12.dp)
+            ) {
+                RegisterButton(navController, "Zarejestruj", sharedViewModel, context)
+
+                Row(
+                    Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "Już masz konto?", modifier = Modifier.padding(horizontal = 8.dp))
+                    Text(
+                        text = "Zaloguj się",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colors.primary,
+                        style = TextStyle(textDecoration = TextDecoration.Underline),
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .clickable { navController.navigate("LoginScreen") }
+                    )
+                }
+            }
+        }
     }
 }
 
 @Composable
-fun RegisterButton(navController: NavController, text: String, sharedViewModel: SharedViewModel, context: Context) {
+fun RegisterButton(
+    navController: NavController,
+    text: String,
+    sharedViewModel: SharedViewModel,
+    context: Context
+) {
     Button(
         onClick = {
-            if (sharedViewModel.isFunctionCarer.value){
+            if (sharedViewModel.isFunctionCarer.value) {
                 sharedViewModel.function.value = "Carer"
             }
-            if (sharedViewModel.isFunctionSenior.value){
+            if (sharedViewModel.isFunctionSenior.value) {
                 sharedViewModel.function.value = "Senior"
             }
 
             if (sharedViewModel.function.value == "") {
                 Toast.makeText(context, "You must choose a function", Toast.LENGTH_LONG).show()
-            }
-            else{
+            } else {
                 sharedViewModel.registerUser(
                     sharedViewModel,
                     sharedViewModel.email.value,

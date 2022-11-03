@@ -29,10 +29,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.body_16
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
@@ -42,6 +42,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.GoogleAuthProvider
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
+import com.google.firebase.auth.FirebaseAuth
 
 
 @Composable
@@ -132,8 +133,9 @@ fun SignUpGoogleView(navController: NavController, sharedViewModel: SharedViewMo
     when(state.status) {
         LoadingState.Status.SUCCESS -> {
             LaunchedEffect(""){
-                sharedViewModel.writeNewUserFromGoogle(sharedViewModel.userData)
-                sharedViewModel.isAfterRegistration = true
+                if (sharedViewModel.isNewUser.value == true){
+                    sharedViewModel.writeNewUserFromGoogle(sharedViewModel.userData)
+                }
                 sharedViewModel.getUserData()
                 navController.navigate("LoadingDataView")
             }

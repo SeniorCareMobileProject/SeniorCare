@@ -2,7 +2,7 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
-import androidx.compose.foundation.gestures.draggable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
@@ -14,17 +14,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun Header() {
+fun Header(
+    navController: NavController,
+    items: List<List<String>>
+) {
     val context = LocalContext.current
     val iconId = remember("edit") {
         context.resources.getIdentifier(
@@ -60,7 +66,11 @@ fun Header() {
                 painter = painterResource(id = iconId),
                 contentDescription = "edit",
                 tint = Color.Black,
-                modifier = Modifier.padding(horizontal = 8.dp)
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .clickable {
+                        navController.navigate(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name)
+                    }
             )
         }
 
@@ -77,36 +87,37 @@ fun ItemsList(items: List<List<String>>) {
 @Composable
 fun CarerMedicalInfoView(
     navController: NavController,
+    sharedViewModel: SharedViewModel,
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
     val items = listOf(
-        listOf("Data urodzenia", "17.06.1943 (79 lat)"),
-        listOf("Choroby", "Demencja"),
-        listOf("Grupa krwi", "A+"),
-        listOf("Alergie", "Orzechy"),
-        listOf(
-            "Przyjmowane leki",
-            "Donepezil (50mg dwa razy dziennie)\n" + "Galantamin (25mg trzy razy dziennie)"
-        ),
-        listOf("Wzrost", "168"),
-        listOf("Waga", "58"),
-        listOf("Główny język", "Polski"),
-        listOf("Inne", "Inne informacje/uwagi o podopiecznym"),
+        listOf(stringResource(R.string.first_name), sharedViewModel.medInfo.value!!.firstName),
+        listOf(stringResource(R.string.last_name), sharedViewModel.medInfo.value!!.lastName),
+        listOf(stringResource(R.string.birthday), sharedViewModel.medInfo.value!!.birthday),
+        listOf(stringResource(R.string.illnesses), sharedViewModel.medInfo.value!!.illnesses),
+        listOf(stringResource(R.string.blood_type), sharedViewModel.medInfo.value!!.bloodType),
+        listOf(stringResource(R.string.allergies), sharedViewModel.medInfo.value!!.allergies),
+        listOf(stringResource(R.string.medication), sharedViewModel.medInfo.value!!.medication),
+        listOf(stringResource(R.string.height), sharedViewModel.medInfo.value!!.height),
+        listOf(stringResource(R.string.weight), sharedViewModel.medInfo.value!!.weight),
+        listOf(stringResource(R.string.languages), sharedViewModel.medInfo.value!!.languages),
+        listOf(stringResource(R.string.others), sharedViewModel.medInfo.value!!.others),
     )
 
     Scaffold(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
-        topBar = { TopBar(navController, scope, scaffoldState) },
-        bottomBar = { BottomNavigationBarView(navController) },
+        topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
+        bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(
                 scope = scope,
                 scaffoldState = scaffoldState,
-                navController = navController
+                navController = navController,
+                sharedViewModel = sharedViewModel
             )
-        }) {
+        }) {innerPadding ->
         val scrollState = remember { ScrollState(0) }
 
         Column(
@@ -115,10 +126,11 @@ fun CarerMedicalInfoView(
                 .fillMaxHeight()
                 .background(Color.White)
                 .verticalScroll(scrollState)
+                .padding(bottom = innerPadding.calculateBottomPadding())
 
         ) {
 
-            Header()
+            Header(navController, items)
             ItemsList(items)
         }
     }
@@ -129,9 +141,10 @@ fun CarerMedicalInfoView(
 fun CarerMedicalInfoViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
+        val sharedViewModel = SharedViewModel()
         val scope = rememberCoroutineScope()
         val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
 
-        CarerMedicalInfoView(navController, scope, scaffoldState)
+        CarerMedicalInfoView(navController, sharedViewModel, scope, scaffoldState)
     }
 }

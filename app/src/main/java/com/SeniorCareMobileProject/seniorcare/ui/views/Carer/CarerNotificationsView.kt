@@ -8,7 +8,6 @@ import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -54,14 +53,15 @@ fun CarerNotificationsView(
     Scaffold(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
-        topBar = { TopBar(navController, scope, scaffoldState) },
+        topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
         floatingActionButton = { FloatingButton() },
-        bottomBar = { BottomNavigationBarView(navController) },
+        bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(
                 scope = scope,
                 scaffoldState = scaffoldState,
-                navController = navController
+                navController = navController,
+                sharedViewModel = sharedViewModel
             )
         }) {
         val scrollState = remember { ScrollState(0) }
