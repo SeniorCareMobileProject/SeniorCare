@@ -28,7 +28,6 @@ fun CarerSettingsSOSUpdateView(navController: NavController, sharedViewModel: Sh
     Scaffold(
         topBar = { TopBarSettings(navController, sharedViewModel) }) {
         Column(modifier = Modifier.fillMaxSize()) {
-            SettingsItem(navController, "Dodaj numer", "")
             SettingsItemWithIcon(
                 navController,
                 "Lista opiekunów",

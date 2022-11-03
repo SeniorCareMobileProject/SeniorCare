@@ -860,6 +860,7 @@ fun SettingsNumberElement(
     sharedViewModel: SharedViewModel
 ) {
 
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -871,31 +872,54 @@ fun SettingsNumberElement(
                     .padding(start = 16.dp)
                     .padding(top = 16.dp)
             ) {
+
+                Column(
+                    modifier = Modifier
+                        .width(160.dp),
+                    horizontalAlignment = Alignment.Start
+                ){
                 Text(
+
                     text = sharedViewModel.sosPhoneNumbersNames[index],
                     color = Color.Black,
-                    textAlign = TextAlign.Start,
                     lineHeight = 24.sp,
                     style = TextStyle(
                         fontSize = 16.sp
                     )
-                )
+                )}
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 20.dp),
-                    horizontalAlignment = Alignment.End
+                        .width(120.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         modifier = Modifier.padding(start = 20.dp),
                         text = sharedViewModel.sosCascadePhoneNumbers[index],
                         color = Color.Black,
-                        textAlign = TextAlign.Start,
                         lineHeight = 24.sp,
                         style = TextStyle(
                             fontSize = 16.sp
                         )
+                    )
+                }
+                Column(modifier = Modifier
+                    .width(40.dp)
+                    .clickable{
+                        /**sharedViewModel.sosPhoneNumbersNames.remove(sharedViewModel.sosPhoneNumbersNames[index])
+                        sharedViewModel.sosCascadePhoneNumbers.remove(sharedViewModel.sosCascadePhoneNumbers[index])
+                        sharedViewModel.sosSettingsNameStates.remove(sharedViewModel.sosSettingsNameStates[index])
+                        sharedViewModel.sosSettingsNumberStates.remove(sharedViewModel.sosSettingsNumberStates[index])**/
+                },
+                horizontalAlignment = Alignment.End){
+                    Icon(
+                        painter = painterResource(id = LocalContext.current.resources.getIdentifier(
+                            "remove",
+                            "drawable",
+                            LocalContext.current.packageName
+                        )),
+                        contentDescription = "Remove",
+                        tint = Color.Black,
                     )
                 }
 
@@ -957,7 +981,7 @@ fun SettingsEditNumberElement(
                 }
                 Column(
                     modifier = Modifier
-                        .width(50.dp)
+                        .width(40.dp)
                         .clickable {
                             try {
                                 var buff = sharedViewModel.sosCascadePhoneNumbers[index]
@@ -997,7 +1021,7 @@ fun SettingsEditNumberElement(
                 }
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
+                        .width(40.dp)
                         .clickable {
                             try {
                                 var buff = sharedViewModel.sosCascadePhoneNumbers[index]
