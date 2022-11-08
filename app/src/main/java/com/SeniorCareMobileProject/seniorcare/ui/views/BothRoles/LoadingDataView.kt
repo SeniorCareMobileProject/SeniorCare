@@ -63,6 +63,7 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
                             // get geofence information
                             sharedViewModel.getGeofenceForSenior()
                             sharedViewModel.getMedicalInformationForSenior()
+                            sharedViewModel.getSosNumbersForSenior()
                             navController.navigate("SeniorMainScreen"){
                                 popUpTo("LoadingDataView") {inclusive = true}
                             }

@@ -4,6 +4,8 @@ import android.content.Context
 import android.provider.Settings.Secure.getString
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.SeniorCareMobileProject.seniorcare.R
@@ -526,6 +528,41 @@ class Repository {
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("Database", "getSeniorMedInfo:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
+    }
+
+    fun getSosNumbersForSenior(sharedViewModel: SharedViewModel) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("sos")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val sosNumbers = snapshot.getValue<ArrayList<SosNumberDAO>>()
+                if (sosNumbers != null) {
+                    val newSosNumbers = mutableListOf<String>()
+                    val newSosNames = mutableListOf<String>()
+                    val newNumberState = mutableListOf<MutableState<String>>()
+                    val newNameState = mutableListOf<MutableState<String>>()
+                    for (sosNumber in sosNumbers) {
+                        newSosNumbers.add(sosNumber.number)
+                        newSosNames.add(sosNumber.name)
+                        newNumberState.add(
+                            mutableStateOf(sosNumber.number))
+                        newNameState.add(
+                            mutableStateOf(sosNumber.name))
+                    }
+                    sharedViewModel.sosCascadePhoneNumbers = newSosNumbers
+                    sharedViewModel.sosPhoneNumbersNames = newSosNames
+                    sharedViewModel.sosSettingsNumberStates = newNumberState
+                    sharedViewModel.sosSettingsNameStates = newNameState
+                    sharedViewModel.saveSosNumbersToLocalRepo()
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSosNumbersForSenior:onCancelled", databaseError.toException())
             }
         }
         reference.addValueEventListener(userListener)
