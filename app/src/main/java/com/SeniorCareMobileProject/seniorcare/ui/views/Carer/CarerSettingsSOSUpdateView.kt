@@ -31,7 +31,7 @@ fun CarerSettingsSOSUpdateView(navController: NavController, sharedViewModel: Sh
             SettingsItemWithIcon(
                 navController,
                 "Lista opiekunów",
-                "CarerSettingsSOSUpdateScreen",
+                "CarerSettingsSOSScreen",
                 "edit"
             )
             for(i in 0 until sharedViewModel.sosCascadePhoneNumbers.size){

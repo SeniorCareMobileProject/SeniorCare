@@ -47,7 +47,7 @@ fun CarerSettingsSOSView(navController: NavController, sharedViewModel: SharedVi
                 "edit"
             )
             for(i in 0 until sharedViewModel.sosCascadePhoneNumbers.size){
-                SettingsNumberElement(index = i, sharedViewModel = sharedViewModel)
+                SettingsNumberElement(index = i, sharedViewModel = sharedViewModel, navController, "CarerSettingsSOSScreen")
             }
         }
     }
