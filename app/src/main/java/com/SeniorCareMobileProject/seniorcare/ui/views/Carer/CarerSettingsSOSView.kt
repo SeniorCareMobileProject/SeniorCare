@@ -31,7 +31,7 @@ fun CarerSettingsSOSView(navController: NavController, sharedViewModel: SharedVi
         topBar = { TopBarSettings(navController, sharedViewModel) }) {
 
         if (showDialog.value) {
-            NewContactPopupView(setShowDialog = { showDialog.value = it })
+            NewContactPopupView(setShowDialog = { showDialog.value = it },sharedViewModel)
         }
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -46,8 +46,9 @@ fun CarerSettingsSOSView(navController: NavController, sharedViewModel: SharedVi
                 "CarerSettingsSOSUpdateScreen",
                 "edit"
             )
-            SettingsNumberElement("Paweł", 123456789, false)
-            SettingsNumberElement("Agnieszka", 123456789, false)
+            for(i in 0 until sharedViewModel.sosCascadePhoneNumbers.size){
+                SettingsNumberElement(index = i, sharedViewModel = sharedViewModel, navController, "CarerSettingsSOSScreen")
+            }
         }
     }
 }

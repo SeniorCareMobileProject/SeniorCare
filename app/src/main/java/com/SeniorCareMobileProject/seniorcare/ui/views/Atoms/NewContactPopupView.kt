@@ -25,12 +25,13 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 
 
 @Composable
-fun NewContactPopupView(setShowDialog: (Boolean) -> Unit) {
+fun NewContactPopupView(setShowDialog: (Boolean) -> Unit, sharedViewModel: SharedViewModel) {
     Dialog(onDismissRequest = { setShowDialog(false) },
     ) {
         Surface(
@@ -80,8 +81,8 @@ fun NewContactPopupView(setShowDialog: (Boolean) -> Unit) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    PopupButton("Anuluj")
-                    PopupButton("Dodaj")
+                    PopupButton("Anuluj",setShowDialog)
+                    PopupButtonAddNumber(text = "Dodaj", sharedViewModel = sharedViewModel, name = contactName.value.text, number = contactNumber.value.text, setShowDialog)
 
                 }
             }
@@ -96,6 +97,6 @@ fun NewContactPopupViewPreview() {
         val navController = rememberNavController()
         val showDialog =  remember { mutableStateOf(false) }
 
-        NewContactPopupView( setShowDialog = { showDialog.value = it })
+        //NewContactPopupView( setShowDialog = { showDialog.value = it } )
     }
 }
