@@ -1,14 +1,16 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
-import android.content.SharedPreferences
 import android.location.Location
 import android.os.CountDownTimer
+import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.SeniorCareMobileProject.seniorcare.data.CalendarEvent
+import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.*
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
@@ -29,7 +31,9 @@ import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 
 
-class SharedViewModel : ViewModel(), KoinComponent {
+class SharedViewModel() : ViewModel(), KoinComponent {
+
+    lateinit var localSettingsRepository: LocalSettingsRepository
 
     // Bottom navigation bar
     val navBarIndex = mutableStateOf(0)
@@ -97,10 +101,10 @@ class SharedViewModel : ViewModel(), KoinComponent {
 
     // sos button
     val sosCascadeIndex: MutableLiveData<Int> = MutableLiveData(-2)
-    var sosCascadePhoneNumbers = mutableListOf("604346348","734419423","883235958","444444444")
-    var sosSettingsNumberStates = mutableListOf(mutableStateOf(sosCascadePhoneNumbers[0]),mutableStateOf(sosCascadePhoneNumbers[1]),mutableStateOf(sosCascadePhoneNumbers[2]),mutableStateOf(sosCascadePhoneNumbers[3]))
-    var sosPhoneNumbersNames = mutableListOf("Agnieszka","Damian","Agata","Piotr")
-    var sosSettingsNameStates = mutableListOf(mutableStateOf(sosPhoneNumbersNames[0]),mutableStateOf(sosPhoneNumbersNames[1]),mutableStateOf(sosPhoneNumbersNames[2]),mutableStateOf(sosPhoneNumbersNames[3]))
+    var sosCascadePhoneNumbers = mutableListOf<String>()
+    var sosPhoneNumbersNames = mutableListOf<String>()
+    var sosSettingsNumberStates = mutableListOf<MutableState<String>>()
+    var sosSettingsNameStates = mutableListOf<MutableState<String>>()
     val sosCascadeInterval:Long = 10000
     val sosCascadeTimer = object : CountDownTimer(sosCascadeInterval, 1000) {
         override fun onTick(millisUntilFinished: Long) {
@@ -335,5 +339,28 @@ class SharedViewModel : ViewModel(), KoinComponent {
 
     fun getMedicalInformationForSenior() {
         repository.getMedicalInformationForSenior(this)
+    }
+
+    // SOS - FIREBASE
+    fun getSosNumbersForSenior() {
+        repository.getSosNumbersForSenior(this)
+    }
+
+    fun saveSosNumbersToFirebase() {
+        repository.saveSosNumbersToFirebase(this)
+    }
+
+    // LOCAL REPOSITORY
+    fun getSosNumbersFromLocalRepo() {
+        val allNumbersString = localSettingsRepository.readSosNumbers()
+        val numbersToList = allNumbersString?.split(",")?.map { it.trim() }
+        numbersToList?.forEach {
+            sosCascadePhoneNumbers.add(it)
+        }
+    }
+
+    fun saveSosNumbersToLocalRepo() {
+        localSettingsRepository.saveSosNumbers(sosCascadePhoneNumbers.joinToString())
+        Log.d("saveSosNumbersToLocalRepo", "Saved ${sosCascadePhoneNumbers.joinToString()}")
     }
 }

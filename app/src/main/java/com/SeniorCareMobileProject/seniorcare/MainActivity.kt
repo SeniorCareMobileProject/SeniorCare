@@ -31,6 +31,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
+import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
@@ -111,6 +112,8 @@ class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val localSettingsRepository = LocalSettingsRepository.getInstance(application)
+        sharedViewModel.localSettingsRepository = localSettingsRepository
 
         scheduleJob()
      //   startForegroundService(Intent(this, MainForegroundService::class.java))
@@ -154,6 +157,7 @@ class MainActivity : ComponentActivity() {
 ////todo delete /\
         sharedViewModel.userData.observe(this, Observer { value ->
             if (value.function == "Senior") {
+                sharedViewModel.getSosNumbersFromLocalRepo()
                 if (disabled) {
                     currentOnlyLocationService?.unSubscribeToLocationUpdates()
                 } else {
@@ -166,6 +170,7 @@ class MainActivity : ComponentActivity() {
                 }
             }
         })
+
         sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
             if (value >= 0) {
                 makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])

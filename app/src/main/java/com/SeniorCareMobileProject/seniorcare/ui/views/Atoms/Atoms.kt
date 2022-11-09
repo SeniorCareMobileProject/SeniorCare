@@ -864,8 +864,6 @@ fun SettingsNumberElement(
     navController: NavController,
     rout: String
 ) {
-
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -885,7 +883,6 @@ fun SettingsNumberElement(
                     horizontalAlignment = Alignment.Start
                 ){
                 Text(
-
                     text = sharedViewModel.sosPhoneNumbersNames[index],
                     color = Color.Black,
                     lineHeight = 24.sp,
@@ -916,6 +913,7 @@ fun SettingsNumberElement(
                         sharedViewModel.sosCascadePhoneNumbers.remove(sharedViewModel.sosCascadePhoneNumbers[index])
                         sharedViewModel.sosSettingsNameStates.remove(sharedViewModel.sosSettingsNameStates[index])
                         sharedViewModel.sosSettingsNumberStates.remove(sharedViewModel.sosSettingsNumberStates[index])
+                        sharedViewModel.saveSosNumbersToFirebase()
                         navController.navigate(rout)
                 },
                 horizontalAlignment = Alignment.End){
@@ -956,7 +954,7 @@ fun SettingsEditNumberElement(
             ) {
 
                 TextField(
-                    modifier = Modifier.weight(4f),
+                    modifier = Modifier.weight(3f),
                     value = textName,
                     onValueChange = { textName = it;sharedViewModel.sosPhoneNumbersNames[index] = textName },
                     textStyle = TextStyle(
@@ -965,7 +963,8 @@ fun SettingsEditNumberElement(
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color(0xFFF5F5F5),
                         unfocusedIndicatorColor = Color.Transparent
-                    )
+                    ),
+                    label = { Text(text = "Opiekun:")}
                 )
                 Column(
                     modifier = Modifier.weight(3f).fillMaxWidth(),
@@ -983,7 +982,8 @@ fun SettingsEditNumberElement(
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
-                        )
+                        ),
+                        label = { Text(text = "Numer telefonu:")}
                     )
                 }
                 Column(
@@ -1006,6 +1006,8 @@ fun SettingsEditNumberElement(
                                 textName = sharedViewModel.sosPhoneNumbersNames[index]
                                 sharedViewModel.sosSettingsNameStates[index - 1].value =
                                     sharedViewModel.sosPhoneNumbersNames[index - 1]
+
+                                sharedViewModel.saveSosNumbersToFirebase()
                             } catch (e: Exception) {
 
                             }
@@ -1045,6 +1047,8 @@ fun SettingsEditNumberElement(
                                 textName = sharedViewModel.sosPhoneNumbersNames[index]
                                 sharedViewModel.sosSettingsNameStates[index + 1].value =
                                     sharedViewModel.sosPhoneNumbersNames[index + 1]
+
+                                sharedViewModel.saveSosNumbersToFirebase()
                             } catch (e: Exception) {
 
                             }
@@ -1285,12 +1289,15 @@ fun PopupButton(text: String, setShowDialog: (Boolean) -> Unit) {
 fun PopupButtonAddNumber(text: String, sharedViewModel: SharedViewModel,name:String,number:String,setShowDialog: (Boolean) -> Unit) {
     Button(
         onClick = {
-            if (!name.equals("") && !number.equals("") && number.length == 9 ){
-            sharedViewModel.sosCascadePhoneNumbers.add(number)
-            sharedViewModel.sosPhoneNumbersNames.add(name)
+            if (name != "" && number != "" && number.length == 9 ){
+                sharedViewModel.sosCascadePhoneNumbers.add(number)
+                sharedViewModel.sosPhoneNumbersNames.add(name)
                 sharedViewModel.sosSettingsNumberStates.add(mutableStateOf(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadePhoneNumbers.size-1]))
-            sharedViewModel.sosSettingsNameStates.add(mutableStateOf(sharedViewModel.sosPhoneNumbersNames[sharedViewModel.sosCascadePhoneNumbers.size-1]))
-            setShowDialog(false)}},
+                sharedViewModel.sosSettingsNameStates.add(mutableStateOf(sharedViewModel.sosPhoneNumbersNames[sharedViewModel.sosPhoneNumbersNames.size-1]))
+                sharedViewModel.saveSosNumbersToFirebase()
+                setShowDialog(false)
+            }
+                  },
         shape = RoundedCornerShape(5.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
     ) {

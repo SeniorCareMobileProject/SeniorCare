@@ -82,7 +82,12 @@ fun NewContactPopupView(setShowDialog: (Boolean) -> Unit, sharedViewModel: Share
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     PopupButton("Anuluj",setShowDialog)
-                    PopupButtonAddNumber(text = "Dodaj", sharedViewModel = sharedViewModel, name = contactName.value.text, number = contactNumber.value.text, setShowDialog)
+                    PopupButtonAddNumber(
+                        text = "Dodaj",
+                        sharedViewModel = sharedViewModel,
+                        name = contactName.value.text,
+                        number = contactNumber.value.text,
+                        setShowDialog)
 
                 }
             }
