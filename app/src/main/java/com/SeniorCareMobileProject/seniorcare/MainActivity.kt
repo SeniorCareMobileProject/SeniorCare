@@ -157,6 +157,7 @@ class MainActivity : ComponentActivity() {
 ////todo delete /\
         sharedViewModel.userData.observe(this, Observer { value ->
             if (value.function == "Senior") {
+                sharedViewModel.getSosNumbersFromLocalRepo()
                 if (disabled) {
                     currentOnlyLocationService?.unSubscribeToLocationUpdates()
                 } else {
@@ -170,7 +171,6 @@ class MainActivity : ComponentActivity() {
             }
         })
 
-        sharedViewModel.getSosNumbersFromLocalRepo()
         sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
             if (value >= 0) {
                 makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])

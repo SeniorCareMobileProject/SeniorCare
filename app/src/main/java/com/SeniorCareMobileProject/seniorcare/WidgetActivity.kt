@@ -61,7 +61,7 @@ class WidgetActivity : ComponentActivity() {
         )
     }
 
-    fun makePhoneCall(number: String) {
+    private fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {
             if (ContextCompat.checkSelfPermission(
                     this@WidgetActivity,

@@ -1,6 +1,5 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
-import android.content.SharedPreferences
 import android.location.Location
 import android.os.CountDownTimer
 import android.util.Log
@@ -333,6 +332,10 @@ class SharedViewModel() : ViewModel(), KoinComponent {
         repository.getSosNumbersForSenior(this)
     }
 
+    fun saveSosNumbersToFirebase() {
+        repository.saveSosNumbersToFirebase(this)
+    }
+
     // LOCAL REPOSITORY
     fun getSosNumbersFromLocalRepo() {
         val allNumbersString = localSettingsRepository.readSosNumbers()
@@ -340,7 +343,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
         numbersToList?.forEach {
             sosCascadePhoneNumbers.add(it)
         }
-        Log.d("AAAAAAAAAA", sosCascadePhoneNumbers.toString())
     }
 
     fun saveSosNumbersToLocalRepo() {

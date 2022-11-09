@@ -11,4 +11,5 @@ data class SeniorAllDAO (
     val location: LocationDAO? = null,
     val geofence: GeofenceDAO? = null,
     val medicalInformation: MedInfoDAO? = null,
+    val sos: ArrayList<SosNumberDAO>? = null,
         )
