@@ -70,7 +70,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 navController = navController,
                 text = "Kalendarz",
                 iconName = "calendar_month",
-                rout = "",
+                rout = "SeniorCalendarScreen",
                 color = "main"
             )
 //            SeniorButton(

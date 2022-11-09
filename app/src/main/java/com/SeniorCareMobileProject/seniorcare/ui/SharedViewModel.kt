@@ -125,54 +125,68 @@ class SharedViewModel : ViewModel(), KoinComponent {
     var removeEvent = mutableStateOf(false)
     var calendarEvents: MutableList<CalendarEvent> = mutableListOf(
         CalendarEvent(
-            LocalDate(2022, 10, 31),
+            LocalDate(2022, 11, 9),
             LocalTime(11, 30),
             LocalTime(13, 0),
             "Lekarz",
             "Opis wydarzenia"
         ),
         CalendarEvent(
-            LocalDate(2022, 10, 31),
+            LocalDate(2022, 11, 9),
             LocalTime(10, 0),
             LocalTime(11, 30),
             "Sambo",
             "Opis"
         ),
         CalendarEvent(
-            LocalDate(2022, 10, 31),
+            LocalDate(2022, 11, 9),
             LocalTime(16, 0),
             LocalTime(18, 30),
             "Lekarz",
             "Opis wydarzenia"
         ),
         CalendarEvent(
-            LocalDate(2022, 11, 2),
+            LocalDate(2022, 11, 10),
             LocalTime(10, 0),
             LocalTime(11, 30),
             "Lekarz",
             "Opis wydarzenia"
         ),
         CalendarEvent(
-            LocalDate(2022, 11, 2),
+            LocalDate(2022, 11, 10),
             LocalTime(13, 0),
             LocalTime(15, 30),
             "Lekasghasfdgasdarz",
             "Opis wydaasdgadsrzenia"
         ),
         CalendarEvent(
-            LocalDate(2022, 11, 5),
+            LocalDate(2022, 11, 13),
             LocalTime(10, 0),
             LocalTime(11, 30),
             "Opis wydarzenia",
             ""
         ),
         CalendarEvent(
-            LocalDate(2022, 11, 5),
+            LocalDate(2022, 11, 13),
             LocalTime(16, 0),
             LocalTime(18, 30),
             "Lekgsjfgarz",
             "Opis wydasgfjdgfrzenia"
-        )
+        ),
+        CalendarEvent(
+            LocalDate(2022, 11, 19),
+            LocalTime(16, 0),
+            LocalTime(18, 30),
+            "Lekgsjfgarz",
+            "Opis wydasgfjdgfrzenia"
+        ),
+        CalendarEvent(
+            LocalDate(2022, 11, 19),
+            LocalTime(10, 0),
+            LocalTime(11, 30),
+            "Opis wydarzenia",
+            ""
+        ),
     )
 
     private val repository = Repository()

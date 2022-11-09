@@ -287,7 +287,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(NavigationScreens.SeniorCalendarScreen.name) {
-                        SeniorCalendarView(navController, sharedViewModel)
+                        SeniorCalendarScreenView(navController, sharedViewModel)
 
                     }
 

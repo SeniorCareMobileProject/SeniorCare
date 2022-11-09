@@ -46,4 +46,7 @@
     <string name="weight">Waga</string>
     <string name="languages">Główny język</string>
     <string name="others">Inne</string>
+
+    <string name="today">Dzisiaj</string>
+    <string name="tomorrow">Jutro</string>
 </resources>
