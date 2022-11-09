@@ -33,6 +33,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.compose.rememberNavController
@@ -858,15 +859,13 @@ fun SettingsItemWithIcon(
 
 @Composable
 fun SettingsNumberElement(
-    name: String,
-    number: Int,
-    edit: Boolean
+    index: Int,
+    sharedViewModel: SharedViewModel,
+    navController: NavController,
+    rout: String
 ) {
-    val textName = remember { mutableStateOf(TextFieldValue(name)) }
-    val textNumber = remember { mutableStateOf(TextFieldValue(number.toString())) }
 
 
-    if (!edit) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -877,38 +876,76 @@ fun SettingsNumberElement(
                     .fillMaxWidth()
                     .padding(start = 16.dp)
                     .padding(top = 16.dp)
+                    .padding(end = 16.dp)
             ) {
+
+                Column(
+                    modifier = Modifier
+                        .weight(4f),
+                    horizontalAlignment = Alignment.Start
+                ){
                 Text(
-                    text = name,
+
+                    text = sharedViewModel.sosPhoneNumbersNames[index],
                     color = Color.Black,
-                    textAlign = TextAlign.Start,
                     lineHeight = 24.sp,
                     style = TextStyle(
                         fontSize = 16.sp
                     )
-                )
+                )}
 
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 20.dp),
-                    horizontalAlignment = Alignment.End
+                        .weight(4f),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
                         modifier = Modifier.padding(start = 20.dp),
-                        text = number.toString(),
+                        text = sharedViewModel.sosCascadePhoneNumbers[index],
                         color = Color.Black,
-                        textAlign = TextAlign.Start,
                         lineHeight = 24.sp,
                         style = TextStyle(
                             fontSize = 16.sp
                         )
                     )
                 }
+                Column(modifier = Modifier
+                    .weight(1f)
+                    .clickable{
+                        sharedViewModel.sosPhoneNumbersNames.remove(sharedViewModel.sosPhoneNumbersNames[index])
+                        sharedViewModel.sosCascadePhoneNumbers.remove(sharedViewModel.sosCascadePhoneNumbers[index])
+                        sharedViewModel.sosSettingsNameStates.remove(sharedViewModel.sosSettingsNameStates[index])
+                        sharedViewModel.sosSettingsNumberStates.remove(sharedViewModel.sosSettingsNumberStates[index])
+                        navController.navigate(rout)
+                },
+                horizontalAlignment = Alignment.End){
+                    Icon(
+                        painter = painterResource(id = LocalContext.current.resources.getIdentifier(
+                            "remove",
+                            "drawable",
+                            LocalContext.current.packageName
+                        )),
+                        contentDescription = "Remove",
+                        tint = Color.Black,
+                    )
+                }
 
             }
         }
-    } else {
+
+
+
+}
+
+@Composable
+fun SettingsEditNumberElement(
+    index: Int,
+    sharedViewModel: SharedViewModel
+) {
+    var textName by remember { sharedViewModel.sosSettingsNameStates[index] }
+    var textNumber by remember{ sharedViewModel.sosSettingsNumberStates[index] }
+
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -917,10 +954,11 @@ fun SettingsNumberElement(
                 modifier = Modifier
                     .fillMaxWidth()
             ) {
+
                 TextField(
-                    modifier = Modifier.width(240.dp),
-                    value = textName.value,
-                    onValueChange = { textName.value = it },
+                    modifier = Modifier.weight(4f),
+                    value = textName,
+                    onValueChange = { textName = it;sharedViewModel.sosPhoneNumbersNames[index] = textName },
                     textStyle = TextStyle(
                         fontSize = 16.sp
                     ),
@@ -929,15 +967,13 @@ fun SettingsNumberElement(
                         unfocusedIndicatorColor = Color.Transparent
                     )
                 )
-
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    horizontalAlignment = Alignment.End
+                    modifier = Modifier.weight(3f).fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     TextField(
-                        value = textNumber.value,
-                        onValueChange = { textNumber.value = it },
+                        value = textNumber,
+                        onValueChange = { textNumber = it;sharedViewModel.sosCascadePhoneNumbers[index] = textNumber },
                         textStyle = TextStyle(
                             fontSize = 16.sp
                         ),
@@ -950,12 +986,94 @@ fun SettingsNumberElement(
                         )
                     )
                 }
+                Column(
+                    modifier = Modifier
+                        .weight(1f).fillMaxWidth()
+                        .clickable {
+                            try {
+                                var buff = sharedViewModel.sosCascadePhoneNumbers[index]
+                                sharedViewModel.sosCascadePhoneNumbers[index] =
+                                    sharedViewModel.sosCascadePhoneNumbers[index - 1]
+                                sharedViewModel.sosCascadePhoneNumbers[index - 1] = buff
+                                textNumber = sharedViewModel.sosCascadePhoneNumbers[index]
+                                sharedViewModel.sosSettingsNumberStates[index - 1].value =
+                                    sharedViewModel.sosCascadePhoneNumbers[index - 1]
+
+                                buff = sharedViewModel.sosPhoneNumbersNames[index]
+                                sharedViewModel.sosPhoneNumbersNames[index] =
+                                    sharedViewModel.sosPhoneNumbersNames[index - 1]
+                                sharedViewModel.sosPhoneNumbersNames[index - 1] = buff
+                                textName = sharedViewModel.sosPhoneNumbersNames[index]
+                                sharedViewModel.sosSettingsNameStates[index - 1].value =
+                                    sharedViewModel.sosPhoneNumbersNames[index - 1]
+                            } catch (e: Exception) {
+
+                            }
+
+                        },
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Icon(
+                        painter = painterResource(id = LocalContext.current.resources.getIdentifier(
+                            "sos_arrow_upward",
+                            "drawable",
+                            LocalContext.current.packageName
+                        )),
+                        contentDescription = "ArrowUpward",
+                        tint = Color.Black,
+                    )
+
+
+                }
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .clickable {
+                            try {
+                                var buff = sharedViewModel.sosCascadePhoneNumbers[index]
+                                sharedViewModel.sosCascadePhoneNumbers[index] =
+                                    sharedViewModel.sosCascadePhoneNumbers[index + 1]
+                                sharedViewModel.sosCascadePhoneNumbers[index + 1] = buff
+                                textNumber = sharedViewModel.sosCascadePhoneNumbers[index]
+                                sharedViewModel.sosSettingsNumberStates[index + 1].value =
+                                    sharedViewModel.sosCascadePhoneNumbers[index + 1]
+
+                                buff = sharedViewModel.sosPhoneNumbersNames[index]
+                                sharedViewModel.sosPhoneNumbersNames[index] =
+                                    sharedViewModel.sosPhoneNumbersNames[index + 1]
+                                sharedViewModel.sosPhoneNumbersNames[index + 1] = buff
+                                textName = sharedViewModel.sosPhoneNumbersNames[index]
+                                sharedViewModel.sosSettingsNameStates[index + 1].value =
+                                    sharedViewModel.sosPhoneNumbersNames[index + 1]
+                            } catch (e: Exception) {
+
+                            }
+
+                        },
+                    horizontalAlignment = Alignment.End
+                ) {
+                    Icon(
+                        painter = painterResource(id = LocalContext.current.resources.getIdentifier(
+                            "sos_arrow_downward",
+                            "drawable",
+                            LocalContext.current.packageName
+                        )),
+                        contentDescription = "ArrowDownward",
+                        tint = Color.Black,
+                    )
+
+
+
+
+                }
             }
+
         }
     }
 
 
-}
+
+
 
 @Composable
 fun StatusWidget(navController: NavController, title: String, text: String, iconName: String) {
@@ -1146,9 +1264,33 @@ fun FloatingButton() {
 }
 
 @Composable
-fun PopupButton(text: String) {
+fun PopupButton(text: String, setShowDialog: (Boolean) -> Unit) {
     Button(
-        onClick = { },
+        onClick = { setShowDialog(false)},
+        shape = RoundedCornerShape(5.dp),
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
+    ) {
+        Text(
+            text = text,
+            color = Color.White,
+            textAlign = TextAlign.Center,
+            style = TextStyle(
+                fontSize = 12.sp
+            )
+        )
+    }
+}
+
+@Composable
+fun PopupButtonAddNumber(text: String, sharedViewModel: SharedViewModel,name:String,number:String,setShowDialog: (Boolean) -> Unit) {
+    Button(
+        onClick = {
+            if (!name.equals("") && !number.equals("") && number.length == 9 ){
+            sharedViewModel.sosCascadePhoneNumbers.add(number)
+            sharedViewModel.sosPhoneNumbersNames.add(name)
+                sharedViewModel.sosSettingsNumberStates.add(mutableStateOf(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadePhoneNumbers.size-1]))
+            sharedViewModel.sosSettingsNameStates.add(mutableStateOf(sharedViewModel.sosPhoneNumbersNames[sharedViewModel.sosCascadePhoneNumbers.size-1]))
+            setShowDialog(false)}},
         shape = RoundedCornerShape(5.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
     ) {
@@ -1228,8 +1370,8 @@ fun SignUpViewPreview() {
             TopBarSettings(navController = navController, sharedViewModel = sharedViewModel)
             SettingsItem(navController, "Przycisk SOS", "")
             SettingsItemWithIcon(navController, "Przycisk SOS", "", "edit")
-            SettingsNumberElement("Paweł", 123456789, false)
-            SettingsNumberElement("Paweł", 123456789, true)
+            SettingsNumberElement(0,sharedViewModel,navController,"CarerSettingsSOSScreen")
+            SettingsNumberElement(1,sharedViewModel,navController,"CarerSettingsSOSScreen")
 //            StatusWidget(
 //                navController, title = "Najbliższe wydarzenie:",
 //                text = "Wizyta u lekarza\nData: 12.05.22 - godzina: 08:00",
@@ -1246,7 +1388,7 @@ fun SignUpViewPreview() {
 //            )
 //            NotificationItem(title = "IBUPROM", howOften = "Codziennie", listOfTime = listOfTime)
 //            FloatingButton()
-            PopupButton("Text")
+            //PopupButton("Text")
         }
 
     }

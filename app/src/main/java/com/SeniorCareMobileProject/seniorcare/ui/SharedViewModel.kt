@@ -97,8 +97,11 @@ class SharedViewModel : ViewModel(), KoinComponent {
 
     // sos button
     val sosCascadeIndex: MutableLiveData<Int> = MutableLiveData(-2)
-    val sosCascadePhoneNumbers = listOf("604346348", "734419423", "883235958", "444444444")
-    val sosCascadeInterval: Long = 10000
+    var sosCascadePhoneNumbers = mutableListOf("604346348","734419423","883235958","444444444")
+    var sosSettingsNumberStates = mutableListOf(mutableStateOf(sosCascadePhoneNumbers[0]),mutableStateOf(sosCascadePhoneNumbers[1]),mutableStateOf(sosCascadePhoneNumbers[2]),mutableStateOf(sosCascadePhoneNumbers[3]))
+    var sosPhoneNumbersNames = mutableListOf("Agnieszka","Damian","Agata","Piotr")
+    var sosSettingsNameStates = mutableListOf(mutableStateOf(sosPhoneNumbersNames[0]),mutableStateOf(sosPhoneNumbersNames[1]),mutableStateOf(sosPhoneNumbersNames[2]),mutableStateOf(sosPhoneNumbersNames[3]))
+    val sosCascadeInterval:Long = 10000
     val sosCascadeTimer = object : CountDownTimer(sosCascadeInterval, 1000) {
         override fun onTick(millisUntilFinished: Long) {
         }
