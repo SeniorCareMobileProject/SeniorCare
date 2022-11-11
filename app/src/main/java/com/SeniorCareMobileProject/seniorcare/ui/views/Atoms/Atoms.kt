@@ -799,6 +799,7 @@ fun AddNumber(
 @Composable
 fun SettingsItemWithIcon(
     navController: NavController,
+    sharedViewModel: SharedViewModel,
     text: String,
     rout: String,
     iconName: String,
@@ -842,7 +843,7 @@ fun SettingsItemWithIcon(
                     tint = Color.Black,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
-                        .clickable { navController.navigate(rout) }
+                        .clickable { navController.navigate(rout);sharedViewModel.saveSosNumbersToFirebase()}
                 )
             }
         }
@@ -938,7 +939,7 @@ fun SettingsNumberElement(
 @Composable
 fun SettingsEditNumberElement(
     index: Int,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
 ) {
     var textName by remember { sharedViewModel.sosSettingsNameStates[index] }
     var textNumber by remember{ sharedViewModel.sosSettingsNumberStates[index] }
@@ -951,6 +952,8 @@ fun SettingsEditNumberElement(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(Color(0xFFF5F5F5))
+                    .padding(end=16.dp)
             ) {
 
                 TextField(
@@ -989,6 +992,8 @@ fun SettingsEditNumberElement(
                 Column(
                     modifier = Modifier
                         .weight(1f).fillMaxWidth()
+                        .padding(top=8.dp)
+                        .padding(bottom=8.dp)
                         .clickable {
                             try {
                                 var buff = sharedViewModel.sosCascadePhoneNumbers[index]
@@ -1007,7 +1012,6 @@ fun SettingsEditNumberElement(
                                 sharedViewModel.sosSettingsNameStates[index - 1].value =
                                     sharedViewModel.sosPhoneNumbersNames[index - 1]
 
-                                sharedViewModel.saveSosNumbersToFirebase()
                             } catch (e: Exception) {
 
                             }
@@ -1030,6 +1034,8 @@ fun SettingsEditNumberElement(
                 Column(
                     modifier = Modifier
                         .weight(1f)
+                        .padding(top=8.dp)
+                        .padding(bottom=8.dp)
                         .clickable {
                             try {
                                 var buff = sharedViewModel.sosCascadePhoneNumbers[index]
@@ -1048,7 +1054,6 @@ fun SettingsEditNumberElement(
                                 sharedViewModel.sosSettingsNameStates[index + 1].value =
                                     sharedViewModel.sosPhoneNumbersNames[index + 1]
 
-                                sharedViewModel.saveSosNumbersToFirebase()
                             } catch (e: Exception) {
 
                             }
@@ -1376,7 +1381,7 @@ fun SignUpViewPreview() {
             )
             TopBarSettings(navController = navController, sharedViewModel = sharedViewModel)
             SettingsItem(navController, "Przycisk SOS", "")
-            SettingsItemWithIcon(navController, "Przycisk SOS", "", "edit")
+            SettingsItemWithIcon(navController, sharedViewModel,"Przycisk SOS", "", "edit")
             SettingsNumberElement(0,sharedViewModel,navController,"CarerSettingsSOSScreen")
             SettingsNumberElement(1,sharedViewModel,navController,"CarerSettingsSOSScreen")
 //            StatusWidget(
