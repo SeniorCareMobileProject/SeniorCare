@@ -12,11 +12,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorButton
 
 @Composable
-fun SeniorSettingsView(navController: NavController) {
+fun SeniorSettingsView(navController: NavController, sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -42,24 +43,28 @@ fun SeniorSettingsView(navController: NavController) {
                 text = "Dodaj opiekuna",
                 iconName = "add_circle",
                 rout = "PairingScreenCodeInputScreen",
+                sharedViewModel = sharedViewModel
             )
             SeniorButton(
                 navController = navController,
                 text = "Detektor upadku",
                 iconName = "elderly",
                 rout = "SettingsFallDetectorScreen",
+                sharedViewModel = sharedViewModel
             )
             SeniorButton(
                 navController = navController,
                 text = "Lista opiekunów",
                 iconName = "format_list_bulleted",
                 rout = "SeniorCarersListScreen",
+                sharedViewModel = sharedViewModel
             )
             SeniorButton(
                 navController = navController,
                 text = "Wyloguj się",
                 iconName = "logout",
                 rout = "sign out",
+                sharedViewModel = sharedViewModel
             )
         }
     }
@@ -70,6 +75,6 @@ fun SeniorSettingsView(navController: NavController) {
 fun SeniorSettingsViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        SeniorSettingsView(navController)
+        SeniorSettingsView(navController, sharedViewModel = SharedViewModel())
     }
 }

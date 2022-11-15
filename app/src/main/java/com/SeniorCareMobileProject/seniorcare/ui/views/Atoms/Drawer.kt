@@ -200,7 +200,8 @@ fun BottomButton(
     navController: NavController,
     iconName: String,
     text: String,
-    rout: String
+    rout: String,
+    sharedViewModel: SharedViewModel
 ) {
     val context = LocalContext.current
     val iconId = remember(iconName) {
@@ -219,6 +220,7 @@ fun BottomButton(
             }
             else if (rout == "sign out") {
                 FirebaseAuth.getInstance().signOut()
+                sharedViewModel.clearLocalRepository()
                 val activity = context as Activity
                 activity.finish()
                 val intent = Intent(context, MainActivity::class.java)
@@ -250,7 +252,7 @@ fun BottomButton(
 }
 
 @Composable
-fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState) {
+fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState, sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -267,7 +269,8 @@ fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState) {
             navController = navController,
             iconName = "add_circle",
             text = "Dodaj podopiecznego",
-            rout = "PairingScreenCodeScreen"
+            rout = "PairingScreenCodeScreen",
+            sharedViewModel = sharedViewModel
         )
 
         Divider(
@@ -280,14 +283,16 @@ fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState) {
             navController = navController,
             iconName = "settings_outfilled",
             text = "Ustawienia",
-            rout = ""
+            rout = "",
+            sharedViewModel = sharedViewModel
         )
 
         BottomButton(
             navController = navController,
             iconName = "clear",
             text = "Wyloguj się",
-            rout = "sign out"
+            rout = "sign out",
+            sharedViewModel = sharedViewModel
         )
 
     }
@@ -327,7 +332,7 @@ fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: N
             .background(Color(0xFFF1ECF8)),
         verticalArrangement = Arrangement.Bottom
     ) {
-        BottomButtons(navController, scaffoldState)
+        BottomButtons(navController, scaffoldState, sharedViewModel = sharedViewModel)
     }
 }
 

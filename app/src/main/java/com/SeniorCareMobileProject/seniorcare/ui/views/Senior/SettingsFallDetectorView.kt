@@ -1,8 +1,8 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Senior
 
-import android.widget.Space
-import android.widget.Switch
-import android.widget.Toast
+import android.app.Activity
+import android.app.Service
+import android.content.Intent
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -17,7 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.input.key.Key.Companion.I
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -27,14 +26,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorSwitchButton
-import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.PairingScreenCodeView
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorFallDetectorSwitchButton
 
 
 @Composable
-fun SettingsFallDetectorView(navController: NavController) {
+fun SettingsFallDetectorView(navController: NavController, sharedViewModel: SharedViewModel) {
     val context = LocalContext.current
     val iconId = remember("elderly") {
         context.resources.getIdentifier(
@@ -44,7 +44,7 @@ fun SettingsFallDetectorView(navController: NavController) {
         )
     }
     val scrollState = remember { ScrollState(0) }
-    val mCheckedState = remember { mutableStateOf(false) }
+    val mCheckedState = remember { mutableStateOf(sharedViewModel.isFallDetectorTurnOn.value!!) }
 
 
     Column(
@@ -89,9 +89,10 @@ fun SettingsFallDetectorView(navController: NavController) {
 
             Spacer(modifier = Modifier.height(80.dp))
 
-            SeniorSwitchButton(text = "Włącz/wyłącz",
+            SeniorFallDetectorSwitchButton(text = "Włącz/wyłącz",
                 color = "main",
-                mCheckedState = mCheckedState
+                mCheckedState = mCheckedState,
+                sharedViewModel = sharedViewModel
             )
 
 //            Column(
@@ -121,6 +122,7 @@ fun SettingsFallDetectorView(navController: NavController) {
 fun SettingsFallDetectorViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        SettingsFallDetectorView(navController)
+        val sharedViewModel = SharedViewModel()
+        SettingsFallDetectorView(navController, sharedViewModel)
     }
 }

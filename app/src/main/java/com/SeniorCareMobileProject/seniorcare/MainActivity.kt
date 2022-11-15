@@ -36,6 +36,7 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
 import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
@@ -155,9 +156,20 @@ class MainActivity : ComponentActivity() {
 //            requestForegroundPermissions()
 //        }
 ////todo delete /\
+
+        sharedViewModel.getUserFunctionFromLocalRepo()
+        if (sharedViewModel.userFunctionFromLocalRepo == "Senior"){
+            sharedViewModel.getSosNumbersFromLocalRepo()
+            sharedViewModel.getFallDetectionStateFromLocalRepo()
+            if (sharedViewModel.isFallDetectorTurnOn.value == true) {
+                val fallDetectorService = FallDetectorService()
+                val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
+                startService(fallDetectorServiceIntent)
+            }
+        }
+
         sharedViewModel.userData.observe(this, Observer { value ->
             if (value.function == "Senior") {
-                sharedViewModel.getSosNumbersFromLocalRepo()
                 if (disabled) {
                     currentOnlyLocationService?.unSubscribeToLocationUpdates()
                 } else {
@@ -376,7 +388,7 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     composable(NavigationScreens.SeniorSettingsScreen.name) {
-                        SeniorSettingsView(navController)
+                        SeniorSettingsView(navController, sharedViewModel)
 
                     }
 
@@ -406,12 +418,12 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(NavigationScreens.SettingsFallDetectorScreen.name) {
-                        SettingsFallDetectorView(navController)
+                        SettingsFallDetectorView(navController, sharedViewModel)
 
                     }
 
                     composable(NavigationScreens.SeniorCarersListScreen.name) {
-                        SeniorCarersListView(navController)
+                        SeniorCarersListView(navController, sharedViewModel)
 
                     }
 
