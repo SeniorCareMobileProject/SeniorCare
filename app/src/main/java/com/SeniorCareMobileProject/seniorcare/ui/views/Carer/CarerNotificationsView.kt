@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -50,11 +51,15 @@ fun CarerNotificationsView(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
+    val showDialog = remember { mutableStateOf(false) }
+    if (showDialog.value) {
+        NewNotificationPopupView(setShowDialog = { showDialog.value = it },sharedViewModel,navController,Screen.Notifications.route)
+    }
     Scaffold(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
-        floatingActionButton = { FloatingButton() },
+        floatingActionButton = { FloatingButtonNotifications(setShowDialog = { showDialog.value = it }) },
         bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(

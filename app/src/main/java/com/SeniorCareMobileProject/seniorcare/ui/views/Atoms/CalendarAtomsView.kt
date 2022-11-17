@@ -143,29 +143,29 @@ fun CalendarEventItemView(
                                     )
                                 }
                                 DropdownMenuItem(
-                                    onClick = {
-                                        sharedViewModel.modifiedEvent.date = date
-                                        sharedViewModel.modifiedEvent.startTime = startTime
-                                        sharedViewModel.modifiedEvent.endTime = endTime
-                                        sharedViewModel.modifiedEvent.eventName = eventName
-                                        sharedViewModel.modifiedEvent.eventDescription =
-                                            eventDescription
+                                            onClick = {
+                                                sharedViewModel.modifiedEvent.date = date
+                                                sharedViewModel.modifiedEvent.startTime = startTime
+                                                sharedViewModel.modifiedEvent.endTime = endTime
+                                                sharedViewModel.modifiedEvent.eventName = eventName
+                                                sharedViewModel.modifiedEvent.eventDescription =
+                                                    eventDescription
 
-                                        expanded = false
+                                                expanded = false
 
-                                        sharedViewModel.removeEvent.value = true
-                                        //Due to the line above, will not show dialog, only enter if
-                                        showDialog.value = true
-                                    },
-                                    modifier = Modifier
-                                        .clip(RoundedCornerShape(4.dp))
+                                                sharedViewModel.removeEvent.value = true
+                                                //Due to the line above, will not show dialog, only enter if
+                                                showDialog.value = true
+                                            },
+                                            modifier = Modifier
+                                                .clip(RoundedCornerShape(4.dp))
 //                                        .background(Color.Red)
-                                ) {
-                                    Text(
-                                        modifier = Modifier.fillMaxWidth(),
-                                        text = "Usuń",
-                                        color = Color.Red,
-                                        textAlign = TextAlign.Center
+                                        ) {
+                                            Text(
+                                                modifier = Modifier.fillMaxWidth(),
+                                                text = "Usuń",
+                                                color = Color.Red,
+                                                textAlign = TextAlign.Center
                                     )
                                 }
                             }

@@ -1273,6 +1273,23 @@ fun FloatingButton() {
 }
 
 @Composable
+fun FloatingButtonNotifications(setShowDialog: (Boolean) -> Unit) {
+    val context = LocalContext.current
+
+    FloatingActionButton(
+        modifier = Modifier.size(48.dp),
+        onClick = { setShowDialog(true) },
+        backgroundColor = Color.Blue,
+    ) {
+        Icon(
+            Icons.Filled.Add, "",
+            modifier = Modifier.size(48.dp),
+            tint = Color.White
+        )
+    }
+}
+
+@Composable
 fun PopupButton(text: String, setShowDialog: (Boolean) -> Unit) {
     Button(
         onClick = { setShowDialog(false)},
