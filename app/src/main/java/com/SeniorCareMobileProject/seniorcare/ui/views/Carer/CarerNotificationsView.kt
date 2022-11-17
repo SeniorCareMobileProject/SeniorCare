@@ -21,27 +21,17 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun ItemsList() {
-    NotificationItem(
-        title = "IBUPROM",
-        howOften = "Codziennie",
-        listOfTime = listOf<String>("10:00", "15:00", "20:00")
-    )
-    NotificationItem(
-        title = "Donepezil",
-        howOften = "Co 2 dni",
-        listOfTime = listOf<String>("10:00", "20:00")
-    )
-    NotificationItem(
-        title = "Zatogrip",
-        howOften = "Co 3 dni",
-        listOfTime = listOf<String>("13:00", "16:00", "27:00", "21:00")
-    )
-    NotificationItem(
-        title = "Dezaftan",
-        howOften = "Codziennie",
-        listOfTime = listOf<String>("10:00")
-    )
+fun ItemsList(sharedViewModel: SharedViewModel,navController: NavController) {
+    for(i in 0 until sharedViewModel.notificationItems.size){
+        NotificationItem(title = sharedViewModel.notificationItems[i].name,
+        howOften = sharedViewModel.notificationItems[i].interval,
+        listOfTime = sharedViewModel.notificationItems[i].timeList,
+        sharedViewModel = sharedViewModel,
+        index = i,
+        navController = navController,
+        rout = Screen.Notifications.route)
+    }
+
 }
 
 @Composable
@@ -83,7 +73,7 @@ fun CarerNotificationsView(
                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                ItemsList()
+                ItemsList(sharedViewModel,navController)
             }
 
 

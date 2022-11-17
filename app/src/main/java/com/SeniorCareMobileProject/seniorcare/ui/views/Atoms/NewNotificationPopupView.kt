@@ -26,8 +26,10 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.SeniorCareMobileProject.seniorcare.data.NotificationItem
 import java.lang.Math.log
 import java.util.*
+
 
 @Composable
 fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
@@ -42,25 +44,12 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
             shape = RoundedCornerShape(20.dp),
             color = Color(0xFFF1ECF8)
         ) {
+
+            val mTime1 = remember { mutableStateOf("00:00") }
+            val mTime2 = remember { mutableStateOf("00:00") }
+            val mTime3 = remember { mutableStateOf("00:00") }
+
             val name = remember { mutableStateOf(TextFieldValue("")) }
-
-
-            val mContext = LocalContext.current
-
-            // Declaring and initializing a calendar
-            val mCalendar = Calendar.getInstance()
-            val mHour = mCalendar[Calendar.HOUR_OF_DAY]
-            val mMinute = mCalendar[Calendar.MINUTE]
-
-            val mTime = remember { mutableStateOf("00:00") }
-
-
-            val mTimePickerDialog = TimePickerDialog(
-                mContext,
-                {_, mHour : Int, mMinute: Int ->
-                    mTime.value = "$mHour:$mMinute"
-                }, mHour, mMinute, false
-            )
 
 
             var expanded by remember { mutableStateOf(false) }
@@ -97,15 +86,88 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         Text(text = mTime.value)
                         }**/
                         Text(text = "Godzina")
-                        NotificationHourItem()
+                        val mContext1 = LocalContext.current
+
+                        // Declaring and initializing a calendar
+                        val mCalendar1 = Calendar.getInstance()
+                        val mHour1 = mCalendar1[Calendar.HOUR_OF_DAY]
+                        val mMinute1 = mCalendar1[Calendar.MINUTE]
+
+
+
+                        val mTimePickerDialog1 = TimePickerDialog(
+                            mContext1,
+                            {_, mHour1 : Int, mMinute1: Int ->
+                                mTime1.value = "$mHour1:$mMinute1"
+                            }, mHour1, mMinute1, false
+                        )
+
+                        Text(
+                            modifier = Modifier
+                                .clickable {
+                                    mTimePickerDialog1.show()
+
+                                }
+                                .background(Color.White),
+                            text = mTime1.value,
+                            color = Color.Black
+                        )
                         if (enabled>=2){
-                            NotificationHourItem()
+                            val mContext2 = LocalContext.current
+
+                            // Declaring and initializing a calendar
+                            val mCalendar2 = Calendar.getInstance()
+                            val mHour2 = mCalendar2[Calendar.HOUR_OF_DAY]
+                            val mMinute2 = mCalendar2[Calendar.MINUTE]
+
+
+                            val mTimePickerDialog2 = TimePickerDialog(
+                                mContext2,
+                                {_, mHour2 : Int, mMinute2: Int ->
+                                    mTime2.value = "$mHour2:$mMinute2"
+                                }, mHour2, mMinute2, false
+                            )
+
+                            Text(
+                                modifier = Modifier
+                                    .clickable {
+                                        mTimePickerDialog2.show()
+                                    }
+                                    .background(Color.White),
+                                text = mTime2.value,
+                                color = Color.Black
+                            )
                         }
                         else{
                             Spacer(Modifier.height(20.dp))
                         }
                         if (enabled>=3) {
-                            NotificationHourItem()
+                            val mContext3 = LocalContext.current
+
+                            // Declaring and initializing a calendar
+                            val mCalendar3 = Calendar.getInstance()
+                            val mHour3 = mCalendar3[Calendar.HOUR_OF_DAY]
+                            val mMinute3 = mCalendar3[Calendar.MINUTE]
+
+
+
+
+                            val mTimePickerDialog3 = TimePickerDialog(
+                                mContext3,
+                                {_, mHour3 : Int, mMinute3: Int ->
+                                    mTime3.value = "$mHour3:$mMinute3"
+                                }, mHour3, mMinute3, false
+                            )
+
+                            Text(
+                                modifier = Modifier
+                                    .clickable {
+                                        mTimePickerDialog3.show()
+                                    }
+                                    .background(Color.White),
+                                text = mTime3.value,
+                                color = Color.Black
+                            )
                     } else{
                             Spacer(Modifier.height(20.dp))
                         }
@@ -115,7 +177,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                     .height(30.dp)
                                     .width(40.dp),
                                 onClick = {
-                                    if (enabled <=3){
+                                    if (enabled <3){
 
                                     enabled += 1
                                 } },
@@ -136,7 +198,8 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                 modifier = Modifier
                                     .height(30.dp)
                                     .width(40.dp),
-                                onClick = { if (enabled>=1){
+                                onClick = { if (enabled>1){
+                                    //notificationTimePickerList.remove(notificationTimePickerList[notificationTimePickerList.size-1])
                                     enabled -= 1
                                 } },
                                 shape = RoundedCornerShape(5.dp),
@@ -242,9 +305,33 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
                     Button(
-                        onClick = { setShowDialog(false)
+                        onClick = {
+                            if (!frequency.equals("Brak")) {
+                                setShowDialog(false)
+                                var timeList = mutableListOf<String>()
+                                if (enabled == 1) {
+                                    timeList = mutableListOf(mTime1.value)
+                                }
+                                if (enabled == 2) {
+                                    timeList = mutableListOf(mTime1.value, mTime2.value)
+                                }
+                                if (enabled == 3) {
+                                    timeList =
+                                        mutableListOf(mTime1.value, mTime2.value, mTime3.value)
+                                }
+                                timeList.sort()
 
-                                  navController.navigate(rout)},
+                                sharedViewModel.notificationItems.add(
+                                    NotificationItem(
+                                        name = name.value.text,
+                                        interval = frequency,
+                                        timeList = timeList
+                                    )
+                                )
+                                navController.navigate(rout)
+                            }
+                        },
+
                         shape = RoundedCornerShape(5.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
                     ) {
@@ -270,35 +357,6 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
     }
 }
 
-@Composable
-fun NotificationHourItem(){
-    val mContext = LocalContext.current
-
-    // Declaring and initializing a calendar
-    val mCalendar = Calendar.getInstance()
-    val mHour = mCalendar[Calendar.HOUR_OF_DAY]
-    val mMinute = mCalendar[Calendar.MINUTE]
-
-    val mTime = remember { mutableStateOf("00:00") }
-
-
-    val mTimePickerDialog = TimePickerDialog(
-        mContext,
-        {_, mHour : Int, mMinute: Int ->
-            mTime.value = "$mHour:$mMinute"
-        }, mHour, mMinute, false
-    )
-
-    Text(
-        modifier = Modifier
-            .clickable {
-                mTimePickerDialog.show()
-            }
-            .background(Color.White),
-        text = mTime.value,
-        color = Color.Black
-    )
-}
 
 @Preview(showBackground = true, showSystemUi = true, widthDp = 360, heightDp = 800)
 @Composable
