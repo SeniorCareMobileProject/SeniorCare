@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -85,7 +86,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         Button(onClick = {mTimePickerDialog.show()},shape = RoundedCornerShape(5.dp), colors =ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFFFFFF))) {
                         Text(text = mTime.value)
                         }**/
-                        Text(text = "Godzina")
+                        Text(text = "Godzina",modifier = Modifier.align(Alignment.CenterHorizontally))
                         val mContext1 = LocalContext.current
 
                         // Declaring and initializing a calendar
@@ -98,20 +99,38 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         val mTimePickerDialog1 = TimePickerDialog(
                             mContext1,
                             {_, mHour1 : Int, mMinute1: Int ->
-                                mTime1.value = "$mHour1:$mMinute1"
+                                if(mMinute1<10){
+                                    if(mHour1<10){
+                                        mTime1.value = "0$mHour1:0$mMinute1"
+                                    }
+                                    else{
+                                        mTime1.value = "$mHour1:0$mMinute1"
+                                    }
+
+                                }
+                                else{
+                                    if(mHour1<10){
+                                        mTime1.value = "0$mHour1:$mMinute1"
+                                    }
+                                    else{
+                                        mTime1.value = "$mHour1:$mMinute1"
+                                    }
+                                }
                             }, mHour1, mMinute1, false
                         )
 
                         Text(
-                            modifier = Modifier
+                            modifier = Modifier.width(60.dp).height(25.dp).align(Alignment.CenterHorizontally)
                                 .clickable {
                                     mTimePickerDialog1.show()
 
                                 }
                                 .background(Color.White),
                             text = mTime1.value,
-                            color = Color.Black
+                            color = Color.Black,
+                            textAlign = TextAlign.Center
                         )
+                        Spacer(Modifier.height(4.dp))
                         if (enabled>=2){
                             val mContext2 = LocalContext.current
 
@@ -124,22 +143,40 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                             val mTimePickerDialog2 = TimePickerDialog(
                                 mContext2,
                                 {_, mHour2 : Int, mMinute2: Int ->
-                                    mTime2.value = "$mHour2:$mMinute2"
+                                    if(mMinute2<10){
+                                        if(mHour2<10){
+                                            mTime2.value = "0$mHour2:0$mMinute2"
+                                        }
+                                        else{
+                                            mTime2.value = "$mHour2:0$mMinute2"
+                                        }
+
+                                    }
+                                    else{
+                                        if(mHour2<10){
+                                            mTime2.value = "0$mHour2:$mMinute2"
+                                        }
+                                        else{
+                                            mTime2.value = "$mHour2:$mMinute2"
+                                        }
+                                    }
                                 }, mHour2, mMinute2, false
                             )
 
                             Text(
-                                modifier = Modifier
+                                modifier = Modifier.width(60.dp).height(25.dp).align(Alignment.CenterHorizontally)
                                     .clickable {
                                         mTimePickerDialog2.show()
                                     }
                                     .background(Color.White),
                                 text = mTime2.value,
-                                color = Color.Black
+                                color = Color.Black,
+                                textAlign = TextAlign.Center
                             )
+                            Spacer(Modifier.height(4.dp))
                         }
                         else{
-                            Spacer(Modifier.height(20.dp))
+                            Spacer(Modifier.height(24.dp))
                         }
                         if (enabled>=3) {
                             val mContext3 = LocalContext.current
@@ -155,21 +192,39 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                             val mTimePickerDialog3 = TimePickerDialog(
                                 mContext3,
                                 {_, mHour3 : Int, mMinute3: Int ->
-                                    mTime3.value = "$mHour3:$mMinute3"
+                                    if(mMinute3<10){
+                                        if(mHour3<10){
+                                            mTime3.value = "0$mHour3:0$mMinute3"
+                                        }
+                                        else{
+                                            mTime3.value = "$mHour3:0$mMinute3"
+                                        }
+
+                                    }
+                                    else{
+                                        if(mHour3<10){
+                                            mTime3.value = "0$mHour3:$mMinute3"
+                                        }
+                                        else{
+                                            mTime3.value = "$mHour3:$mMinute3"
+                                        }
+                                    }
                                 }, mHour3, mMinute3, false
                             )
 
                             Text(
-                                modifier = Modifier
+                                modifier = Modifier.width(60.dp).height(25.dp).align(Alignment.CenterHorizontally)
                                     .clickable {
                                         mTimePickerDialog3.show()
                                     }
                                     .background(Color.White),
                                 text = mTime3.value,
-                                color = Color.Black
+                                color = Color.Black,
+                                textAlign = TextAlign.Center
                             )
+                            Spacer(Modifier.height(4.dp))
                     } else{
-                            Spacer(Modifier.height(20.dp))
+                            Spacer(Modifier.height(24.dp))
                         }
                         Row(){
                             Button(
@@ -231,8 +286,9 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                     expanded = true
 
                                 }
-                                .background(Color.White),
+                                .background(Color.White).align(Alignment.CenterHorizontally).width(90.dp).height(25.dp),
                             text = frequency,
+                            textAlign = TextAlign.Center,
                             color = Color.Black)
                         if (expanded) {
                             DropdownMenu(
