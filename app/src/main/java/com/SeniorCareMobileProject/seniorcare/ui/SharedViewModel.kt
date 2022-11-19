@@ -16,6 +16,8 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.*
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
+import com.SeniorCareMobileProject.seniorcare.data.NotificationItem
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.NotificationItem
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
@@ -192,6 +194,21 @@ class SharedViewModel() : ViewModel(), KoinComponent {
             ""
         ),
     )
+
+    //NOTIFICATIONS
+    var notificationItems: MutableList<NotificationItem> = mutableListOf(
+        NotificationItem(
+            name = "IBUPROM",
+            interval = "Codziennie",
+            timeList = mutableListOf("10:00", "15:00", "20:00")
+        ),
+        NotificationItem(
+            name = "Donepezil",
+            interval = "Co 2 dni",
+            timeList = mutableListOf("10:00", "20:00")
+        )
+    )
+
 
     private val repository = Repository()
 

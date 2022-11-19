@@ -1217,7 +1217,7 @@ fun MedicalDataItemUpd(title: String, text: String, sharedViewModel: SharedViewM
 }
 
 @Composable
-fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) {
+fun NotificationItem(title: String, howOften: String, listOfTime: List<String>,sharedViewModel: SharedViewModel,index:Int,navController: NavController,rout:String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1236,7 +1236,7 @@ fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) 
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(70f)) {
+            Column(modifier = Modifier.weight(60f)) {
                 Text(text = title)
 
             }
@@ -1251,6 +1251,21 @@ fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) 
                     Text(text = item)
                 }
             }
+            Column(modifier = Modifier.weight(10f).clickable{
+                sharedViewModel.notificationItems.remove(sharedViewModel.notificationItems[index])
+                navController.navigate(rout)
+            }){
+                Icon(
+                    painter = painterResource(id = LocalContext.current.resources.getIdentifier(
+                        "remove",
+                        "drawable",
+                        LocalContext.current.packageName
+                    )),
+                    contentDescription = "Remove",
+                    tint = Color.Black,
+                )
+
+            }
         }
     }
 }
@@ -1262,6 +1277,23 @@ fun FloatingButton() {
     FloatingActionButton(
         modifier = Modifier.size(48.dp),
         onClick = { inProgressToastView(context) },
+        backgroundColor = Color.Blue,
+    ) {
+        Icon(
+            Icons.Filled.Add, "",
+            modifier = Modifier.size(48.dp),
+            tint = Color.White
+        )
+    }
+}
+
+@Composable
+fun FloatingButtonNotifications(setShowDialog: (Boolean) -> Unit) {
+    val context = LocalContext.current
+
+    FloatingActionButton(
+        modifier = Modifier.size(48.dp),
+        onClick = { setShowDialog(true) },
         backgroundColor = Color.Blue,
     ) {
         Icon(
