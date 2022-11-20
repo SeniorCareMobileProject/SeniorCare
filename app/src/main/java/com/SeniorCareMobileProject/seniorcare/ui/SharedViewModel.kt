@@ -208,7 +208,7 @@ class SharedViewModel() : ViewModel(), KoinComponent {
             timeList = mutableListOf("10:00", "20:00")
         )
     )
-
+    var notificationitemsLiveData: MutableLiveData<MutableList<NotificationItem>> = MutableLiveData(notificationItems)
 
     private val repository = Repository()
 

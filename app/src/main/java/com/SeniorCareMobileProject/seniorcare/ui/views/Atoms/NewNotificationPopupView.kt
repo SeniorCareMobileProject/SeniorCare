@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -384,6 +385,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                         timeList = timeList
                                     )
                                 )
+                                sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
                                 navController.navigate(rout)
                             }
                         },

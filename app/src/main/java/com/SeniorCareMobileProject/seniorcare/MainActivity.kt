@@ -180,6 +180,13 @@ class MainActivity : ComponentActivity() {
             }
         }
         )
+        sharedViewModel.notificationitemsLiveData.observe(this) { value ->
+            //if (currentUser != null) {
+                //if (sharedViewModel.userData.value?.function == "Senior")
+            if (value.size > 2) {
+                showNotification(context,"Przypomnienie",value[value.size-1].name)
+            }
+        }
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
