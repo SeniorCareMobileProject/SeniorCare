@@ -669,7 +669,8 @@ class MainActivity : ComponentActivity() {
                 this@MainActivity,
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.CALL_PHONE
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.SEND_SMS
                 ),
                 REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
@@ -678,7 +679,8 @@ class MainActivity : ComponentActivity() {
                 this@MainActivity,
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
-                    Manifest.permission.CALL_PHONE
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.SEND_SMS
                 ),
                 REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
