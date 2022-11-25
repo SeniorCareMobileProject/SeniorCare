@@ -1,7 +1,9 @@
 package com.SeniorCareMobileProject.seniorcare.fallDetector
 
 import android.content.Intent
+import android.media.MediaPlayer
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.BorderStroke
@@ -28,8 +30,10 @@ import kotlin.time.ExperimentalTime
 class FallAlertActivity: ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val mediaPlayer = AlarmPlayingUtil(applicationContext).createMediaPlayer()
+        mediaPlayer.start()
         setContent {
-            FallAlertScreen(this)
+            FallAlertScreen(this, mediaPlayer)
         }
     }
 
@@ -46,12 +50,16 @@ class FallAlertActivity: ComponentActivity() {
 
 @OptIn(ExperimentalTime::class)
 @Composable
-fun FallAlertScreen(activity: FallAlertActivity){
+fun FallAlertScreen(activity: FallAlertActivity, mediaPlayer: MediaPlayer){
     var ticks by remember { mutableStateOf(30) }
     LaunchedEffect(Unit) {
         while(ticks > 0) {
             delay(Duration.seconds(1))
             ticks--
+        }
+        if (ticks == 0){
+            // TODO wyslij sms do opiekuna
+            Toast.makeText(activity.applicationContext, "WYSLIJ SMS", Toast.LENGTH_SHORT).show()
         }
     }
     Column(
@@ -87,12 +95,12 @@ fun FallAlertScreen(activity: FallAlertActivity){
             modifier = Modifier.padding(40.dp),
             fontWeight = FontWeight.Bold
         )
-        CancelAlarmButton(activity)
+        CancelAlarmButton(activity, mediaPlayer)
     }
 }
 
 @Composable
-fun CancelAlarmButton(activity: FallAlertActivity) {
+fun CancelAlarmButton(activity: FallAlertActivity, mediaPlayer: MediaPlayer) {
     val backgroundColor: Color = Color.White
     Surface(
         modifier = Modifier
@@ -100,6 +108,8 @@ fun CancelAlarmButton(activity: FallAlertActivity) {
             .height(100.dp)
             .padding(10.dp)
             .clickable {
+                mediaPlayer.stop()
+                mediaPlayer.release()
                 activity.stopActivity()
                 activity.startServiceAgain()
                        },
@@ -134,5 +144,5 @@ fun CancelAlarmButton(activity: FallAlertActivity) {
 @Preview()
 @Composable
 fun FallAlertScreenPreview() {
-    FallAlertScreen(activity = FallAlertActivity())
+    FallAlertScreen(activity = FallAlertActivity(), mediaPlayer = MediaPlayer())
 }
