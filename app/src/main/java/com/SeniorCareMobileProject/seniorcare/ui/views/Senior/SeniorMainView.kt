@@ -57,29 +57,33 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 text = comeHomeText,
                 iconName = "my_location",
                 rout = "SeniorGoingOutInfoScreen",
-                color = comeHomeColor
+                color = comeHomeColor,
+                sharedViewModel = sharedViewModel
             )
             SeniorButton(
                 navController = navController,
                 text = "Informacje medyczne",
                 iconName = "info",
                 rout = "SeniorMedicalInfoScreen",
-                color = "main"
+                color = "main",
+                sharedViewModel = sharedViewModel
             )
             SeniorButton(
                 navController = navController,
                 text = "Kalendarz",
                 iconName = "calendar_month",
                 rout = "SeniorCalendarScreen",
-                color = "main"
+                color = "main",
+                sharedViewModel = sharedViewModel
             )
-//            SeniorButton(
-//                navController = navController,
-//                text = "Detektor upadku",
-//                iconName = "clear",
-//                rout = "",
-//                color = "main"
-//            )
+            SeniorButton(
+                navController = navController,
+                text = "Detektor upadku",
+                iconName = "elderly",
+                rout = "SettingsFallDetectorScreen",
+                color = "main",
+                sharedViewModel = sharedViewModel
+            )
             /*SeniorButton(
             SeniorButton(
                 navController = navController,
@@ -108,6 +112,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 text = "Ustawienia",
                 iconName = "settings",
                 rout = "SeniorSettingsScreen",
+                sharedViewModel = sharedViewModel
             )
         }
     }

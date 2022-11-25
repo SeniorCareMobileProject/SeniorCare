@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.TemplateView3
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -25,7 +26,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.PairingScreenCodeVi
 
 
 @Composable
-fun SeniorCarersListView(navController: NavController) {
+fun SeniorCarersListView(navController: NavController, sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -51,24 +52,28 @@ fun SeniorCarersListView(navController: NavController) {
                 text = "Opiekun",
                 iconName = "",
                 rout = "",
+                sharedViewModel = sharedViewModel
             )
             SeniorButton(
                 navController = navController,
                 text = "Opiekun",
                 iconName = "",
                 rout = "",
+                sharedViewModel = sharedViewModel
             )
             SeniorButton(
                 navController = navController,
                 text = "Opiekun",
                 iconName = "",
                 rout = "",
+                sharedViewModel = sharedViewModel
             )
             SeniorButton(
                 navController = navController,
                 text = "Opiekun",
                 iconName = "",
                 rout = "",
+                sharedViewModel = sharedViewModel
             )
         }
     }
@@ -79,6 +84,6 @@ fun SeniorCarersListView(navController: NavController) {
 fun SeniorCarersListViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        SeniorCarersListView(navController)
+        SeniorCarersListView(navController, sharedViewModel = SharedViewModel())
     }
 }

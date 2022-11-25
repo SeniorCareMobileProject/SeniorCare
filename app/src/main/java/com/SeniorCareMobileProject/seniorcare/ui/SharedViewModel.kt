@@ -40,6 +40,8 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     // Bottom navigation bar
     val navBarIndex = mutableStateOf(0)
 
+    var userFunctionFromLocalRepo = ""
+
     //location
     val onGeofenceRequest = MutableLiveData<Boolean>(false)
     val seniorLocalization = mutableStateOf(LatLng(52.408839, 16.906782))
@@ -119,6 +121,9 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     // MEDICAL INFORMATION
     val medInfo: MutableLiveData<MedInfoDAO> = MutableLiveData()
+
+    // Fall Detector
+    var isFallDetectorTurnOn: MutableLiveData<Boolean> = MutableLiveData(false)
 
     //Calendar events
     //Stores data about new element
@@ -368,6 +373,14 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     }
 
     // LOCAL REPOSITORY
+    fun getUserFunctionFromLocalRepo() {
+        userFunctionFromLocalRepo = localSettingsRepository.readUserFunction().toString()
+    }
+
+    fun saveUserFunctionToLocalRepo(userFunction: String) {
+        localSettingsRepository.saveUserFunction(userFunction)
+    }
+
     fun getSosNumbersFromLocalRepo() {
         val allNumbersString = localSettingsRepository.readSosNumbers()
         val numbersToList = allNumbersString?.split(",")?.map { it.trim() }
@@ -379,5 +392,18 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     fun saveSosNumbersToLocalRepo() {
         localSettingsRepository.saveSosNumbers(sosCascadePhoneNumbers.joinToString())
         Log.d("saveSosNumbersToLocalRepo", "Saved ${sosCascadePhoneNumbers.joinToString()}")
+    }
+
+    fun getFallDetectionStateFromLocalRepo() {
+        isFallDetectorTurnOn.value = localSettingsRepository.readFallDetectionState()
+    }
+
+    fun saveFallDetectionStateToLocalRepo() {
+        localSettingsRepository.saveFallDetectionState(isFallDetectorTurnOn.value!!)
+        Log.d("saveFallDetectionStateToLocalRepo", "Saved $isFallDetectorTurnOn")
+    }
+
+    fun clearLocalRepository() {
+        localSettingsRepository.clearRepository()
     }
 }
