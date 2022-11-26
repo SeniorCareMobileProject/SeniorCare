@@ -29,12 +29,20 @@ import kotlinx.coroutines.CoroutineScope
 @Composable
 fun Header(
     navController: NavController,
-    items: List<List<String>>
+    items: List<List<String>>,
+    sharedViewModel: SharedViewModel
 ) {
     val context = LocalContext.current
     val iconId = remember("edit") {
         context.resources.getIdentifier(
             "edit",
+            "drawable",
+            context.packageName
+        )
+    }
+    val iconShareId = remember("share") {
+        context.resources.getIdentifier(
+            "share",
             "drawable",
             context.packageName
         )
@@ -48,6 +56,23 @@ fun Header(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Center
     ) {
+        Column(
+            modifier = Modifier
+                .weight(10f),
+            horizontalAlignment = Alignment.Start
+        ) {
+            Icon(
+                painter = painterResource(id = iconShareId),
+                contentDescription = "share",
+                tint = Color.Black,
+                modifier = Modifier
+                    .padding(horizontal = 8.dp)
+                    .clickable {
+                        val shareIntent = sharedViewModel.createShareMedInfoIntent()
+                        context.startActivity(shareIntent)
+                    }
+            )
+        }
         Column(
             modifier = Modifier
                 .weight(90f),
@@ -130,7 +155,7 @@ fun CarerMedicalInfoView(
 
         ) {
 
-            Header(navController, items)
+            Header(navController, items, sharedViewModel)
             ItemsList(items)
         }
     }

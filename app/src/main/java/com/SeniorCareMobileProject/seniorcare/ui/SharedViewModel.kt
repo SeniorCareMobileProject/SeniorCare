@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
+import android.content.Intent
 import android.location.Location
 import android.os.CountDownTimer
 import android.util.Log
@@ -17,7 +18,6 @@ import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.data.NotificationItem
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.NotificationItem
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
@@ -405,5 +405,14 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     fun clearLocalRepository() {
         localSettingsRepository.clearRepository()
+    }
+
+    fun createShareMedInfoIntent(): Intent? {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, medInfo.value.toString())
+            type = "text/plain"
+        }
+        return Intent.createChooser(sendIntent, "Udostępnij dane medyczne")
     }
 }
