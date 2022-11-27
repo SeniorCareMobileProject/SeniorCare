@@ -1,6 +1,8 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.app.TimePickerDialog
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -385,8 +387,9 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                         timeList = timeList
                                     )
                                 )
-                                sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
+                                Log.e(TAG,sharedViewModel.notificationItems.toString())
                                 navController.navigate(rout)
+                                sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
                             }
                         },
 

@@ -18,9 +18,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
@@ -33,10 +30,9 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
+import com.SeniorCareMobileProject.seniorcare.receivers.NotificationsBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
 import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -55,6 +51,7 @@ import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
+import java.util.*
 
 private const val TAG = "MainActivity"
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
@@ -183,8 +180,12 @@ class MainActivity : ComponentActivity() {
         sharedViewModel.notificationitemsLiveData.observe(this) { value ->
             //if (currentUser != null) {
                 //if (sharedViewModel.userData.value?.function == "Senior")
-            if (value.size > 2) {
-                showNotification(context,"Przypomnienie",value[value.size-1].name)
+            if (value.size != sharedViewModel.notificationItemsNumber) {
+                //stopService(Intent(applicationContext,NotificationsService::class.java))
+                //startService(Intent(applicationContext,NotificationsService::class.java).)
+                sharedViewModel.notificationItemsNumber = value.size
+                cancelAllAlarms()
+                scheduleNotifications()
             }
         }
 
@@ -527,6 +528,80 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    fun scheduleNotifications(){
+        Log.e(TAG, "onStartCommand")
+        Log.e(TAG,sharedViewModel.notificationItems.size.toString())
+        Log.e(TAG,sharedViewModel.notificationitemsLiveData.value.toString())
+        //startTimer()
+
+        for(i in 0 until sharedViewModel.notificationItems.size){
+            for(j in 0 until sharedViewModel.notificationItems[i].timeList.size){
+                Log.e(TAG,sharedViewModel.notificationItems[i].name)
+
+
+                Log.e(TAG, Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()).toString() + " " + Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()).toString() )
+                setAlarm(
+                    Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()),
+                    Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()),
+                    i,
+                    j
+                )
+            }
+
+        }
+    }
+
+    fun setAlarm(hour: Int, minute: Int, notificationId: Int, timeId: Int){
+        val alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
+        Log.e(TAG,sharedViewModel.notificationItems[notificationId].name)
+        val alarmPendingIntent by lazy {
+            val intent = Intent(context, NotificationsBroadcastReceiver::class.java).putExtra("NotificationId",notificationId).putExtra("VALUE",sharedViewModel.notificationItems[notificationId].name).putExtra("TimeId",timeId)
+            PendingIntent.getBroadcast(context, notificationId*3 + timeId, intent, 0)
+        }
+
+        val calendar = GregorianCalendar.getInstance().apply {
+            if (get(Calendar.HOUR_OF_DAY) >= hour && get(Calendar.MINUTE)>=minute) {
+                add(Calendar.DAY_OF_MONTH, 1)
+            }
+
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            alarmPendingIntent
+        )
+    }
+
+    fun cancelAllAlarms(){
+        for(i in 0 until sharedViewModel.notificationItems.size){
+            for(j in 0 until sharedViewModel.notificationItems[i].timeList.size){
+
+                cancelAlarm(
+                    i,
+                    j
+                )
+            }
+
+        }
+    }
+
+    fun cancelAlarm(notificationId: Int,timeId: Int){
+
+        val alarmManager = getSystemService(ALARM_SERVICE) as AlarmManager
+        val myIntent = Intent(applicationContext, NotificationsBroadcastReceiver::class.java)
+        val pendingIntent = PendingIntent.getBroadcast(
+            applicationContext, notificationId*3 + timeId, myIntent, 0
+        )
+
+        alarmManager.cancel(pendingIntent)
+    }
+
     fun scheduleJob() {
         val componentName = ComponentName(this, LocationJobScheduler::class.java)
         val info = JobInfo.Builder(123, componentName)
@@ -634,6 +709,10 @@ class MainActivity : ComponentActivity() {
         super.onPause()
     }
 
+    override fun onDestroy(){
+        super.onDestroy()
+    }
+
     override fun onStop() {
         if (currentOnlyLocationService != null) {
             currentOnlyLocationService?.unSubscribeToLocationUpdates()
@@ -644,6 +723,7 @@ class MainActivity : ComponentActivity() {
             foregroundOnlyLocationServiceBound = false
         }
         // sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+
 
         super.onStop()
     }
