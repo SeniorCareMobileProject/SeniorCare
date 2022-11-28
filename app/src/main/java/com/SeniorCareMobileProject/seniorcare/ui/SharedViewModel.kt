@@ -134,71 +134,8 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     var createNewEvent = mutableStateOf(false)
     var updateEvent = mutableStateOf(false)
     var removeEvent = mutableStateOf(false)
-    var calendarEvents: MutableList<CalendarEvent> = mutableListOf(
-        CalendarEvent(
-            LocalDate(2022, 11, 9),
-            LocalTime(11, 30),
-            LocalTime(13, 0),
-            "Lekarz",
-            "Opis wydarzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 9),
-            LocalTime(10, 0),
-            LocalTime(11, 30),
-            "Sambo",
-            "Opis"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 9),
-            LocalTime(16, 0),
-            LocalTime(18, 30),
-            "Lekarz",
-            "Opis wydarzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 10),
-            LocalTime(10, 0),
-            LocalTime(11, 30),
-            "Lekarz",
-            "Opis wydarzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 10),
-            LocalTime(13, 0),
-            LocalTime(15, 30),
-            "Lekasghasfdgasdarz",
-            "Opis wydaasdgadsrzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 13),
-            LocalTime(10, 0),
-            LocalTime(11, 30),
-            "Opis wydarzenia",
-            ""
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 13),
-            LocalTime(16, 0),
-            LocalTime(18, 30),
-            "Lekgsjfgarz",
-            "Opis wydasgfjdgfrzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 19),
-            LocalTime(16, 0),
-            LocalTime(18, 30),
-            "Lekgsjfgarz",
-            "Opis wydasgfjdgfrzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 19),
-            LocalTime(10, 0),
-            LocalTime(11, 30),
-            "Opis wydarzenia",
-            ""
-        ),
-    )
+    var calendarEvents: MutableList<CalendarEvent> = mutableListOf()
+    val calendarEventsFirebase = arrayListOf<CalendarEventDAO>()
 
     //NOTIFICATIONS
     var notificationItems: MutableList<NotificationItem> = mutableListOf(
@@ -414,5 +351,43 @@ class SharedViewModel() : ViewModel(), KoinComponent {
             type = "text/plain"
         }
         return Intent.createChooser(sendIntent, "Udostępnij dane medyczne")
+    }
+
+    // CALENDAR EVENTS - FIREBASE
+    fun saveCalendarEventsToFirebase() {
+        parseCalendarEventsToCalendarEventsFirebase()
+        repository.saveCalendarEvents(this)
+    }
+
+    fun loadCalendarEventsFromFirebase() {
+        repository.loadCalendarEventsForSenior(this)
+    }
+
+    private fun parseCalendarEventsToCalendarEventsFirebase(){
+        calendarEventsFirebase.clear()
+        for (calendarEvent in calendarEvents){
+            val calendarEventFirebase = CalendarEventDAO(
+                calendarEvent.date.toString(),
+                calendarEvent.startTime.toString(),
+                calendarEvent.endTime.toString(),
+                calendarEvent.eventName,
+                calendarEvent.eventDescription
+            )
+            calendarEventsFirebase.add(calendarEventFirebase)
+        }
+    }
+
+    fun parseCalendarEventsFirebaseToCalendarEvents(){
+        calendarEvents.clear()
+        for (calendarEventFirebase in calendarEventsFirebase){
+            val calendarEvent = CalendarEvent(
+                LocalDate.parse(calendarEventFirebase.date),
+                LocalTime.parse(calendarEventFirebase.startTime),
+                LocalTime.parse(calendarEventFirebase.endTime),
+                calendarEventFirebase.eventName,
+                calendarEventFirebase.eventDescription
+            )
+            calendarEvents.add(calendarEvent)
+        }
     }
 }
