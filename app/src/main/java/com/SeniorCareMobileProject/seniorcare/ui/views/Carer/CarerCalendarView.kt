@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -43,7 +44,6 @@ fun CarerCalendarView(
     scaffoldState: ScaffoldState
 ) {
     val showDialog = remember { mutableStateOf(false) }
-    val context = LocalContext.current
 
     Scaffold(
         scaffoldState = scaffoldState,
@@ -233,21 +233,34 @@ fun CarerCalendarView(
                 sharedViewModel.removeEvent.value = false
                 refreshEventsList.value = true
                 showDialog.value = false
+            } else if (sharedViewModel.removeEventConfirmation.value) {
+                val context = LocalContext.current
+
+                SubmitOrDenyDialogView(
+                    text = context.getString(R.string.event_delete_confirmation),
+                    onDismissRequest = {
+                        sharedViewModel.modifiedEvent = emptyEvent.copy()
+                        sharedViewModel.removeEventConfirmation.value = false
+                        showDialog.value = false
+                    },
+                    sharedViewModel = sharedViewModel,
+                    showDialog = showDialog
+                )
             }
         }
     }
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun CarerDayPlanningViewPreview() {
-    SeniorCareTheme() {
-        val navController = rememberNavController()
-        val sharedViewModel = SharedViewModel()
-        val scope = rememberCoroutineScope()
-        val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-
-        CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
-    }
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun CarerDayPlanningViewPreview() {
+//    SeniorCareTheme() {
+//        val navController = rememberNavController()
+//        val sharedViewModel = SharedViewModel()
+//        val scope = rememberCoroutineScope()
+//        val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
+//
+//        CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
+//    }
+//}

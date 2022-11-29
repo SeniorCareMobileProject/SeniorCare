@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import kotlinx.datetime.LocalDate
@@ -110,6 +111,7 @@ fun CalendarEventItemView(
                     )
                     Column() {
                         if (expanded) {
+
                             DropdownMenu(
                                 modifier = Modifier.background(Color.Transparent),
                                 expanded = expanded,
@@ -143,33 +145,112 @@ fun CalendarEventItemView(
                                     )
                                 }
                                 DropdownMenuItem(
-                                            onClick = {
-                                                sharedViewModel.modifiedEvent.date = date
-                                                sharedViewModel.modifiedEvent.startTime = startTime
-                                                sharedViewModel.modifiedEvent.endTime = endTime
-                                                sharedViewModel.modifiedEvent.eventName = eventName
-                                                sharedViewModel.modifiedEvent.eventDescription =
-                                                    eventDescription
+                                    onClick = {
+                                        sharedViewModel.removeEventConfirmation.value = true
+                                        //Trigger main if statement
+                                        showDialog.value = true
 
-                                                expanded = false
+                                        sharedViewModel.modifiedEvent.date = date
+                                        sharedViewModel.modifiedEvent.startTime = startTime
+                                        sharedViewModel.modifiedEvent.endTime = endTime
+                                        sharedViewModel.modifiedEvent.eventName = eventName
+                                        sharedViewModel.modifiedEvent.eventDescription =
+                                            eventDescription
 
-                                                sharedViewModel.removeEvent.value = true
-                                                //Due to the line above, will not show dialog, only enter if
-                                                showDialog.value = true
-                                            },
-                                            modifier = Modifier
-                                                .clip(RoundedCornerShape(4.dp))
+                                        expanded = false
+
+//                                        sharedViewModel.removeEvent.value = true
+//                                        //Due to the line above, will not show dialog, only enter
+//                                        // "if" statement in CarerCalendarView.kt file
+//                                        showDialog.value = true
+                                    },
+                                    modifier = Modifier
+                                        .clip(RoundedCornerShape(4.dp))
 //                                        .background(Color.Red)
-                                        ) {
-                                            Text(
-                                                modifier = Modifier.fillMaxWidth(),
-                                                text = "Usuń",
-                                                color = Color.Red,
-                                                textAlign = TextAlign.Center
+                                ) {
+                                    Text(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        text = "Usuń",
+                                        color = Color.Red,
+                                        textAlign = TextAlign.Center
                                     )
                                 }
                             }
                         }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SubmitOrDenyDialogView(
+    text: String,
+    onDismissRequest: () -> Unit,
+    sharedViewModel: SharedViewModel,
+    showDialog: MutableState<Boolean>,
+) {
+//    AlertDialog(
+//        onDismissRequest = onDismissRequest,
+//        dismissButton = dismissButton,
+//        confirmButton = confirmButton,
+//        title = { Text(text = text) },
+//        shape = RoundedCornerShape(15.dp)
+//    )
+
+
+    val context = LocalContext.current
+
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            backgroundColor = Color(0xFFF1ECF8),
+            shape = RoundedCornerShape(15.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = text)
+                Row(modifier = Modifier.padding(top = 12.dp)) {
+                    Button(
+                        modifier = Modifier
+                            .weight(10f),
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = {
+                            sharedViewModel.removeEvent.value = true
+                            //Due to the line above, will not show dialog, only enter
+                            // "if" statement in CarerCalendarView.kt file
+                            showDialog.value = true
+                            sharedViewModel.removeEventConfirmation.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFFA670F0),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = context.getString(R.string.yes))
+                    }
+
+                    Spacer(modifier = Modifier.weight(2f))
+
+                    Button(
+                        modifier = Modifier
+                            .weight(10f),
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = {
+                            sharedViewModel.modifiedEvent = emptyEvent.copy()
+                            sharedViewModel.removeEventConfirmation.value = false
+                            showDialog.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFF3D1574),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = context.getString(R.string.no))
                     }
                 }
             }

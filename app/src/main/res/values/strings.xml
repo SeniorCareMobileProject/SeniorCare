@@ -49,6 +49,9 @@
 
     <string name="today">Dzisiaj</string>
     <string name="tomorrow">Jutro</string>
+    <string name="event_delete_confirmation">Czy na pewno chcesz usunąć?</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
 
     <string name="fall_detection_alert_message">UWAGA! Potencjalny upadek podopiecznego!</string>
 </resources>

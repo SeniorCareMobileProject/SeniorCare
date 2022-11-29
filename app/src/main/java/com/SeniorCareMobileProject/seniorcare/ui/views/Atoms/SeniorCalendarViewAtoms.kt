@@ -115,6 +115,11 @@ fun SeniorCalendarViewAtomsPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
 //        DaySeparator(navController, "Dzisiaj")
-//        SeniorCalendarEventItemView()
+//        SeniorCalendarEventItemView(
+//            LocalTime(16, 0, 0),
+//            LocalTime(16, 30, 0),
+//            "Example",
+//            "Description of the test event"
+//        )
     }
 }
