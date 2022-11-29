@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -17,6 +18,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
+import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.SeniorMainView
@@ -30,6 +32,11 @@ class WidgetActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val localSettingsRepository = LocalSettingsRepository.getInstance(application)
+        sharedViewModel.localSettingsRepository = localSettingsRepository
+        sharedViewModel.getSosNumbersFromLocalRepo()
+
         setContent {
             val navController = rememberNavController()
             NavHost(navController, startDestination = NavigationScreens.SosCascadeView.name){
@@ -54,7 +61,7 @@ class WidgetActivity : ComponentActivity() {
         )
     }
 
-    fun makePhoneCall(number: String) {
+    private fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {
             if (ContextCompat.checkSelfPermission(
                     this@WidgetActivity,

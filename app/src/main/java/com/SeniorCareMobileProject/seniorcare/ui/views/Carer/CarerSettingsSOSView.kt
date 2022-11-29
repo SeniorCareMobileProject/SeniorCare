@@ -42,6 +42,7 @@ fun CarerSettingsSOSView(navController: NavController, sharedViewModel: SharedVi
             )
             SettingsItemWithIcon(
                 navController,
+                sharedViewModel,
                 "Lista opiekunów",
                 "CarerSettingsSOSUpdateScreen",
                 "edit"

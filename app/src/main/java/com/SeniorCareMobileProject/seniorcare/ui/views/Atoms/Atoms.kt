@@ -799,6 +799,7 @@ fun AddNumber(
 @Composable
 fun SettingsItemWithIcon(
     navController: NavController,
+    sharedViewModel: SharedViewModel,
     text: String,
     rout: String,
     iconName: String,
@@ -842,7 +843,7 @@ fun SettingsItemWithIcon(
                     tint = Color.Black,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
-                        .clickable { navController.navigate(rout) }
+                        .clickable { navController.navigate(rout);sharedViewModel.saveSosNumbersToFirebase()}
                 )
             }
         }
@@ -864,8 +865,6 @@ fun SettingsNumberElement(
     navController: NavController,
     rout: String
 ) {
-
-
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -885,7 +884,6 @@ fun SettingsNumberElement(
                     horizontalAlignment = Alignment.Start
                 ){
                 Text(
-
                     text = sharedViewModel.sosPhoneNumbersNames[index],
                     color = Color.Black,
                     lineHeight = 24.sp,
@@ -916,6 +914,7 @@ fun SettingsNumberElement(
                         sharedViewModel.sosCascadePhoneNumbers.remove(sharedViewModel.sosCascadePhoneNumbers[index])
                         sharedViewModel.sosSettingsNameStates.remove(sharedViewModel.sosSettingsNameStates[index])
                         sharedViewModel.sosSettingsNumberStates.remove(sharedViewModel.sosSettingsNumberStates[index])
+                        sharedViewModel.saveSosNumbersToFirebase()
                         navController.navigate(rout)
                 },
                 horizontalAlignment = Alignment.End){
@@ -940,7 +939,7 @@ fun SettingsNumberElement(
 @Composable
 fun SettingsEditNumberElement(
     index: Int,
-    sharedViewModel: SharedViewModel
+    sharedViewModel: SharedViewModel,
 ) {
     var textName by remember { sharedViewModel.sosSettingsNameStates[index] }
     var textNumber by remember{ sharedViewModel.sosSettingsNumberStates[index] }
@@ -953,10 +952,12 @@ fun SettingsEditNumberElement(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(Color(0xFFF5F5F5))
+                    .padding(end=16.dp)
             ) {
 
                 TextField(
-                    modifier = Modifier.weight(4f),
+                    modifier = Modifier.weight(3f),
                     value = textName,
                     onValueChange = { textName = it;sharedViewModel.sosPhoneNumbersNames[index] = textName },
                     textStyle = TextStyle(
@@ -965,7 +966,8 @@ fun SettingsEditNumberElement(
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color(0xFFF5F5F5),
                         unfocusedIndicatorColor = Color.Transparent
-                    )
+                    ),
+                    label = { Text(text = "Opiekun:")}
                 )
                 Column(
                     modifier = Modifier.weight(3f).fillMaxWidth(),
@@ -983,12 +985,15 @@ fun SettingsEditNumberElement(
                         ),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number
-                        )
+                        ),
+                        label = { Text(text = "Numer telefonu:")}
                     )
                 }
                 Column(
                     modifier = Modifier
                         .weight(1f).fillMaxWidth()
+                        .padding(top=8.dp)
+                        .padding(bottom=8.dp)
                         .clickable {
                             try {
                                 var buff = sharedViewModel.sosCascadePhoneNumbers[index]
@@ -1006,6 +1011,7 @@ fun SettingsEditNumberElement(
                                 textName = sharedViewModel.sosPhoneNumbersNames[index]
                                 sharedViewModel.sosSettingsNameStates[index - 1].value =
                                     sharedViewModel.sosPhoneNumbersNames[index - 1]
+
                             } catch (e: Exception) {
 
                             }
@@ -1028,6 +1034,8 @@ fun SettingsEditNumberElement(
                 Column(
                     modifier = Modifier
                         .weight(1f)
+                        .padding(top=8.dp)
+                        .padding(bottom=8.dp)
                         .clickable {
                             try {
                                 var buff = sharedViewModel.sosCascadePhoneNumbers[index]
@@ -1045,6 +1053,7 @@ fun SettingsEditNumberElement(
                                 textName = sharedViewModel.sosPhoneNumbersNames[index]
                                 sharedViewModel.sosSettingsNameStates[index + 1].value =
                                     sharedViewModel.sosPhoneNumbersNames[index + 1]
+
                             } catch (e: Exception) {
 
                             }
@@ -1208,7 +1217,7 @@ fun MedicalDataItemUpd(title: String, text: String, sharedViewModel: SharedViewM
 }
 
 @Composable
-fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) {
+fun NotificationItem(title: String, howOften: String, listOfTime: List<String>,sharedViewModel: SharedViewModel,index:Int,navController: NavController,rout:String) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -1227,7 +1236,7 @@ fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) 
                 .padding(horizontal = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Column(modifier = Modifier.weight(70f)) {
+            Column(modifier = Modifier.weight(60f)) {
                 Text(text = title)
 
             }
@@ -1242,6 +1251,21 @@ fun NotificationItem(title: String, howOften: String, listOfTime: List<String>) 
                     Text(text = item)
                 }
             }
+            Column(modifier = Modifier.weight(10f).clickable{
+                sharedViewModel.notificationItems.remove(sharedViewModel.notificationItems[index])
+                navController.navigate(rout)
+            }){
+                Icon(
+                    painter = painterResource(id = LocalContext.current.resources.getIdentifier(
+                        "remove",
+                        "drawable",
+                        LocalContext.current.packageName
+                    )),
+                    contentDescription = "Remove",
+                    tint = Color.Black,
+                )
+
+            }
         }
     }
 }
@@ -1253,6 +1277,23 @@ fun FloatingButton() {
     FloatingActionButton(
         modifier = Modifier.size(48.dp),
         onClick = { inProgressToastView(context) },
+        backgroundColor = Color.Blue,
+    ) {
+        Icon(
+            Icons.Filled.Add, "",
+            modifier = Modifier.size(48.dp),
+            tint = Color.White
+        )
+    }
+}
+
+@Composable
+fun FloatingButtonNotifications(setShowDialog: (Boolean) -> Unit) {
+    val context = LocalContext.current
+
+    FloatingActionButton(
+        modifier = Modifier.size(48.dp),
+        onClick = { setShowDialog(true) },
         backgroundColor = Color.Blue,
     ) {
         Icon(
@@ -1285,12 +1326,15 @@ fun PopupButton(text: String, setShowDialog: (Boolean) -> Unit) {
 fun PopupButtonAddNumber(text: String, sharedViewModel: SharedViewModel,name:String,number:String,setShowDialog: (Boolean) -> Unit) {
     Button(
         onClick = {
-            if (!name.equals("") && !number.equals("") && number.length == 9 ){
-            sharedViewModel.sosCascadePhoneNumbers.add(number)
-            sharedViewModel.sosPhoneNumbersNames.add(name)
+            if (name != "" && number != "" && number.length == 9 ){
+                sharedViewModel.sosCascadePhoneNumbers.add(number)
+                sharedViewModel.sosPhoneNumbersNames.add(name)
                 sharedViewModel.sosSettingsNumberStates.add(mutableStateOf(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadePhoneNumbers.size-1]))
-            sharedViewModel.sosSettingsNameStates.add(mutableStateOf(sharedViewModel.sosPhoneNumbersNames[sharedViewModel.sosCascadePhoneNumbers.size-1]))
-            setShowDialog(false)}},
+                sharedViewModel.sosSettingsNameStates.add(mutableStateOf(sharedViewModel.sosPhoneNumbersNames[sharedViewModel.sosPhoneNumbersNames.size-1]))
+                sharedViewModel.saveSosNumbersToFirebase()
+                setShowDialog(false)
+            }
+                  },
         shape = RoundedCornerShape(5.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
     ) {
@@ -1369,7 +1413,7 @@ fun SignUpViewPreview() {
             )
             TopBarSettings(navController = navController, sharedViewModel = sharedViewModel)
             SettingsItem(navController, "Przycisk SOS", "")
-            SettingsItemWithIcon(navController, "Przycisk SOS", "", "edit")
+            SettingsItemWithIcon(navController, sharedViewModel,"Przycisk SOS", "", "edit")
             SettingsNumberElement(0,sharedViewModel,navController,"CarerSettingsSOSScreen")
             SettingsNumberElement(1,sharedViewModel,navController,"CarerSettingsSOSScreen")
 //            StatusWidget(

@@ -30,9 +30,10 @@ fun CarerSettingsSOSUpdateView(navController: NavController, sharedViewModel: Sh
         Column(modifier = Modifier.fillMaxSize()) {
             SettingsItemWithIcon(
                 navController,
-                "Lista opiekunów",
+                sharedViewModel,
+                "Zapisz zmiany",
                 "CarerSettingsSOSScreen",
-                "edit"
+                "done"
             )
             for(i in 0 until sharedViewModel.sosCascadePhoneNumbers.size){
                 SettingsEditNumberElement(index = i, sharedViewModel = sharedViewModel)
