@@ -199,21 +199,10 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     )
 
     //NOTIFICATIONS
-    var notificationItems: MutableList<NotificationItem> = mutableListOf(
-        /**NotificationItem(
-            name = "IBUPROM",
-            interval = "Codziennie",
-            //timeList = mutableListOf("10:00", "15:00", "20:00")
-            timeList = mutableListOf("18:01","18:02","17:59")
-        ),
-        NotificationItem(
-            name = "Donepezil",
-            interval = "Co 2 dni",
-            timeList = mutableListOf("18:04", "17:58")
-        )**/
-    )
-    var notificationitemsLiveData: MutableLiveData<MutableList<NotificationItem>> = MutableLiveData(notificationItems)
-    var notificationItemsNumber = 0
+    var notificationItems: MutableList<NotificationItem> = mutableListOf() //List of notifications
+    var notificationitemsLiveData: MutableLiveData<MutableList<NotificationItem>> = MutableLiveData(notificationItems) //Livedata of notifcations list
+    var notificationItemsNumber = 0 //Variable used for checking if there is a new notification
+
 
     private val repository = Repository()
 
