@@ -64,6 +64,7 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
                             sharedViewModel.getGeofenceForSenior()
                             sharedViewModel.getMedicalInformationForSenior()
                             sharedViewModel.getSosNumbersForSenior()
+                            sharedViewModel.loadCalendarEventsFromFirebase()
                             navController.navigate("SeniorMainScreen"){
                                 popUpTo("LoadingDataView") {inclusive = true}
                             }

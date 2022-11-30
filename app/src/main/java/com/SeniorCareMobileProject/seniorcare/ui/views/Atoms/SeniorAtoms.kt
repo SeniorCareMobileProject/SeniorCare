@@ -3,6 +3,7 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 import android.app.Activity
 import android.content.Intent
 import android.os.CountDownTimer
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -29,6 +30,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
+import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -39,7 +41,8 @@ fun SeniorButton(
     text: String,
     iconName: String,
     rout: String,
-    color: String = ""
+    color: String = "",
+    sharedViewModel: SharedViewModel
     /*
     * @param[iconName] "" - no icon
     * @param[color]:
@@ -87,6 +90,7 @@ fun SeniorButton(
                 }
                 else if (rout == "sign out") {
                     FirebaseAuth.getInstance().signOut()
+                    sharedViewModel.clearLocalRepository()
                     val activity = context as Activity
                     activity.finish()
                     val intent = Intent(context, MainActivity::class.java)
@@ -190,11 +194,13 @@ fun SeniorButtonNoIcon(
 }
 
 @Composable
-fun SeniorSwitchButton(
+fun SeniorFallDetectorSwitchButton(
     text: String,
     color: String = "",
-    mCheckedState: MutableState<Boolean>
+    mCheckedState: MutableState<Boolean>,
+    sharedViewModel: SharedViewModel
 ) {
+    val applicationContext = LocalContext.current as Activity
     val backgroundColor: Color = when (color) {
         "main" -> {
             Color(0xFFcaaaf9)
@@ -243,7 +249,16 @@ fun SeniorSwitchButton(
             ) {
                 Switch(
                     checked = mCheckedState.value,
-                    onCheckedChange = { mCheckedState.value = it },
+                    onCheckedChange = {
+                        mCheckedState.value = it
+                        sharedViewModel.isFallDetectorTurnOn.value = it
+                        sharedViewModel.saveFallDetectionStateToLocalRepo()
+                        if (sharedViewModel.isFallDetectorTurnOn.value == true) {
+                            applicationContext.startService(Intent(applicationContext, FallDetectorService::class.java))
+                        } else {
+                            applicationContext.stopService(Intent(applicationContext, FallDetectorService::class.java))
+                        }
+                                      },
 //                colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF6522C1))
                 )
             }
@@ -284,7 +299,8 @@ fun TemplateViewPreview() {
                 "Wychodzę z domu",
                 "my_location",
                 "",
-                "main"
+                "main",
+                sharedViewModel = SharedViewModel()
             )
             SeniorMedicalDataItem(
                 title = "Przyjmowane leki:",

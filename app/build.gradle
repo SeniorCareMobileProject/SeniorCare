@@ -107,4 +107,7 @@ dependencies {
 
     implementation("com.himanshoe:kalendar:1.2.0")
 
+    // fall detector - CircularFifoQueue
+    implementation("org.apache.commons:commons-collections4:4.0")
+
 }

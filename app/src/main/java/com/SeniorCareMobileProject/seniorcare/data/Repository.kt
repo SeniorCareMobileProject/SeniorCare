@@ -22,6 +22,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlin.random.Random
 
 class Repository {
@@ -110,6 +112,7 @@ class Repository {
                 val user = snapshot.getValue<User>()
                 if (user != null) {
                     sharedViewModel._userData.value = user
+                    user.function?.let { sharedViewModel.saveUserFunctionToLocalRepo(it) }
                     sharedViewModel._userDataStatus.postValue(Resource.Success(user))
                 }
                 else {
@@ -193,6 +196,13 @@ class Repository {
                         sharedViewModel.sosPhoneNumbersNames = newSosNames
                         sharedViewModel.sosSettingsNumberStates = newNumberState
                         sharedViewModel.sosSettingsNameStates = newNameState
+                    }
+                    if (user.calendar != null) {
+                        sharedViewModel.calendarEventsFirebase.clear()
+                        for (calendarEventFirebase in user.calendar) {
+                            sharedViewModel.calendarEventsFirebase.add(calendarEventFirebase)
+                        }
+                        sharedViewModel.parseCalendarEventsFirebaseToCalendarEvents()
                     }
                     //getSeniorLocation(sharedViewModel)
                     sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
@@ -609,5 +619,45 @@ class Repository {
                 }
             }
         }
+    }
+
+    fun saveCalendarEvents(sharedViewModel: SharedViewModel) {
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("calendar")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(sharedViewModel.calendarEventsFirebase).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveCalendarEventsToFirebase:", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun loadCalendarEventsForSenior(sharedViewModel: SharedViewModel) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("calendar")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val calendarEventsFirebase = snapshot.getValue<ArrayList<CalendarEventDAO>>()
+                if (calendarEventsFirebase != null) {
+                    sharedViewModel.calendarEventsFirebase.clear()
+                    for (calendarEventFirebase in calendarEventsFirebase) {
+                        sharedViewModel.calendarEventsFirebase.add(calendarEventFirebase)
+                    }
+                    sharedViewModel.parseCalendarEventsFirebaseToCalendarEvents()
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "loadCalendarEventsForSenior:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
     }
 }

@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
+import android.content.Intent
 import android.location.Location
 import android.os.CountDownTimer
 import android.os.Handler
@@ -19,7 +20,6 @@ import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.data.NotificationItem
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.NotificationItem
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.AuthCredential
 import com.google.firebase.auth.AuthResult
@@ -42,6 +42,8 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     // Bottom navigation bar
     val navBarIndex = mutableStateOf(0)
+
+    var userFunctionFromLocalRepo = ""
 
     //location
     val onGeofenceRequest = MutableLiveData<Boolean>(false)
@@ -123,6 +125,9 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     // MEDICAL INFORMATION
     val medInfo: MutableLiveData<MedInfoDAO> = MutableLiveData()
 
+    // Fall Detector
+    var isFallDetectorTurnOn: MutableLiveData<Boolean> = MutableLiveData(false)
+
     //Calendar events
     //Stores data about new element
     var newEvent = emptyEvent.copy()
@@ -132,71 +137,8 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     var createNewEvent = mutableStateOf(false)
     var updateEvent = mutableStateOf(false)
     var removeEvent = mutableStateOf(false)
-    var calendarEvents: MutableList<CalendarEvent> = mutableListOf(
-        CalendarEvent(
-            LocalDate(2022, 11, 9),
-            LocalTime(11, 30),
-            LocalTime(13, 0),
-            "Lekarz",
-            "Opis wydarzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 9),
-            LocalTime(10, 0),
-            LocalTime(11, 30),
-            "Sambo",
-            "Opis"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 9),
-            LocalTime(16, 0),
-            LocalTime(18, 30),
-            "Lekarz",
-            "Opis wydarzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 10),
-            LocalTime(10, 0),
-            LocalTime(11, 30),
-            "Lekarz",
-            "Opis wydarzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 10),
-            LocalTime(13, 0),
-            LocalTime(15, 30),
-            "Lekasghasfdgasdarz",
-            "Opis wydaasdgadsrzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 13),
-            LocalTime(10, 0),
-            LocalTime(11, 30),
-            "Opis wydarzenia",
-            ""
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 13),
-            LocalTime(16, 0),
-            LocalTime(18, 30),
-            "Lekgsjfgarz",
-            "Opis wydasgfjdgfrzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 19),
-            LocalTime(16, 0),
-            LocalTime(18, 30),
-            "Lekgsjfgarz",
-            "Opis wydasgfjdgfrzenia"
-        ),
-        CalendarEvent(
-            LocalDate(2022, 11, 19),
-            LocalTime(10, 0),
-            LocalTime(11, 30),
-            "Opis wydarzenia",
-            ""
-        ),
-    )
+    var calendarEvents: MutableList<CalendarEvent> = mutableListOf()
+    val calendarEventsFirebase = arrayListOf<CalendarEventDAO>()
 
     //NOTIFICATIONS
     var notificationItems: MutableList<NotificationItem> = mutableListOf() //List of notifications
@@ -362,6 +304,14 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     }
 
     // LOCAL REPOSITORY
+    fun getUserFunctionFromLocalRepo() {
+        userFunctionFromLocalRepo = localSettingsRepository.readUserFunction().toString()
+    }
+
+    fun saveUserFunctionToLocalRepo(userFunction: String) {
+        localSettingsRepository.saveUserFunction(userFunction)
+    }
+
     fun getSosNumbersFromLocalRepo() {
         val allNumbersString = localSettingsRepository.readSosNumbers()
         val numbersToList = allNumbersString?.split(",")?.map { it.trim() }
@@ -375,4 +325,63 @@ class SharedViewModel() : ViewModel(), KoinComponent {
         Log.d("saveSosNumbersToLocalRepo", "Saved ${sosCascadePhoneNumbers.joinToString()}")
     }
 
+    fun getFallDetectionStateFromLocalRepo() {
+        isFallDetectorTurnOn.value = localSettingsRepository.readFallDetectionState()
+    }
+
+    fun saveFallDetectionStateToLocalRepo() {
+        localSettingsRepository.saveFallDetectionState(isFallDetectorTurnOn.value!!)
+        Log.d("saveFallDetectionStateToLocalRepo", "Saved $isFallDetectorTurnOn")
+    }
+
+    fun clearLocalRepository() {
+        localSettingsRepository.clearRepository()
+    }
+
+    fun createShareMedInfoIntent(): Intent? {
+        val sendIntent: Intent = Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, medInfo.value.toString())
+            type = "text/plain"
+        }
+        return Intent.createChooser(sendIntent, "Udostępnij dane medyczne")
+    }
+
+    // CALENDAR EVENTS - FIREBASE
+    fun saveCalendarEventsToFirebase() {
+        parseCalendarEventsToCalendarEventsFirebase()
+        repository.saveCalendarEvents(this)
+    }
+
+    fun loadCalendarEventsFromFirebase() {
+        repository.loadCalendarEventsForSenior(this)
+    }
+
+    private fun parseCalendarEventsToCalendarEventsFirebase(){
+        calendarEventsFirebase.clear()
+        for (calendarEvent in calendarEvents){
+            val calendarEventFirebase = CalendarEventDAO(
+                calendarEvent.date.toString(),
+                calendarEvent.startTime.toString(),
+                calendarEvent.endTime.toString(),
+                calendarEvent.eventName,
+                calendarEvent.eventDescription
+            )
+            calendarEventsFirebase.add(calendarEventFirebase)
+        }
+    }
+
+    fun parseCalendarEventsFirebaseToCalendarEvents(){
+        calendarEvents.clear()
+        for (calendarEventFirebase in calendarEventsFirebase){
+            val calendarEvent = CalendarEvent(
+                LocalDate.parse(calendarEventFirebase.date),
+                LocalTime.parse(calendarEventFirebase.startTime),
+                LocalTime.parse(calendarEventFirebase.endTime),
+                calendarEventFirebase.eventName,
+                calendarEventFirebase.eventDescription
+            )
+            calendarEvents.add(calendarEvent)
+        }
+    }
 }

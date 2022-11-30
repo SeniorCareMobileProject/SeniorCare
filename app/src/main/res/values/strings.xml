@@ -49,4 +49,6 @@
 
     <string name="today">Dzisiaj</string>
     <string name="tomorrow">Jutro</string>
+
+    <string name="fall_detection_alert_message">UWAGA! Potencjalny upadek podopiecznego!</string>
 </resources>
