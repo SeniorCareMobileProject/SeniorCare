@@ -581,6 +581,7 @@ class MainActivity : ComponentActivity() {
                 setAlarm(
                     Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()),
                     Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()),
+                    sharedViewModel.notificationItems[i].interval,
                     i,
                     j
                 )
@@ -589,7 +590,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun setAlarm(hour: Int, minute: Int, notificationId: Int, timeId: Int){
+    fun setAlarm(hour: Int, minute: Int, interval: String, notificationId: Int, timeId: Int){
         manageNotificationChannel(context, notificationId.toString())
         val alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
         Log.e(TAG,sharedViewModel.notificationItems[notificationId].name)
@@ -601,6 +602,14 @@ class MainActivity : ComponentActivity() {
         intent.putExtras(bundle)
 
         val pendingIntent = PendingIntent.getBroadcast(context, notificationId*3 + timeId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        var alarmInterval = AlarmManager.INTERVAL_DAY
+        if(interval.equals("Co 2 dni")){
+            alarmInterval *= 2
+        }
+        if(interval.equals("Co tydzień")){
+            alarmInterval *= 7
+        }
 
         val calendar = GregorianCalendar.getInstance().apply {
             if (get(Calendar.HOUR_OF_DAY) >= hour && get(Calendar.MINUTE)>=minute) {
@@ -616,7 +625,7 @@ class MainActivity : ComponentActivity() {
         alarmManager.setRepeating(
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
-            AlarmManager.INTERVAL_DAY,
+            alarmInterval,
             pendingIntent
         )
     }
