@@ -1,6 +1,8 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.content.ContentValues.TAG
 import android.content.Context
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -1254,6 +1256,7 @@ fun NotificationItem(title: String, howOften: String, listOfTime: List<String>,s
             Column(modifier = Modifier.weight(10f).clickable{
                 sharedViewModel.notificationItems.remove(sharedViewModel.notificationItems[index])
                 navController.navigate(rout)
+                sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
             }){
                 Icon(
                     painter = painterResource(id = LocalContext.current.resources.getIdentifier(

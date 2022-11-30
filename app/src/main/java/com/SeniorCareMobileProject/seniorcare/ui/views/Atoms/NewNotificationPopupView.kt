@@ -1,6 +1,8 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.app.TimePickerDialog
+import android.content.ContentValues.TAG
+import android.util.Log
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -23,6 +25,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -384,7 +387,9 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                         timeList = timeList
                                     )
                                 )
+                                Log.e(TAG,sharedViewModel.notificationItems.toString())
                                 navController.navigate(rout)
+                                sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
                             }
                         },
 

@@ -3,6 +3,7 @@ package com.SeniorCareMobileProject.seniorcare.ui
 import android.content.Intent
 import android.location.Location
 import android.os.CountDownTimer
+import android.os.Handler
 import android.util.Log
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
@@ -10,6 +11,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.SeniorCareMobileProject.seniorcare.data.CalendarEvent
 import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.Repository
@@ -31,6 +33,7 @@ import kotlinx.coroutines.tasks.await
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
+import java.util.*
 
 
 class SharedViewModel() : ViewModel(), KoinComponent {
@@ -138,18 +141,9 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val calendarEventsFirebase = arrayListOf<CalendarEventDAO>()
 
     //NOTIFICATIONS
-    var notificationItems: MutableList<NotificationItem> = mutableListOf(
-        NotificationItem(
-            name = "IBUPROM",
-            interval = "Codziennie",
-            timeList = mutableListOf("10:00", "15:00", "20:00")
-        ),
-        NotificationItem(
-            name = "Donepezil",
-            interval = "Co 2 dni",
-            timeList = mutableListOf("10:00", "20:00")
-        )
-    )
+    var notificationItems: MutableList<NotificationItem> = mutableListOf() //List of notifications
+    var notificationitemsLiveData: MutableLiveData<MutableList<NotificationItem>> = MutableLiveData(notificationItems) //Livedata of notifcations list
+    var notificationItemsNumber = 0 //Variable used for checking if there is a new notification
 
 
     private val repository = Repository()

@@ -18,12 +18,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.material.*
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -33,11 +31,11 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
+import com.SeniorCareMobileProject.seniorcare.receivers.NotificationsBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService
 import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -56,6 +54,7 @@ import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
+import java.util.*
 
 private const val TAG = "MainActivity"
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
@@ -193,6 +192,7 @@ class MainActivity : ComponentActivity() {
         }
         )
 
+
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
         var startDestination = ""
@@ -201,6 +201,19 @@ class MainActivity : ComponentActivity() {
             startDestination = NavigationScreens.LoadingDataView.name
         } else {
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
+        }
+
+        sharedViewModel.notificationitemsLiveData.observe(this) { value ->
+            if (currentUser != null) {
+                if (sharedViewModel.userData.value?.function == "Senior"){
+                    if (value.size != sharedViewModel.notificationItemsNumber) {
+                        sharedViewModel.notificationItemsNumber = value.size
+                        cancelAllAlarms()
+                        scheduleNotifications()
+                    }
+
+                }                }
+
         }
 
         setContent {
@@ -469,6 +482,27 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun manageNotificationChannel(context: Context?, id: String) {
+
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(id, "channel_name", importance)
+            channel.description = "channel desc"
+
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+
+            val a : NotificationManager? = null
+            val notificationManager = NotificationManagerCompat.from(context!!)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+
+
+    }
+
 
     private fun showNotification(context: Context?, title: String, text: String) {
 
@@ -530,6 +564,82 @@ class MainActivity : ComponentActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    fun scheduleNotifications(){
+        Log.e(TAG, "onStartCommand")
+        Log.e(TAG,sharedViewModel.notificationItems.size.toString())
+        Log.e(TAG,sharedViewModel.notificationitemsLiveData.value.toString())
+        //startTimer()
+
+        for(i in 0 until sharedViewModel.notificationItems.size){
+            for(j in 0 until sharedViewModel.notificationItems[i].timeList.size){
+                Log.e(TAG,sharedViewModel.notificationItems[i].name)
+
+
+                Log.e(TAG, Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()).toString() + " " + Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()).toString() )
+                setAlarm(
+                    Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()),
+                    Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()),
+                    i,
+                    j
+                )
+            }
+
+        }
+    }
+
+    fun setAlarm(hour: Int, minute: Int, notificationId: Int, timeId: Int){
+        manageNotificationChannel(context, notificationId.toString())
+        val alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
+        Log.e(TAG,sharedViewModel.notificationItems[notificationId].name)
+        val bundle = Bundle()
+            bundle.putInt("NotificationId",notificationId)
+            bundle.putString("Title",sharedViewModel.notificationItems[notificationId].name)
+            bundle.putInt("TimeId",timeId)
+        val intent = Intent(context, NotificationsBroadcastReceiver::class.java)
+        intent.putExtras(bundle)
+
+        val pendingIntent = PendingIntent.getBroadcast(context, notificationId*3 + timeId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val calendar = GregorianCalendar.getInstance().apply {
+            if (get(Calendar.HOUR_OF_DAY) >= hour && get(Calendar.MINUTE)>=minute) {
+                add(Calendar.DAY_OF_MONTH, 1)
+            }
+
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY,
+            pendingIntent
+        )
+    }
+
+    fun cancelAllAlarms(){
+        for(i in 0 until sharedViewModel.notificationItems.size){
+            for(j in 0 until sharedViewModel.notificationItems[i].timeList.size){
+
+                cancelAlarm(
+                    context,
+                    i,
+                    j
+                )
+            }
+
+        }
+    }
+
+    fun cancelAlarm(context: Context?, notificationId: Int, timeId: Int){
+
+        val notificationManager = NotificationManagerCompat.from(context!!)
+        notificationManager.cancel(notificationId*3+timeId)
+        notificationManager.deleteNotificationChannel("$notificationId")
     }
 
     fun scheduleJob() {
@@ -639,6 +749,10 @@ class MainActivity : ComponentActivity() {
         super.onPause()
     }
 
+    override fun onDestroy(){
+        super.onDestroy()
+    }
+
     override fun onStop() {
         if (currentOnlyLocationService != null) {
             currentOnlyLocationService?.unSubscribeToLocationUpdates()
@@ -649,6 +763,7 @@ class MainActivity : ComponentActivity() {
             foregroundOnlyLocationServiceBound = false
         }
         // sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
+
 
         super.onStop()
     }
