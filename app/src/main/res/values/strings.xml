@@ -58,5 +58,7 @@
     <string name="start_time_cannot_be_greater_then_end_time">Czas rozpoczęcia nie może być pożniejszy
                                                            od czasu zakończenia</string>
 
+    <string name="logout_confirmation">Czy na pewno chczesz się wylogować?</string>
+
     <string name="fall_detection_alert_message">UWAGA! Potencjalny upadek podopiecznego!</string>
 </resources>

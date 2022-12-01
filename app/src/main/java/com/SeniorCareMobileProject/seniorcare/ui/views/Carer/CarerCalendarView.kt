@@ -246,7 +246,14 @@ fun CarerCalendarView(
                         showDialog.value = false
                     },
                     sharedViewModel = sharedViewModel,
-                    showDialog = showDialog
+                    showDialog = showDialog,
+                    {
+                        sharedViewModel.removeEvent.value = true
+                        //Due to the line above, will not show dialog, only enter
+                        // "if" statement in CarerCalendarView.kt file
+                        showDialog.value = true
+                        sharedViewModel.removeEventConfirmation.value = false
+                    }
                 )
             }
         }

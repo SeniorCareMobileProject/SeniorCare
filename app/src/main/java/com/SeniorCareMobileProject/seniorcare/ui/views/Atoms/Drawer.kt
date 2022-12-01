@@ -7,10 +7,7 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -125,7 +122,11 @@ fun Header(sharedViewModel: SharedViewModel) {
                     .height(64.dp)
             )
             Column() {
-                Text(text = "${sharedViewModel.userData.value?.firstName} ${sharedViewModel.userData.value?.lastName}", fontSize = 16.sp, fontWeight = FontWeight.Medium)
+                Text(
+                    text = "${sharedViewModel.userData.value?.firstName} ${sharedViewModel.userData.value?.lastName}",
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium
+                )
                 Text(
                     text = "${sharedViewModel.userData.value?.email}",
                     fontSize = 14.sp,
@@ -212,21 +213,26 @@ fun BottomButton(
         )
     }
 
-    Button(
-        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFF1ECF8)),
-        onClick = {
-            if ((rout != "") && (rout != "sign out")){
-                navController.navigate(rout)
-            }
-            else if (rout == "sign out") {
+    val showConfirmDialog = remember { mutableStateOf(false) }
+    if (showConfirmDialog.value) {
+        SubmitOrDenyDialogView(context.getString(R.string.logout_confirmation),
+            { showConfirmDialog.value = false }, sharedViewModel, showConfirmDialog, {
                 FirebaseAuth.getInstance().signOut()
                 sharedViewModel.clearLocalRepository()
                 val activity = context as Activity
                 activity.finish()
                 val intent = Intent(context, MainActivity::class.java)
                 activity.startActivity(intent)
-            }
-            else inProgressToastView(context)
+            })
+    }
+    Button(
+        colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFF1ECF8)),
+        onClick = {
+            if ((rout != "") && (rout != "sign out")) {
+                navController.navigate(rout)
+            } else if (rout == "sign out") {
+                showConfirmDialog.value = true
+            } else inProgressToastView(context)
         }
     ) {
         Row(
@@ -252,7 +258,11 @@ fun BottomButton(
 }
 
 @Composable
-fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState, sharedViewModel: SharedViewModel) {
+fun BottomButtons(
+    navController: NavController,
+    scaffoldState: ScaffoldState,
+    sharedViewModel: SharedViewModel
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -299,7 +309,12 @@ fun BottomButtons(navController: NavController, scaffoldState: ScaffoldState, sh
 }
 
 @Composable
-fun Drawer(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController, sharedViewModel: SharedViewModel) {
+fun Drawer(
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+    navController: NavController,
+    sharedViewModel: SharedViewModel
+) {
     if (scaffoldState.drawerState.isOpen) {
         BackHandler {
             scope.launch {
@@ -342,6 +357,11 @@ fun DrawerPreview() {
     val scope = rememberCoroutineScope()
     val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
     val navController = rememberNavController()
-    val sharedViewModel  = SharedViewModel()
-    Drawer(scope = scope, scaffoldState = scaffoldState, navController = navController, sharedViewModel = sharedViewModel)
+    val sharedViewModel = SharedViewModel()
+    Drawer(
+        scope = scope,
+        scaffoldState = scaffoldState,
+        navController = navController,
+        sharedViewModel = sharedViewModel
+    )
 }
