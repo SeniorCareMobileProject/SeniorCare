@@ -8,9 +8,7 @@ import android.content.*
 import android.content.pm.PackageManager
 import android.location.Location
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.IBinder
+import android.os.*
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -32,7 +30,6 @@ import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.receivers.NotificationsBroadcastReceiver
@@ -212,9 +209,48 @@ class MainActivity : ComponentActivity() {
                         scheduleNotifications()
                     }
 
-                }                }
+                }
+            }
+        }
+
+        sharedViewModel.batteryPct.observe(this) { value ->
+            if (currentUser != null) {
+                Handler().postDelayed({
+                Log.e(TAG, sharedViewModel.userData.value?.function.toString())
+                if (sharedViewModel.userData.value?.function == "Carer") {
+                    if(value<=25.0){
+                        showBatteryNotification(context,value.toInt())
+                    }
+                }},10000)
+
+            }
+
 
         }
+
+        val mHandler = Handler()
+        var mStatusChecker: Runnable = object : Runnable {
+            override fun run() {
+                try {
+                    if (currentUser != null) {
+                        batteryStatusCheck()
+                    }
+                } finally {
+                    // 100% guarantee that this always happens, even if
+                    // your update method throws an exception
+                    mHandler.postDelayed(this, 1000*60*30)
+                }
+            }
+        }
+        if(currentUser!=null){
+            Handler().postDelayed({
+            if (sharedViewModel.userData.value?.function == "Senior"){
+                startRepeatingTask(mStatusChecker)
+            }
+        },10000)
+        }
+
+
 
         setContent {
             SeniorCareTheme() {
@@ -538,7 +574,39 @@ class MainActivity : ComponentActivity() {
         mNotificationManager.notify(1, mBuilder.build())
     }
 
+    private fun showBatteryNotification(context: Context?, batteryPct: Int) {
 
+        createNotificationChannel(context)
+        Log.d("Notification", "showing")
+
+        var mBuilder = NotificationCompat.Builder(context!!, "CHANNEL_ID")
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setContentTitle("Bateria seniora w niskim stanie!")
+            .setContentText("Stan baterii: $batteryPct%")
+            .setPriority(NotificationCompat.PRIORITY_MAX)
+
+        val contentIntent =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getActivity(
+                context,
+                0,
+                Intent(context, GeofenceBroadcastReceiver::class.java),
+                PendingIntent.FLAG_MUTABLE
+            )
+        } else {
+            PendingIntent.getActivity(
+                context, 0,
+                Intent(context, GeofenceBroadcastReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT
+            )
+        }
+
+        mBuilder.setContentIntent(contentIntent)
+
+        mBuilder.setDefaults(Notification.DEFAULT_SOUND)
+        mBuilder.setAutoCancel(true)
+        val mNotificationManager =
+            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        mNotificationManager.notify(1, mBuilder.build())
+    }
 
 
     fun makePhoneCall(number: String) {
@@ -650,6 +718,31 @@ class MainActivity : ComponentActivity() {
         notificationManager.cancel(notificationId*3+timeId)
         notificationManager.deleteNotificationChannel("$notificationId")
     }
+
+    fun batteryStatusCheck() {
+
+                    val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->
+                        context?.registerReceiver(null, ifilter)
+                    }
+                    sharedViewModel.batteryPct.value = batteryStatus?.let { intent ->
+                        val level: Int = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+                        val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+                        level * 100 / scale.toFloat()
+                    }
+                    Log.e(TAG,sharedViewModel.batteryPct.value.toString())
+    }
+
+
+    fun startRepeatingTask(mStatusChecker: Runnable) {
+        mStatusChecker.run()
+    }
+
+    /**fun stopRepeatingTask() {
+        mHandler.removeCallbacks(mStatusChecker)
+    }**/
+
+
+
 
     fun scheduleJob() {
         val componentName = ComponentName(this, LocationJobScheduler::class.java)
