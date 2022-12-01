@@ -1,6 +1,5 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles
 
-import android.app.Application
 import android.content.Intent
 import android.util.Log
 import android.widget.Toast
@@ -10,16 +9,11 @@ import androidx.activity.result.ActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Divider
-import androidx.compose.material.Icon
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,25 +27,19 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.Observer
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.SeniorCareMobileProject.seniorcare.data.util.Resource
+import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.body_16
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.IconTextButton
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TextFilledButton
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
-import com.SeniorCareMobileProject.seniorcare.R
-import com.SeniorCareMobileProject.seniorcare.data.util.LoadingState
-import com.SeniorCareMobileProject.seniorcare.ui.body_16
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
-import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.GoogleAuthProvider
 
 @Composable
@@ -62,22 +50,22 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
     // GOOGLE
     val state by sharedViewModel.loadingGoogleLogInState.collectAsState()
     // Equivalent of onActivityResult
-    val launcher = rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
-        val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
-        try {
-            val account = task.getResult(ApiException::class.java)!!
-            val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
-            sharedViewModel.loginWithCredential(credential)
-            sharedViewModel.userDataFromGoogle(account.email!!, account.displayName!!)
-        } catch (e: ApiException) {
-            Log.w("TAG", "Google sign in failed", e)
+    val launcher =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartActivityForResult()) {
+            val task = GoogleSignIn.getSignedInAccountFromIntent(it.data)
+            try {
+                val account = task.getResult(ApiException::class.java)!!
+                val credential = GoogleAuthProvider.getCredential(account.idToken!!, null)
+                sharedViewModel.loginWithCredential(credential)
+                sharedViewModel.userDataFromGoogle(account.email!!, account.displayName!!)
+            } catch (e: ApiException) {
+                Log.w("TAG", "Google sign in failed", e)
+            }
         }
-    }
 
     Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
+            .fillMaxSize()
             .background(Color.White)
             .verticalScroll(scrollState)
     ) {
@@ -92,95 +80,101 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
 
         Column(
             modifier = Modifier
-                .padding(top = 46.dp)
                 .padding(horizontal = 24.dp)
+                .fillMaxHeight()
         ) {
             Text(text = "Logowanie", color = MaterialTheme.colors.primary, style = h1)
         }
 
         Column(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 46.dp),
-            verticalArrangement = Arrangement.spacedBy(29.dp)
+                .fillMaxSize(),
+            verticalArrangement = Arrangement.Center
         ) {
-            InputFieldLabelIcon(
-                text = "Twój adres email",
-                onValueChange = {},
-                fieldLabel = "Email",
-                iconName = "alternate_email",
-                viewModelVariable = sharedViewModel.email
-            )
-            InputFieldLabelIcon(
-                text = "Twoje hasło",
-                onValueChange = {},
-                fieldLabel = "Hasło",
-                iconName = "lock",
-                viewModelVariable = sharedViewModel.password,
-                isPassword = true
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 8.dp)
-        ) {
-            Text(
-                text = "Zapomniałeś hasło?",
-                fontSize = 16.sp,
-                color = MaterialTheme.colors.primary,
-                style = TextStyle(textDecoration = TextDecoration.Underline),
-                fontWeight = FontWeight.Medium,
+            Column(
                 modifier = Modifier
-                    .padding(horizontal = 8.dp)
-                    .clickable { navController.navigate(NavigationScreens.PasswordRecoveryScreen.name) }
-            )
-        }
-
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 30.dp)
-                .padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(30.dp)
-        ) {
-            LoginButton(navController, "Zaloguj się", sharedViewModel)
-            Divider(color = Color.Black, thickness = 1.dp)
-            GoogleLoginInButton(
-                navController,
-                stringResource(R.string.continue_with_Google),
-                "google",
-                "",
-                sharedViewModel,
-                launcher
-            )
-
-            Row(
-                Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+                    .fillMaxWidth()
+                    .padding(top = 32.dp),
+                verticalArrangement = Arrangement.spacedBy(29.dp)
             ) {
-                Text(text = "Nie masz konta?", modifier = Modifier.padding(horizontal = 8.dp))
+                InputFieldLabelIcon(
+                    text = "Twój adres email",
+                    onValueChange = {},
+                    fieldLabel = "Email",
+                    iconName = "alternate_email",
+                    viewModelVariable = sharedViewModel.email
+                )
+                InputFieldLabelIcon(
+                    text = "Twoje hasło",
+                    onValueChange = {},
+                    fieldLabel = "Hasło",
+                    iconName = "lock",
+                    viewModelVariable = sharedViewModel.password,
+                    isPassword = true
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 8.dp)
+            ) {
                 Text(
-                    text = "Zarejestruj się",
+                    text = "Zapomniałeś hasło?",
                     fontSize = 16.sp,
                     color = MaterialTheme.colors.primary,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
                     fontWeight = FontWeight.Medium,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
-                        .clickable { navController.navigate("SignUpEmailScreen") }
+                        .clickable { navController.navigate(NavigationScreens.PasswordRecoveryScreen.name) }
                 )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 30.dp)
+                    .padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(30.dp)
+            ) {
+                LoginButton(navController, "Zaloguj się", sharedViewModel)
+                Divider(color = Color.Black, thickness = 1.dp)
+                GoogleLoginInButton(
+                    navController,
+                    stringResource(R.string.continue_with_Google),
+                    "google",
+                    "",
+                    sharedViewModel,
+                    launcher
+                )
+
+                Row(
+                    Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center
+                ) {
+                    Text(text = "Nie masz konta?", modifier = Modifier.padding(horizontal = 8.dp))
+                    Text(
+                        text = "Zarejestruj się",
+                        fontSize = 16.sp,
+                        color = MaterialTheme.colors.primary,
+                        style = TextStyle(textDecoration = TextDecoration.Underline),
+                        fontWeight = FontWeight.Medium,
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .clickable { navController.navigate("SignUpEmailScreen") }
+                    )
+                }
             }
         }
     }
 
-    when(state.status) {
+    when (state.status) {
         LoadingState.Status.SUCCESS -> {
-            LaunchedEffect(""){
+            LaunchedEffect("") {
                 sharedViewModel.getUserData()
                 navController.navigate("LoadingDataView")
             }
@@ -219,7 +213,14 @@ fun LoginButton(navController: NavController, text: String, sharedViewModel: Sha
 }
 
 @Composable
-fun GoogleLoginInButton(navController: NavController, text: String, iconName: String, rout: String, sharedViewModel: SharedViewModel, launcher: ManagedActivityResultLauncher<Intent, ActivityResult>) {
+fun GoogleLoginInButton(
+    navController: NavController,
+    text: String,
+    iconName: String,
+    rout: String,
+    sharedViewModel: SharedViewModel,
+    launcher: ManagedActivityResultLauncher<Intent, ActivityResult>
+) {
     var iconId = -1
     if (!iconName.equals("")) {
         val context = LocalContext.current

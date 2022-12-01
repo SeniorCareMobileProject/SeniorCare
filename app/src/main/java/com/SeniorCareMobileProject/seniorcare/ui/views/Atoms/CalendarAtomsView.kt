@@ -1,7 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.app.TimePickerDialog
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -24,7 +23,6 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.navigation.NavController
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -35,7 +33,6 @@ import java.util.*
 
 @Composable
 fun CalendarEventItemView(
-    navController: NavController,
     date: LocalDate,
     startTime: LocalTime,
     endTime: LocalTime,
@@ -298,7 +295,10 @@ fun AddEventToCalendarDialogView(
                     }
                 }
 
-                Column() {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
                     TextField(
                         value = eventDescription.value!!,
                         onValueChange = { newText -> eventDescription.value = newText },

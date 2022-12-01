@@ -1,32 +1,26 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
-import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavBarView
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.StatusWidget
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBar
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -49,8 +43,6 @@ fun CarerMainView(
                 sharedViewModel = sharedViewModel
             )
         }) { innerPadding ->
-        val scrollState = remember { ScrollState(0) }
-
         var mapModifier by remember { mutableStateOf(Modifier.height(350.dp)) }
         val fullScreen by remember { sharedViewModel.mapFullscreen }
         mapModifier = if (fullScreen) {
@@ -66,22 +58,16 @@ fun CarerMainView(
                 .fillMaxHeight()
         ) {
 
-
-            // 376.dp, 394.dp
-            Column(modifier = mapModifier.weight(1f)
-//                .zIndex(-1f)
+            Column(
+                modifier = mapModifier.weight(50f)
             ) {
                 MapWindowComponent(sharedViewModel = sharedViewModel)
             }
 
             if (!fullScreen) {
-
                 Column(
                     modifier = Modifier
-                        .weight(1f)
-//                        .fillMaxHeight()
-//                        .padding(top = 349.dp)
-                        .verticalScroll(scrollState)
+                        .weight(50f)
                         .border(
                             width = 1.dp,
                             color = Color(0xFFE6E6E6),
@@ -97,19 +83,11 @@ fun CarerMainView(
                             .fillMaxWidth()
                             .wrapContentHeight()
                             .background(Color.White),
-                        verticalArrangement = Arrangement.spacedBy(18.dp),
+//                        verticalArrangement = Arrangement.spacedBy(18.dp),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
-
-
-//                    Text(
-//                        modifier = Modifier.padding(top = 22.dp),
-//                        text = "${sharedViewModel.currentSeniorData.value!!.firstName} ${sharedViewModel.currentSeniorData.value!!.lastName}",
-//                        fontSize = 20.sp,
-//                        fontWeight = FontWeight.Medium,
-//                        color = MaterialTheme.colors.primary
-//                    )
-                        Spacer(modifier = Modifier.height(12.dp))
+                        val spacedByWeight = 24f
+                        Spacer(modifier = Modifier.weight(spacedByWeight * 2))
 
                         StatusWidget(
                             navController = navController,
@@ -117,12 +95,18 @@ fun CarerMainView(
                             text = "67%",
                             iconName = "battery_4_bar"
                         )
+
+                        Spacer(modifier = Modifier.weight(spacedByWeight))
+
                         StatusWidget(
                             navController = navController,
                             title = "Ostatnio przyjęty lek:",
                             text = "Ibuprom - 12:00",
                             iconName = "medication"
                         )
+
+                        Spacer(modifier = Modifier.weight(spacedByWeight))
+
                         StatusWidget(
                             navController = navController,
                             title = "Najbliższe wydarzenie:",
@@ -131,16 +115,13 @@ fun CarerMainView(
                             iconName = "calendar_month"
                         )
 
-                        Spacer(modifier = Modifier.height(12.dp))
-
+                        Spacer(modifier = Modifier.weight(spacedByWeight * 2))
                     }
                 }
             }
 
         }
     }
-
-
 }
 
 @Preview(showBackground = true)
