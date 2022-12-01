@@ -93,17 +93,10 @@ fun CarerCalendarView(
 
         val scrollState = rememberScrollState()
 
-        //Offset value for kalendar
-        val offsetValue: Dp = if (fullKalendarView.value) {
-            (-20).dp
-        } else {
-            0.dp
-        }
-
         val refreshEventsList = remember { mutableStateOf(true) }
 
         Column(
-            modifier = contentModifier.offset(y = offsetValue)
+            modifier = contentModifier
         ) {
             val kalendarEvents = remember { mutableListOf<KalendarEvent>() }
             if (refreshEventsList.value) {
@@ -117,6 +110,7 @@ fun CarerCalendarView(
 
             if (fullKalendarView.value) {
                 Kalendar(
+                    modifier = Modifier.offset(y = (-20).dp),
                     kalendarType = KalendarType.Firey,
                     kalendarEvents = kalendarEvents,
                     onCurrentDayClick = { date: KalendarDay, _: List<KalendarEvent> ->
