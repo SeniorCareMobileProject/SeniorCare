@@ -35,12 +35,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.body_16
 import com.SeniorCareMobileProject.seniorcare.ui.theme.Main
@@ -1322,6 +1324,73 @@ fun PopupButton(text: String, setShowDialog: (Boolean) -> Unit) {
                 fontSize = 12.sp
             )
         )
+    }
+}
+
+@Composable
+fun SubmitOrDenyDialogView(
+    text: String,
+    onDismissRequest: () -> Unit,
+    sharedViewModel: SharedViewModel,
+    showDialog: MutableState<Boolean>,
+    onConfirmRequest: () -> Unit
+) {
+    val context = LocalContext.current
+
+    Dialog(onDismissRequest = onDismissRequest) {
+        Card(
+            backgroundColor = Color(0xFFF1ECF8),
+            shape = RoundedCornerShape(15.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp, vertical = 8.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(text = text)
+                Row(modifier = Modifier.padding(top = 12.dp)) {
+                    Button(
+                        modifier = Modifier
+                            .weight(10f),
+                        shape = RoundedCornerShape(10.dp),
+                        onClick =
+                            onConfirmRequest
+//                            sharedViewModel.removeEvent.value = true
+//                            //Due to the line above, will not show dialog, only enter
+//                            // "if" statement in CarerCalendarView.kt file
+//                            showDialog.value = true
+//                            sharedViewModel.removeEventConfirmation.value = false
+                        ,
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFFA670F0),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = context.getString(R.string.yes))
+                    }
+
+                    Spacer(modifier = Modifier.weight(2f))
+
+                    Button(
+                        modifier = Modifier
+                            .weight(10f),
+                        shape = RoundedCornerShape(10.dp),
+                        onClick = {
+                            sharedViewModel.modifiedEvent = emptyEvent.copy()
+                            sharedViewModel.removeEventConfirmation.value = false
+                            showDialog.value = false
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xFF3D1574),
+                            contentColor = Color.White
+                        )
+                    ) {
+                        Text(text = context.getString(R.string.no))
+                    }
+                }
+            }
+        }
     }
 }
 

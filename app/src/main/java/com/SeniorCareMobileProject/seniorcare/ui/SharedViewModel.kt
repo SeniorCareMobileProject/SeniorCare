@@ -139,6 +139,8 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     var removeEvent = mutableStateOf(false)
     var calendarEvents: MutableList<CalendarEvent> = mutableListOf()
     val calendarEventsFirebase = arrayListOf<CalendarEventDAO>()
+    val removeEventConfirmation = mutableStateOf(false)
+    val cancelRemoveEventConfirmation = mutableStateOf(false)
 
     //NOTIFICATIONS
     var notificationItems: MutableList<NotificationItem> = mutableListOf() //List of notifications
