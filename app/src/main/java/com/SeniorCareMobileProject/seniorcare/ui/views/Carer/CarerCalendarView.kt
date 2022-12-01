@@ -233,7 +233,9 @@ fun CarerCalendarView(
                 sharedViewModel.removeEvent.value = false
                 refreshEventsList.value = true
                 showDialog.value = false
-            } else if (sharedViewModel.removeEventConfirmation.value) {
+            }
+            // Confirmation Dialog
+            else if (sharedViewModel.removeEventConfirmation.value) {
                 val context = LocalContext.current
 
                 SubmitOrDenyDialogView(

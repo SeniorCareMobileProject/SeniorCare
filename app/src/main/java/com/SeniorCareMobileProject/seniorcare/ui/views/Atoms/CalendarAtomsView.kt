@@ -11,6 +11,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -22,6 +23,7 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
@@ -50,12 +52,13 @@ fun CalendarEventItemView(
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color(0xffF1ECF8))
+            .padding(horizontal = 12.dp)
     ) {
         Card(
             backgroundColor = Color.White,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(height = 80.dp)
+                .defaultMinSize(minHeight = 80.dp)
                 .clip(shape = RoundedCornerShape(15.dp))
         ) {
             Row(
@@ -66,7 +69,7 @@ fun CalendarEventItemView(
                     bottom = 12.dp
                 )
             ) {
-                Column() {
+                Column(modifier = Modifier.weight(90f)) {
                     Text(
                         text = "$startTime - $endTime",
                         color = Color(0xff070707),
@@ -98,7 +101,8 @@ fun CalendarEventItemView(
                 }
                 Box(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .weight(10f),
                     contentAlignment = Alignment.TopEnd
                 ) {
                     Icon(
@@ -135,7 +139,6 @@ fun CalendarEventItemView(
                                     },
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(4.dp))
-//                                        .background(MaterialTheme.colors.primary)
                                 ) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
@@ -158,15 +161,9 @@ fun CalendarEventItemView(
                                             eventDescription
 
                                         expanded = false
-
-//                                        sharedViewModel.removeEvent.value = true
-//                                        //Due to the line above, will not show dialog, only enter
-//                                        // "if" statement in CarerCalendarView.kt file
-//                                        showDialog.value = true
                                     },
                                     modifier = Modifier
                                         .clip(RoundedCornerShape(4.dp))
-//                                        .background(Color.Red)
                                 ) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
@@ -191,15 +188,6 @@ fun SubmitOrDenyDialogView(
     sharedViewModel: SharedViewModel,
     showDialog: MutableState<Boolean>,
 ) {
-//    AlertDialog(
-//        onDismissRequest = onDismissRequest,
-//        dismissButton = dismissButton,
-//        confirmButton = confirmButton,
-//        title = { Text(text = text) },
-//        shape = RoundedCornerShape(15.dp)
-//    )
-
-
     val context = LocalContext.current
 
     Dialog(onDismissRequest = onDismissRequest) {
@@ -258,6 +246,7 @@ fun SubmitOrDenyDialogView(
     }
 }
 
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun AddEventToCalendarDialogView(
     showDialog: MutableState<Boolean>,
@@ -265,15 +254,12 @@ fun AddEventToCalendarDialogView(
     sharedViewModel: SharedViewModel,
     new: Boolean = true
 ) {
+    val context = LocalContext.current
+
     if (!sharedViewModel.duringAddingOrEditing.value) {
         if (!new) {
             sharedViewModel.newEvent = sharedViewModel.modifiedEvent.copy()
             sharedViewModel.duringAddingOrEditing.value = true
-//        sharedViewModel.newEvent.date = sharedViewModel.modifiedEvent.date
-//        sharedViewModel.newEvent.startTime = sharedViewModel.modifiedEvent.startTime
-//        sharedViewModel.newEvent.endTime = sharedViewModel.modifiedEvent.endTime
-//        sharedViewModel.newEvent.eventName = sharedViewModel.modifiedEvent.eventName
-//        sharedViewModel.newEvent.eventDescription = sharedViewModel.modifiedEvent.eventDescription
         }
     }
 
@@ -306,83 +292,156 @@ fun AddEventToCalendarDialogView(
         }, mHour, mMinute, true
     )
 
-    Dialog(onDismissRequest = {
-        sharedViewModel.modifiedEvent = emptyEvent.copy()
-        sharedViewModel.createNewEvent.value = false
-        sharedViewModel.updateEvent.value = false
-        sharedViewModel.removeEvent.value = false
-        sharedViewModel.duringAddingOrEditing.value = false
-        showDialog.value = false
-    }) {
+    // Errors
+    val titleError = remember { mutableStateOf(false) }
+    val titleErrorValue = remember { mutableStateOf(0) }
+    val descriptionError = remember { mutableStateOf(false) }
+    val descriptionErrorValue = remember { mutableStateOf(0) }
+    val timeError = remember { mutableStateOf(false) }
+    val timeErrorValue = remember { mutableStateOf(0) }
+
+    Dialog(
+        onDismissRequest = {
+            sharedViewModel.modifiedEvent = emptyEvent.copy()
+            sharedViewModel.createNewEvent.value = false
+            sharedViewModel.updateEvent.value = false
+            sharedViewModel.removeEvent.value = false
+            sharedViewModel.duringAddingOrEditing.value = false
+            showDialog.value = false
+        },
+        properties = DialogProperties(usePlatformDefaultWidth = false)
+    ) {
         Card(
+            modifier = Modifier
+                .wrapContentHeight()
+                .padding(horizontal = 35.dp),
             backgroundColor = Color(0xFFF1ECF8),
             shape = RoundedCornerShape(20.dp),
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 24.dp, vertical = 10.dp),
+                modifier = Modifier
+                    .padding(horizontal = 24.dp, vertical = 10.dp)
+                    .wrapContentHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
                 Text(text = "Dodaj nowe wydarzenie do kalendarza")
-                TextField(
-                    value = eventName.value,
-                    onValueChange = { newText -> eventName.value = newText },
-                    placeholder = { Text("Nazwa wydarzenia") },
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.White
-                    ),
-                    textStyle = TextStyle(
-                        fontSize = 14.sp
-                    ),
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    TextField(
+                        value = eventName.value,
+                        onValueChange = { newText -> eventName.value = newText },
+                        placeholder = { Text("Nazwa wydarzenia") },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.White
+                        ),
+                        textStyle = TextStyle(
+                            fontSize = 14.sp
+                        ),
+                        isError = titleError.value,
+                        singleLine = true
+                    )
 
-                TextField(
-                    value = eventDescription.value!!,
-                    onValueChange = { newText -> eventDescription.value = newText },
-                    placeholder = { Text("Opis wydarzenia") },
-                    colors = TextFieldDefaults.textFieldColors(
-                        backgroundColor = Color.White,
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.White
-                    ),
-                    textStyle = TextStyle(
-                        fontSize = 14.sp
-                    ),
-                )
+                    if (titleError.value) {
+                        var errorValue = ""
+                        if (titleErrorValue.value == 1) {
+                            errorValue = context.getString(R.string.this_field_cannot_be_empty)
+                        } else if (titleErrorValue.value == 2) {
+                            errorValue = context.getString(R.string.field_length_limit_exceeded)
+                        }
+
+                        Text(
+                            text = errorValue,
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
+
+                Column() {
+                    TextField(
+                        value = eventDescription.value!!,
+                        onValueChange = { newText -> eventDescription.value = newText },
+                        placeholder = { Text("Opis wydarzenia") },
+                        colors = TextFieldDefaults.textFieldColors(
+                            backgroundColor = Color.White,
+                            focusedIndicatorColor = Color.Transparent,
+                            unfocusedIndicatorColor = Color.White
+                        ),
+                        textStyle = TextStyle(
+                            fontSize = 14.sp
+                        ),
+                        isError = descriptionError.value
+                    )
+
+                    if (descriptionError.value) {
+                        var errorValue = ""
+                        if (descriptionErrorValue.value == 2) {
+                            errorValue = context.getString(R.string.field_length_limit_exceeded)
+                        }
+
+                        Text(
+                            text = errorValue,
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Start
+                        )
+                    }
+                }
 
                 Spacer(modifier = Modifier.height(1.dp))
 
                 Text(text = "Wybierz czas")
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "Początek")
-                        Spacer(modifier = Modifier.height(6.dp))
-                        Text(
-                            modifier = Modifier
-                                .clickable {
-                                    mTimeStartPickerDialog.show()
-                                }
-                                .background(Color.White),
-                            text = "${mTimeStart.value}",
-                            color = Color.Black
-                        )
+                Column() {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Początek")
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                modifier = Modifier
+                                    .clickable {
+                                        mTimeStartPickerDialog.show()
+                                    }
+                                    .background(Color.White),
+                                text = "${mTimeStart.value}",
+                                color = Color.Black
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(text = "Koniec")
+                            Spacer(modifier = Modifier.height(6.dp))
+                            Text(
+                                modifier = Modifier
+                                    .clickable {
+                                        mTimeEndPickerDialog.show()
+                                    }
+                                    .background(Color.White),
+                                text = "${mTimeEnd.value}",
+                                color = Color.Black
+                            )
+                        }
                     }
-                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                        Text(text = "Koniec")
-                        Spacer(modifier = Modifier.height(6.dp))
+
+                    if (timeError.value) {
+                        var errorValue = ""
+                        if (timeErrorValue.value == 3) {
+                            errorValue =
+                                context.getString(R.string.start_time_cannot_be_greater_then_end_time)
+                        }
+
                         Text(
-                            modifier = Modifier
-                                .clickable {
-                                    mTimeEndPickerDialog.show()
-                                }
-                                .background(Color.White),
-                            text = "${mTimeEnd.value}",
-                            color = Color.Black
+                            text = errorValue,
+                            color = Color.Red,
+                            fontSize = 14.sp,
+                            textAlign = TextAlign.Start
                         )
                     }
                 }
@@ -399,15 +458,30 @@ fun AddEventToCalendarDialogView(
                         sharedViewModel.duringAddingOrEditing.value = false
                         showDialog.value = false
                     })
-                    // TODO add verification if all fields are filled.
+
                     if (new) {
                         SmallButton("Dodaj", onClick = {
-                            sharedViewModel.newEvent.startTime = mTimeStart.value
-                            sharedViewModel.newEvent.endTime = mTimeEnd.value
-                            sharedViewModel.newEvent.eventName = eventName.value
-                            sharedViewModel.newEvent.eventDescription = eventDescription.value
+                            addEventFieldsCheck(
+                                titleError,
+                                descriptionError,
+                                timeError,
+                                titleErrorValue,
+                                descriptionErrorValue,
+                                timeErrorValue,
+                                eventName,
+                                eventDescription,
+                                mTimeStart,
+                                mTimeEnd
+                            )
 
-                            saveOrUpdateEvent.value = !saveOrUpdateEvent.value
+                            if (!titleError.value and !descriptionError.value and !timeError.value) {
+                                sharedViewModel.newEvent.startTime = mTimeStart.value
+                                sharedViewModel.newEvent.endTime = mTimeEnd.value
+                                sharedViewModel.newEvent.eventName = eventName.value
+                                sharedViewModel.newEvent.eventDescription = eventDescription.value
+
+                                saveOrUpdateEvent.value = !saveOrUpdateEvent.value
+                            }
                         })
                     } else {
                         SmallButton("Zapisz", onClick = {
@@ -427,10 +501,49 @@ fun AddEventToCalendarDialogView(
     }
 }
 
+fun addEventFieldsCheck(
+    titleError: MutableState<Boolean>,
+    descriptionError: MutableState<Boolean>,
+    timeError: MutableState<Boolean>,
+    titleErrorValue: MutableState<Int>,
+    descriptionErrorValue: MutableState<Int>,
+    timeErrorValue: MutableState<Int>,
+    eventName: MutableState<String>,
+    eventDescription: MutableState<String?>,
+    mTimeStart: MutableState<LocalTime>,
+    mTimeEnd: MutableState<LocalTime>
+) {
+    // Title
+    if (eventName.value.isEmpty()) {
+        titleError.value = true
+        titleErrorValue.value = 1
+    } else if (eventName.value.length > 60) {
+        titleError.value = true
+        titleErrorValue.value = 2
+    } else {
+        titleError.value = false
+        titleErrorValue.value = 0
+    }
 
-@Composable
-fun CalendarDropDownMenu(expanded: MutableState<Boolean>) {
+    // Description
+    if (eventDescription.value != null) {
+        if (eventDescription.value!!.length > 500) {
+            descriptionError.value = true
+            descriptionErrorValue.value = 2
+        } else {
+            descriptionError.value = false
+            descriptionErrorValue.value = 0
+        }
+    }
 
+    // Time
+    if (java.time.LocalTime.parse(mTimeStart.value.toString()) > java.time.LocalTime.parse(mTimeEnd.value.toString())) {
+        timeError.value = true
+        timeErrorValue.value = 3
+    } else {
+        timeError.value = false
+        descriptionErrorValue.value = 0
+    }
 }
 
 
@@ -455,30 +568,3 @@ fun SmallButton(text: String, onClick: () -> Unit) {
         )
     }
 }
-
-
-//@Preview(showBackground = true, showSystemUi = true)
-//@Composable
-//fun CalendarAtomsViewPreview() {
-//    SeniorCareTheme() {
-//        val navController = rememberNavController()
-//        val showDialog = remember { mutableStateOf(false) }
-//        val saveNewEvent = remember { mutableStateOf(false) }
-//        val newEvent = mutableStateOf(
-//            CalendarEvent(
-//                LocalDate(0, 0, 0),
-//                LocalTime(0, 0),
-//                LocalTime(0, 0),
-//                "",
-//                ""
-//            )
-//        )
-//        CalendarAtomsView(
-//            navController, LocalTime(12, 0, 0),
-//            LocalTime(13, 30, 0),
-//            "Lekarz", "Trzeba w końcu pójść do lekarza"
-//        )
-//        AddEventToCalendarDialogView(showDialog, saveNewEvent, newEvent)
-//        SmallButton("Anuluj")
-//    }
-//}
