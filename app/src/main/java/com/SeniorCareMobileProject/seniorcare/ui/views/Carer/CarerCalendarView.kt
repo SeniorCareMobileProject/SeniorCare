@@ -1,6 +1,5 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -12,20 +11,15 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
-import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import com.himanshoe.kalendar.Kalendar
 import com.himanshoe.kalendar.color.KalendarThemeColor
@@ -152,7 +146,6 @@ fun CarerCalendarView(
             ) {
                 for (event in filteredEvents) {
                     CalendarEventItemView(
-                        navController = navController,
                         date = event.date,
                         startTime = event.startTime,
                         endTime = event.endTime,
@@ -165,6 +158,7 @@ fun CarerCalendarView(
             }
         }
 
+        // Calendar small and full view switcher transparent button
         Box(
             modifier = Modifier
                 .width(300.dp)
