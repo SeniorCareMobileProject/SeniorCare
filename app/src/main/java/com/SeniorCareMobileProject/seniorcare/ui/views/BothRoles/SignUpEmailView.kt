@@ -48,7 +48,7 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
             .fillMaxWidth()
             .fillMaxHeight()
             .background(Color.White)
-//            .verticalScroll(scrollState)
+            .verticalScroll(scrollState)
     ) {
         Icon(
             imageVector = Icons.Default.ArrowBack,
@@ -66,7 +66,6 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
         ) {
             Column(
                 modifier = Modifier
-//                .padding(top = 50.dp)
                     .padding(horizontal = 24.dp)
             ) {
                 Text(text = "Rejestracja", color = MaterialTheme.colors.primary, style = h1)
