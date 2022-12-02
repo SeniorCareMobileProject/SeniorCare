@@ -5,6 +5,8 @@ import android.content.Intent
 import android.os.CountDownTimer
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
@@ -83,7 +86,8 @@ fun SeniorButton(
     Surface(
         modifier = Modifier
             .fillMaxWidth()
-            .height(86.dp)
+            .defaultMinSize(minHeight = 86.dp)
+//            .height(86.dp)
             .clickable {
                 if ((rout != "") && (rout != "sign out")){
                     navController.navigate(rout)
@@ -102,12 +106,42 @@ fun SeniorButton(
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor
     ) {
+
+
+//    Column(
+//        modifier = Modifier
+//            .fillMaxWidth()
+//            .defaultMinSize(minHeight = 86.dp)
+//            .clip(RoundedCornerShape(20.dp))
+//            .border(BorderStroke(1.dp, Color.Black), RoundedCornerShape(20.dp))
+//            .background(backgroundColor)
+//            .weight(1f)
+////            .height(86.dp)
+//            .clickable {
+//                if ((rout != "") && (rout != "sign out")) {
+//                    navController.navigate(rout)
+//                } else if (rout == "sign out") {
+//                    FirebaseAuth
+//                        .getInstance()
+//                        .signOut()
+//                    sharedViewModel.clearLocalRepository()
+//                    val activity = context as Activity
+//                    activity.finish()
+//                    val intent = Intent(context, MainActivity::class.java)
+//                    activity.startActivity(intent)
+//                } else inProgressToastView(context)
+//            },
+////        shape = RoundedCornerShape(20.dp),
+////        border = BorderStroke(1.dp, Color.Black),
+////        color = backgroundColor
+//    ) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 29.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
+                modifier = Modifier.weight(90f),
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
@@ -123,7 +157,9 @@ fun SeniorButton(
             }
 
             Column(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(10f),
                 horizontalAlignment = Alignment.End
             ) {
                 if (iconId != -1) {
@@ -254,11 +290,21 @@ fun SeniorFallDetectorSwitchButton(
                         sharedViewModel.isFallDetectorTurnOn.value = it
                         sharedViewModel.saveFallDetectionStateToLocalRepo()
                         if (sharedViewModel.isFallDetectorTurnOn.value == true) {
-                            applicationContext.startService(Intent(applicationContext, FallDetectorService::class.java))
+                            applicationContext.startService(
+                                Intent(
+                                    applicationContext,
+                                    FallDetectorService::class.java
+                                )
+                            )
                         } else {
-                            applicationContext.stopService(Intent(applicationContext, FallDetectorService::class.java))
+                            applicationContext.stopService(
+                                Intent(
+                                    applicationContext,
+                                    FallDetectorService::class.java
+                                )
+                            )
                         }
-                                      },
+                    },
 //                colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF6522C1))
                 )
             }

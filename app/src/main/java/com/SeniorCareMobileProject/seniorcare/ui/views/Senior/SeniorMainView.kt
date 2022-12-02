@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -24,96 +25,114 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SosCascadeStartButt
 fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewModel) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
             .fillMaxHeight()
-            .padding(top = 54.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
+        verticalArrangement = Arrangement.Center
 
     ) {
-        Text(
-            text = "Witaj ${sharedViewModel.userData.value?.firstName}",
-            fontWeight = FontWeight.Medium,
-            fontSize = 36.sp,
-            color = MaterialTheme.colors.primary
-        )
-
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
-            val comeHomeColor: String
-            val comeHomeText: String
-            if (/* wyszedł z domu */ false) {
-                comeHomeColor = "came_home"
-                comeHomeText = "Wróciłem do domu"
-            } else {
-                comeHomeColor = "main"
-                comeHomeText = "Wychodzę z domu"
-            }
+            Column(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = "Witaj ${sharedViewModel.userData.value?.firstName}",
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 36.sp,
+                    color = MaterialTheme.colors.primary,
+                    textAlign = TextAlign.Center
+                )
 
-            SeniorButton(
-                navController = navController,
-                text = comeHomeText,
-                iconName = "my_location",
-                rout = "SeniorGoingOutInfoScreen",
-                color = comeHomeColor,
-                sharedViewModel = sharedViewModel
-            )
-            SeniorButton(
-                navController = navController,
-                text = "Informacje medyczne",
-                iconName = "info",
-                rout = "SeniorMedicalInfoScreen",
-                color = "main",
-                sharedViewModel = sharedViewModel
-            )
-            SeniorButton(
-                navController = navController,
-                text = "Kalendarz",
-                iconName = "calendar_month",
-                rout = "SeniorCalendarScreen",
-                color = "main",
-                sharedViewModel = sharedViewModel
-            )
-            SeniorButton(
-                navController = navController,
-                text = "Detektor upadku",
-                iconName = "elderly",
-                rout = "SettingsFallDetectorScreen",
-                color = "main",
-                sharedViewModel = sharedViewModel
-            )
-            /*SeniorButton(
-            SeniorButton(
-                navController = navController,
-                text = "Detektor upadku",
-                iconName = "clear",
-                rout = "",
-                color = "main"
-            )*/
-            /**SeniorButton(
+                val comeHomeColor: String
+                val comeHomeText: String
+                if (/* wyszedł z domu */ false) {
+                    comeHomeColor = "came_home"
+                    comeHomeText = "Wróciłem do domu"
+                } else {
+                    comeHomeColor = "main"
+                    comeHomeText = "Wychodzę z domu"
+                }
+
+                Column(modifier = Modifier.weight(1f)) {
+                    SeniorButton(
+                        navController = navController,
+                        text = comeHomeText,
+                        iconName = "my_location",
+                        rout = "SeniorGoingOutInfoScreen",
+                        color = comeHomeColor,
+                        sharedViewModel = sharedViewModel
+                    )
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    SeniorButton(
+                        navController = navController,
+                        text = "Informacje medyczne",
+                        iconName = "info",
+                        rout = "SeniorMedicalInfoScreen",
+                        color = "main",
+                        sharedViewModel = sharedViewModel
+                    )
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    SeniorButton(
+                        navController = navController,
+                        text = "Kalendarz",
+                        iconName = "calendar_month",
+                        rout = "SeniorCalendarScreen",
+                        color = "main",
+                        sharedViewModel = sharedViewModel
+                    )
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    SeniorButton(
+                        navController = navController,
+                        text = "Detektor upadku",
+                        iconName = "elderly",
+                        rout = "SettingsFallDetectorScreen",
+                        color = "main",
+                        sharedViewModel = sharedViewModel
+                    )
+                }
+                /*SeniorButton(
+                SeniorButton(
+                    navController = navController,
+                    text = "Detektor upadku",
+                    iconName = "clear",
+                    rout = "",
+                    color = "main"
+                )*/
+                /**SeniorButton(
                 navController = navController,
                 text = "SOS",
                 iconName = "clear",
                 rout = "SosCascadeView",
                 color = "red"
-            )**/
-            SosCascadeStartButton(
-                navController = navController,
-                text = "SOS",
-                iconName = "clear",
-                sharedViewModel = sharedViewModel,
-                color = "red",
-                rout = "SosCascadeView"
-            )
-            SeniorButton(
-                navController = navController,
-                text = "Ustawienia",
-                iconName = "settings",
-                rout = "SeniorSettingsScreen",
-                sharedViewModel = sharedViewModel
-            )
+                )**/
+                Column(modifier = Modifier.weight(1f)) {
+                    SosCascadeStartButton(
+                        navController = navController,
+                        text = "SOS",
+                        iconName = "clear",
+                        sharedViewModel = sharedViewModel,
+                        color = "red",
+                        rout = "SosCascadeView"
+                    )
+                }
+                Column(modifier = Modifier.weight(1f)) {
+                    SeniorButton(
+                        navController = navController,
+                        text = "Ustawienia",
+                        iconName = "settings",
+                        rout = "SeniorSettingsScreen",
+                        sharedViewModel = sharedViewModel
+                    )
+                }
+            }
         }
     }
 }
@@ -124,7 +143,7 @@ fun SeniorMainViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
         val sharedViewModel = SharedViewModel()
-        SeniorMainView(navController,sharedViewModel)
+        SeniorMainView(navController, sharedViewModel)
     }
 }
 
