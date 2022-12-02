@@ -4,20 +4,18 @@ package com.SeniorCareMobileProject.seniorcare.services
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.location.Location
-import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.R
-import com.SeniorCareMobileProject.seniorcare.utils.SharedPreferenceUtil
-import com.SeniorCareMobileProject.seniorcare.utils.toText
+import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.google.android.gms.location.*
+import com.google.firebase.auth.FirebaseAuth
 import java.util.concurrent.TimeUnit
 
 class LocationService: Service() {
@@ -25,6 +23,7 @@ class LocationService: Service() {
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
+    private lateinit var repository: Repository
 
     override fun onCreate() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -36,6 +35,9 @@ class LocationService: Service() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
+        FirebaseAuth.getInstance()
+        repository = Repository()
+
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
                 super.onLocationResult(locationResult)
@@ -46,7 +48,15 @@ class LocationService: Service() {
     }
 
     fun sendLocation(currentLocation: Location?) {
+        firebaseUpdate(currentLocation)
         startForeground(1, generateNotification(currentLocation).build())
+    }
+
+    private fun firebaseUpdate(currentLocation: Location?) {
+        if (currentLocation == null){
+            return
+        }
+        repository.saveLocationToFirebase(LocationDAO(currentLocation.latitude, currentLocation.longitude, currentLocation.accuracy))
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
