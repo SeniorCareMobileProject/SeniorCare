@@ -57,8 +57,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val resetCamera = mutableStateOf(false)
     val locationBeforeFreeingCam = mutableStateOf(LatLng(52.408839, 16.906782))
 
-    val onNotficationShow = MutableLiveData<String>("false")
-
     //geofence
     val geofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
     val geofenceRadius = mutableStateOf(1)
@@ -285,14 +283,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     fun getGeofenceForSenior() {
         repository.getGeofenceForSenior(this)
-    }
-
-    fun listenToGeofenceStatus() {
-        repository.listenToGeofenceStatus(this)
-    }
-
-    fun deleteShowAlarm() {
-        repository.deleteShowAlarm(this)
     }
 
     // MEDICAL INFO

@@ -451,25 +451,6 @@ class Repository {
         }
     }
 
-    fun listenToGeofenceStatus(sharedViewModel: SharedViewModel){
-        val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllSeniors[0])
-            .child("geofence")
-        val listener = object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                val status = snapshot.getValue<GeofenceDAO>()
-                if (status != null) {
-                    sharedViewModel.onNotficationShow.value = status.showAlarm
-                    Log.d("showAalarm", "zmiana na true")
-                }
-            }
-            override fun onCancelled(databaseError: DatabaseError) {
-                Log.w("Database", "getSeniorLocation:onCancelled", databaseError.toException())
-            }
-        }
-        reference.addValueEventListener(listener)
-    }
-
     fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO, sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
             .child(sharedViewModel.listOfAllSeniors[0])
@@ -565,14 +546,6 @@ class Repository {
             //remove listener here
             reference.removeEventListener(listener)
         }
-    }
-
-    fun deleteShowAlarm(sharedViewModel: SharedViewModel){
-        val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllSeniors[0])
-            .child("geofence")
-            .child("showAlarm")
-        reference.removeValue()
     }
 
     fun saveMedicalInfo(sharedViewModel: SharedViewModel){
