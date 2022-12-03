@@ -1,7 +1,9 @@
 package com.SeniorCareMobileProject.seniorcare.ui
 
 import android.content.Intent
+import android.content.IntentFilter
 import android.location.Location
+import android.os.BatteryManager
 import android.os.CountDownTimer
 import android.os.Handler
 import android.util.Log
@@ -146,6 +148,12 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     var notificationItems: MutableList<NotificationItem> = mutableListOf() //List of notifications
     var notificationitemsLiveData: MutableLiveData<MutableList<NotificationItem>> = MutableLiveData(notificationItems) //Livedata of notifcations list
     var notificationItemsNumber = 0 //Variable used for checking if there is a new notification
+
+    //Battery
+
+    var batteryPct: MutableLiveData<Float> = MutableLiveData(100.0F)
+
+
 
 
     private val repository = Repository()
