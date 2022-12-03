@@ -43,7 +43,6 @@ import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.*
-import com.SeniorCareMobileProject.seniorcare.utils.SharedPreferenceUtil
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest

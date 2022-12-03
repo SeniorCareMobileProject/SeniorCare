@@ -7,6 +7,8 @@
     <string name="title_activity_maps">MapsActivity</string>
     <string name="safe_zone">Safe Zone</string>
     <string name="safe_zone_left">You have left the safe zone</string>
+    <string name="sms_senior_left">Senior left the safe zone. Check application to track location</string>
+    <string name="sms_senior_safe">Senior is in safe zone</string>
     <string name="safe_zone_in">You are in safe zone</string>
     <string name="title_activity_maps_test">MapsTest</string>
 

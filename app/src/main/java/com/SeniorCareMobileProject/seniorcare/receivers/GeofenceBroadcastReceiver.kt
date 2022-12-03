@@ -13,6 +13,7 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.services.AuthenticationCheckService
+import com.SeniorCareMobileProject.seniorcare.utils.SendSmsUtil
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofenceStatusCodes
 import com.google.android.gms.location.GeofencingEvent
@@ -34,12 +35,16 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
                         checkAuthStatus(context, true)
                         Log.d("GEOFENCE ACTIVATED", "SENIOR LEFT SAFE ZONE")
+                        SendSmsUtil().sendOneMessage(context, context!!.getString(R.string.sms_senior_left))
+                        //sendMessage(context, "LEFT")
                         showNotification(context, context!!.getString(R.string.safe_zone), context.getString(R.string.safe_zone_left))
 
                     }
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
                         checkAuthStatus(context, false)
                         Log.d("GEOFENCE ACTIVATED", "SENIOR IS IN SAFE ZONE")
+                        SendSmsUtil().sendOneMessage(context, context!!.getString(R.string.sms_senior_safe))
+                       // sendMessage(context, "SAFE")
                         showNotification(context, context!!.getString(R.string.safe_zone), context.getString(R.string.safe_zone_in))
                     }
                 } catch (e: NullPointerException) {
@@ -50,11 +55,16 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
     }
 
-    private fun sendSms(context: Context?) {
-        if (context == null) return
-        val smsManager = context.getSystemService(SmsManager::class.java)
+//    private fun sendMessage(context: Context?, messageType: String){
+//        Log.d("SMS", "Check if context is not null in receiver")
+//        if (context == null) return
+//        when(messageType){
+//            "LEFT" -> sendOneMessage(context, context.getString(R.string.sms_senior_left))
+//            else -> sendOneMessage(context, context.getString(R.string.sms_senior_safe))
+//        }
+//    }
 
-    }
+
 
     private fun checkAuthStatus(context: Context?, geofenceStatus: Boolean) {
         val authCheckIntent = Intent(context, AuthenticationCheckService::class.java)

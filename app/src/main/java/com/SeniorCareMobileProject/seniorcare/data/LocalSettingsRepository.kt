@@ -1,15 +1,16 @@
 package com.SeniorCareMobileProject.seniorcare.data
 
 import android.app.Application
+import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.SharedPreferences
 
 
-class LocalSettingsRepository private constructor(application: Application) {
+class LocalSettingsRepository private constructor(application: Context) {
 
     companion object {
         private var INSTANCE: LocalSettingsRepository? = null
-        fun getInstance(application: Application): LocalSettingsRepository {
+        fun getInstance(application: Context): LocalSettingsRepository {
             if (INSTANCE == null) {
                 INSTANCE = LocalSettingsRepository(
                     application = application)

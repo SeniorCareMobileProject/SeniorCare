@@ -1,10 +1,8 @@
 package com.SeniorCareMobileProject.seniorcare.fallDetector
 
-import android.app.PendingIntent
 import android.content.Intent
 import android.media.MediaPlayer
 import android.os.Bundle
-import android.telephony.SmsManager
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -19,6 +17,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,55 +25,38 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.SeniorCareMobileProject.seniorcare.R
-import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.utils.SendSmsUtil
 import kotlinx.coroutines.delay
 import kotlin.time.Duration
 import kotlin.time.ExperimentalTime
 
 class FallAlertActivity: ComponentActivity() {
-    private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val mediaPlayer = AlarmPlayingUtil(applicationContext).createMediaPlayer()
         mediaPlayer.start()
         setContent {
-            FallAlertScreen(this, mediaPlayer)
+            FallAlertScreen(mediaPlayer, {startServiceAgain()}) { stopActivity() }
         }
     }
 
-    fun stopActivity(){
+    private fun stopActivity(){
         this.finish()
     }
 
-    fun startServiceAgain() {
+    private fun startServiceAgain() {
         val fallDetectorService = FallDetectorService()
         val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
         startService(fallDetectorServiceIntent)
-    }
-
-    fun sendSms() {
-        val localSettingsRepository = LocalSettingsRepository.getInstance(application)
-        sharedViewModel.localSettingsRepository = localSettingsRepository
-        sharedViewModel.getSosNumbersFromLocalRepo()
-
-        val smsManager = SmsManager.getDefault()
-        for (number in sharedViewModel.sosCascadePhoneNumbers){
-            smsManager.sendTextMessage(
-                number,
-                null,
-                getString(R.string.fall_detection_alert_message),
-                null,
-                null
-            )
-        }
     }
 }
 
 @OptIn(ExperimentalTime::class)
 @Composable
-fun FallAlertScreen(activity: FallAlertActivity, mediaPlayer: MediaPlayer){
+fun FallAlertScreen(mediaPlayer: MediaPlayer, startServiceAgain: () -> Unit, stopActivity: () -> Unit){
+    val context = LocalContext.current
     var ticks by remember { mutableStateOf(30) }
     var messageSent by remember { mutableStateOf("") }
     LaunchedEffect(Unit) {
@@ -84,7 +66,7 @@ fun FallAlertScreen(activity: FallAlertActivity, mediaPlayer: MediaPlayer){
         }
         if (ticks == 0){
             messageSent = "Sms z alarmem został wysłany do twoich opiekunów"
-            activity.sendSms()
+            SendSmsUtil().sendMultipleSms(context, context.getString(R.string.fall_detection_alert_message),)
         }
     }
     Column(
@@ -128,12 +110,12 @@ fun FallAlertScreen(activity: FallAlertActivity, mediaPlayer: MediaPlayer){
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Bold
         )
-        CancelAlarmButton(activity, mediaPlayer)
+        CancelAlarmButton(mediaPlayer, startServiceAgain, stopActivity)
     }
 }
 
 @Composable
-fun CancelAlarmButton(activity: FallAlertActivity, mediaPlayer: MediaPlayer) {
+fun CancelAlarmButton(mediaPlayer: MediaPlayer, startServiceAgain: () -> Unit, stopActivity: () -> Unit) {
     val backgroundColor: Color = Color.White
     Surface(
         modifier = Modifier
@@ -143,8 +125,8 @@ fun CancelAlarmButton(activity: FallAlertActivity, mediaPlayer: MediaPlayer) {
             .clickable {
                 mediaPlayer.stop()
                 mediaPlayer.release()
-                activity.stopActivity()
-                activity.startServiceAgain()
+                startServiceAgain.invoke()
+                stopActivity.invoke()
             },
         shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
@@ -177,5 +159,5 @@ fun CancelAlarmButton(activity: FallAlertActivity, mediaPlayer: MediaPlayer) {
 @Preview()
 @Composable
 fun FallAlertScreenPreview() {
-    FallAlertScreen(activity = FallAlertActivity(), mediaPlayer = MediaPlayer())
+    FallAlertScreen(mediaPlayer = MediaPlayer(), {  }, {  })
 }
