@@ -81,39 +81,14 @@
             android:exported="true"
             android:permission="android.permission.ACCESS_FINE_LOCATION" />
 
-        <service
-
-            android:name="com.SeniorCareMobileProject.seniorcare.services.CurrentLocationService"
-            android:enabled="true"
-            android:exported="false"
-            android:foregroundServiceType="location"
-            android:permission="android.permission.ACCESS_FINE_LOCATION" />
+        <service android:name="com.SeniorCareMobileProject.seniorcare.services.LocationService" />
 
         <service
             android:name=".fallDetector.FallDetectorService"
             android:enabled="true"/>
 
 
-        <service
-            android:name="com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-
         <service android:name="com.SeniorCareMobileProject.seniorcare.services.AuthenticationCheckService" />
-
-        <service android:name=".services.MainForegroundService"
-            android:foregroundServiceType="location"
-            android:process=":MainForegroundService"
-            android:permission="android.permission.ACCESS_COARSE_LOCATION|android.permission.ACCESS_FINE_LOCATION
-            |android.permission.ACCESS_BACKGROUND_LOCATION|android.permission.INTERNET"
-            android:enabled="true"
-            android:exported="true"
-            tools:node="merge">
-            <intent-filter>
-                <action android:name=".services.MainForegroundService" />
-            </intent-filter>
-        </service>
 
 
     </application>

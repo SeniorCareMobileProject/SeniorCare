@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">Senior Care</string>
+    <string name="localization_title_notification">Localization</string>
+    <string name="localization_notification_text">Localization tracking is enabled</string>
     <string name="template_string">Template String Button Part 1</string>
     <string name="template_string2">Template String Button Part 2</string>
     <string name="title_activity_maps">MapsActivity</string>
+    <string name="safe_zone">Safe Zone</string>
+    <string name="safe_zone_left">You have left the safe zone</string>
+    <string name="safe_zone_in">You are in safe zone</string>
     <string name="title_activity_maps_test">MapsTest</string>
 
     <string name="launch_activity">Launch activity</string>
