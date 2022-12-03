@@ -628,16 +628,7 @@ class MainActivity : ComponentActivity() {
         // Zapis Geofence do firebase pod adres seniora
         val geoFenceLocation = GeofenceDAO(sharedViewModel.geofenceLocation.value.latitude, sharedViewModel.geofenceLocation.value.longitude, sharedViewModel.geofenceRadius.value)
         sharedViewModel.saveGeofenceToFirebase(geoFenceLocation)
-        sharedViewModel.deleteShowAlarm()
-        sharedViewModel.listenToGeofenceStatus()
     }
-
-
-
-    override fun onDestroy(){
-        super.onDestroy()
-    }
-
 
 
     private fun foregroundPermissionApproved(): Boolean {
