@@ -1,9 +1,13 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
+import android.content.Context
+import android.content.SharedPreferences
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
@@ -25,11 +29,14 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MainActivity
+import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.google.android.material.progressindicator.CircularProgressIndicator
 
 
 @Composable
@@ -157,21 +164,52 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
                 .padding(top = 57.dp)
                 .padding(horizontal = 117.dp)
         ) {
-            PairingCodeText(sharedViewModel.pairingCode)
+            val pairingCode by sharedViewModel.pairingCode.observeAsState()
+            when (pairingCode){
+                "" -> {
+                    CircularProgressIndicator()
+                }
+                else -> PairingCodeText(sharedViewModel.pairingCode)
+            }
         }
     }
 
     // CHECK IF PAIRING IS DONE
     val pairingState : State<Boolean?> = sharedViewModel.pairingStatus.observeAsState()
+    val writeNewConnectionStatus: State<Resource<String>?> =  sharedViewModel.writeNewConnectionStatus.observeAsState()
+    val currentSeniorDataStatus : State<Resource<User>?> = sharedViewModel.currentSeniorDataStatus.observeAsState()
     when (pairingState.value){
         true -> {
             LaunchedEffect(pairingState){
-                navController.navigate("PairingScreenSuccessScreen"){
-                    popUpTo("PairingScreenCodeScreen") {inclusive = true}
+                sharedViewModel.getSeniorIDForPairing()
+            }
+            when (writeNewConnectionStatus.value){
+                is Resource.Success<*> -> {
+                    LaunchedEffect(writeNewConnectionStatus){
+                        sharedViewModel.writeNewConnectionWith(sharedViewModel.pairingSeniorID.value!!)
+                        sharedViewModel.deletePairingCode()
+                        sharedViewModel.getCurrentSeniorData()
+                    }
+                    when (currentSeniorDataStatus.value) {
+                        is Resource.Success<*> -> {
+                            LaunchedEffect(currentSeniorDataStatus) {
+                                navController.navigate("PairingScreenSuccessScreen") {
+                                    popUpTo("PairingScreenCodeScreen") { inclusive = true }
+                                }
+                            }
+                        }
+                    }
                 }
-                sharedViewModel.deletePairingCode()
             }
         }
+    }
+
+    BackHandler() {
+        sharedViewModel.deletePairingCode()
+        navController.navigate("LoadingDataView"){
+            popUpTo("PairingScreenCodeScreen") {inclusive = true}
+        }
+        sharedViewModel.pairingCode.value = ""
     }
 }
 

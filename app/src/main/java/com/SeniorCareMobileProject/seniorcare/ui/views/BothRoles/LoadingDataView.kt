@@ -19,6 +19,7 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.google.firebase.auth.FirebaseAuth
 
 @Composable
 fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewModel) {
@@ -28,11 +29,15 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         val userDataState : State<Resource<User>?> = sharedViewModel.userDataStatus.observeAsState()
+        val context = LocalContext.current
 
         when (userDataState.value){
             is Resource.Success<*> -> {
                 Log.d("Funkcja", sharedViewModel.userData.value!!.function.toString())
                 LaunchedEffect(userDataState){
+                    if (sharedViewModel.userData.value?.connectedWith == null){
+                        sharedViewModel.isAfterRegistration = true
+                    }
                     if (sharedViewModel.userData.value!!.function == "Carer"){
                         if (sharedViewModel.isAfterRegistration){
                             // CREATE PAIRING
@@ -42,7 +47,8 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
                             }
                         }
                         else {
-                            navController.navigate("CarerMainScreen"){
+                            sharedViewModel.getCurrentSeniorData()
+                            navController.navigate("LoadingSeniorDataView"){
                                 popUpTo("LoadingDataView") {inclusive = true}
                             }
                         }
@@ -54,6 +60,11 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
                             }
                         }
                         else {
+                            // get geofence information
+                            sharedViewModel.getGeofenceForSenior()
+                            sharedViewModel.getMedicalInformationForSenior()
+                            sharedViewModel.getSosNumbersForSenior()
+                            sharedViewModel.loadCalendarEventsFromFirebase()
                             navController.navigate("SeniorMainScreen"){
                                 popUpTo("LoadingDataView") {inclusive = true}
                             }
@@ -64,7 +75,17 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
             is Resource.Loading<*> -> {
                 CircularProgressIndicator()
             }
-            else -> {Log.d("Funkcja", "null")}
+            else -> {
+                Log.d("Error getting data", "brak danych")
+                if (sharedViewModel.isDataEmpty.value == true){
+                    sharedViewModel.isDataEmpty.value = false
+                    //FirebaseAuth.getInstance().signOut()
+                    navController.navigate("SignUpGoogleScreen"){
+                        popUpTo("LoadingDataView") {inclusive = true}
+                    }
+                    Toast.makeText(context, "You must register first", Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 }

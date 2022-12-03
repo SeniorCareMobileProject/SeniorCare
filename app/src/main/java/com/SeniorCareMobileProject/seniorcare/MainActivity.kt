@@ -1,8 +1,7 @@
 package com.SeniorCareMobileProject.seniorcare
 
 import android.Manifest
-import android.app.PendingIntent
-import android.app.job.JobInfo
+import android.app.*
 import android.app.job.JobScheduler
 import android.content.*
 import android.content.pm.PackageManager
@@ -10,7 +9,6 @@ import android.location.Location
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.os.IBinder
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
@@ -20,15 +18,22 @@ import androidx.activity.viewModels
 import androidx.compose.material.*
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.core.app.ActivityCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.SeniorCareMobileProject.GeofenceBroadcastReceiver
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
+import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
+import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
+import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
+import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
+import com.SeniorCareMobileProject.seniorcare.receivers.NotificationsBroadcastReceiver
+import com.SeniorCareMobileProject.seniorcare.services.LocationService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
+import com.SeniorCareMobileProject.seniorcare.ui.common.MapsAddGeofenceComponent
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.BottomNavItem
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -41,84 +46,54 @@ import com.google.android.gms.location.GeofencingRequest
 import com.google.android.gms.location.LocationServices
 import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
+import java.util.*
 
 private const val TAG = "MainActivity"
 private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
-private var locations: Location?=null
+private var locations: Location? = null
 
-class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceChangeListener {
-
-    private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(MyApplication.context, GeofenceBroadcastReceiver::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(
-                MyApplication.context,
-                0,
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-        } else {
-            PendingIntent.getBroadcast(
-                MyApplication.context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
-    }
+class MainActivity : ComponentActivity() {
 
     private val requestCall = 1
+
     private val sharedViewModel: SharedViewModel by viewModels()
-    private var foregroundOnlyLocationServiceBound = false
-    private var currentOnlyLocationService: CurrentLocationService? = null
-    private lateinit var foregroundOnlyBroadcastReceiver: ForegroundOnlyBroadcastReceiver
-    private lateinit var sharedPreferences: SharedPreferences
-    private val foregroundOnlyServiceConnection = object : ServiceConnection {
-        override fun onServiceConnected(name: ComponentName, service: IBinder) {
-            val binder = service as CurrentLocationService.LocalBinder
-            currentOnlyLocationService = binder.service
-            foregroundOnlyLocationServiceBound = true
-            currentOnlyLocationService?.subscribeToLocationUpdates()
-        }
-
-        override fun onServiceDisconnected(name: ComponentName) {
-            currentOnlyLocationService = null
-            foregroundOnlyLocationServiceBound = false
-        }
-    }
-
-    lateinit var geofencingClient: GeofencingClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        scheduleJob()
+        val localSettingsRepository = LocalSettingsRepository.getInstance(application)
+        sharedViewModel.localSettingsRepository = localSettingsRepository
 
         sharedViewModel.onGeofenceRequest.observe(this, Observer { value ->
             if (value) handleGeofence()
         })
 
-        geofencingClient = LocationServices.getGeofencingClient(this)
-        geofencePendingIntent.send()
-
-        foregroundOnlyBroadcastReceiver = ForegroundOnlyBroadcastReceiver()
-        sharedPreferences =
-            getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE)
-
-        val enabled = sharedPreferences.getBoolean(
-            SharedPreferenceUtil.KEY_FOREGROUND_ENABLED, false
-        )
-        if (enabled) {
-            currentOnlyLocationService?.unSubscribeToLocationUpdates()
-        } else {
-            if (foregroundPermissionApproved()) {
-                currentOnlyLocationService?.subscribeToLocationUpdates()
-                    ?: Log.d("TAG", "Service Not Bound")
-            } else {
-                requestForegroundPermissions()
+        sharedViewModel.getUserFunctionFromLocalRepo()
+        if (sharedViewModel.userFunctionFromLocalRepo == "Senior"){
+            sharedViewModel.getSosNumbersFromLocalRepo()
+            sharedViewModel.getFallDetectionStateFromLocalRepo()
+            Intent(applicationContext, LocationService::class.java).apply {
+                action = LocationService.ACTION_START
+                startService(this)}
+            if (sharedViewModel.isFallDetectorTurnOn.value == true) {
+                val fallDetectorService = FallDetectorService()
+                val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
+                startService(fallDetectorServiceIntent)
             }
         }
+
+        requestForegroundPermissions()
+
+        sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
+            if (value >= 0) {
+                makePhoneCall(sharedViewModel.sosCascadePhoneNumbers[sharedViewModel.sosCascadeIndex.value!!])
+                if (sharedViewModel.sosCascadeIndex.value!! >= sharedViewModel.sosCascadePhoneNumbers.size - 1) {
+                    sharedViewModel.sosCascadeIndex.value = -1
+                }
+            }
+        }
+        )
+
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
@@ -130,16 +105,29 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
         }
 
+        sharedViewModel.notificationitemsLiveData.observe(this) { value ->
+            if (currentUser != null) {
+                if (sharedViewModel.userData.value?.function == "Senior"){
+                    if (value.size != sharedViewModel.notificationItemsNumber) {
+                        sharedViewModel.notificationItemsNumber = value.size
+                        cancelAllAlarms()
+                        scheduleNotifications()
+                    }
+
+                }                }
+
+        }
 
         setContent {
             SeniorCareTheme() {
                 val navController = rememberNavController()
                 val scope = rememberCoroutineScope()
                 val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
+                setMedInfoToNotBeNull()
 
                 NavHost(
                     navController,
-                    startDestination = NavigationScreens.MapComponentView.name,
+                    startDestination = startDestination,
                 ) {
 
 
@@ -163,6 +151,14 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
 
                     composable(NavigationScreens.LoginScreen.name) {
                         LoginView(navController, sharedViewModel)
+                    }
+
+                    composable(NavigationScreens.LoadingSeniorDataView.name) {
+                        LoadingSeniorDataView(navController, sharedViewModel)
+                    }
+
+                    composable(NavigationScreens.MapsAddGeofenceComponent.name) {
+                        MapsAddGeofenceComponent(sharedViewModel)
                     }
 
 //                    composable(NavigationScreens.ChooseRoleScreen.name) {
@@ -223,7 +219,7 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
                     }
 
                     composable(NavigationScreens.SeniorCalendarScreen.name) {
-                        SeniorCalendarView(navController, sharedViewModel)
+                        SeniorCalendarScreenView(navController, sharedViewModel)
 
                     }
 
@@ -298,10 +294,102 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
 
                     }
 
+                    composable(NavigationScreens.CarerMedicalInfoDataUpdateScreen.name) {
+                        CarerMedicalInfoDataUpdateView(
+                            navController,
+                            sharedViewModel,
+                            scope,
+                            scaffoldState
+                        )
+                    }
+                    composable(NavigationScreens.SeniorSettingsScreen.name) {
+                        SeniorSettingsView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.SosCascadeView.name) {
+                        SosCascadeView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsListScreen.name) {
+                        CarerSettingsListView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSOSScreen.name) {
+                        CarerSettingsSOSView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSOSUpdateScreen.name) {
+                        CarerSettingsSOSUpdateView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.SeniorGoingOutInfoScreen.name) {
+                        SeniorGoingOutInfoView(navController)
+
+                    }
+
+                    composable(NavigationScreens.SettingsFallDetectorScreen.name) {
+                        SettingsFallDetectorView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.SeniorCarersListScreen.name) {
+                        SeniorCarersListView(navController, sharedViewModel)
+
+                    }
+
+                    composable(NavigationScreens.CarerSettingsSafeZoneScreen.name) {
+                        CarerSettingsSafeZoneView(navController, sharedViewModel)
+
+                    }
+
                 }
             }
         }
     }
+
+    private fun setMedInfoToNotBeNull(){
+        sharedViewModel.medInfo.value = MedInfoDAO(
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+        )
+    }
+
+
+    private fun manageNotificationChannel(context: Context?, id: String) {
+
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val importance = NotificationManager.IMPORTANCE_DEFAULT
+            val channel = NotificationChannel(id, "channel_name", importance)
+            channel.description = "channel desc"
+
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+
+            val a : NotificationManager? = null
+            val notificationManager = NotificationManagerCompat.from(context!!)
+            notificationManager.createNotificationChannel(channel)
+        }
+
+
+
+    }
+
+
     fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {
             if (ContextCompat.checkSelfPermission(
@@ -327,130 +415,111 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         }
     }
 
-    fun scheduleJob() {
-        val componentName = ComponentName(this, LocationJobScheduler::class.java)
-        val info = JobInfo.Builder(123, componentName)
-            .setRequiresCharging(false)
-            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setPersisted(true)
-            .setPeriodic((1 * 30 * 1000).toLong())
-            .build()
-        val scheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-        val resultCode = scheduler.schedule(info)
-        if (resultCode == JobScheduler.RESULT_SUCCESS) {
-            Log.d(TAG, "Job scheduled")
-        } else {
-            Log.d(TAG, "Job scheduling failed")
-        }
-    }
+    fun scheduleNotifications(){
+        Log.e(TAG, "onStartCommand")
+        Log.e(TAG,sharedViewModel.notificationItems.size.toString())
+        Log.e(TAG,sharedViewModel.notificationitemsLiveData.value.toString())
+        //startTimer()
 
-    fun cancelJob() {
-        val scheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-        scheduler.cancel(123)
-        Log.d(TAG, "Job cancelled")
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-
-        val serviceIntent = Intent(this, CurrentLocationService::class.java)
-        bindService(
-            serviceIntent,
-            foregroundOnlyServiceConnection,
-            Context.BIND_AUTO_CREATE
-        )
+        for(i in 0 until sharedViewModel.notificationItems.size){
+            for(j in 0 until sharedViewModel.notificationItems[i].timeList.size){
+                Log.e(TAG,sharedViewModel.notificationItems[i].name)
 
 
-    }
-
-    private fun handleGeofence(){
-        Log.d("CreateGeofence", "Main")
-        createGeoFence(sharedViewModel.seniorLocalization.value, geofencingClient)
-        sharedViewModel.onGeofenceRequest.value = false
-    }
-
-    private fun createGeoFence(location: LatLng, geofencingClient: GeofencingClient) {
-        val geofence = Geofence.Builder()
-            .setRequestId(GEOFENCE_ID)
-            .setCircularRegion(location.latitude, location.longitude, GEOFENCE_RADIUS.toFloat())
-            .setExpirationDuration(GEOFENCE_EXPIRATION.toLong())
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
-            .build()
-
-        val geofenceRequest = GeofencingRequest.Builder()
-            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT)
-            .addGeofence(geofence)
-            .build()
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(
-                    applicationContext, Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    ),
-                    GEOFENCE_LOCATION_REQUEST_CODE
+                Log.e(TAG, Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()).toString() + " " + Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()).toString() )
+                setAlarm(
+                    Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()),
+                    Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()),
+                    sharedViewModel.notificationItems[i].interval,
+                    i,
+                    j
                 )
-            } else {
-                geofencingClient.addGeofences(geofenceRequest, geofencePendingIntent)
             }
-        } else {
-            geofencingClient.addGeofences(geofenceRequest, geofencePendingIntent)
+
         }
-
-        geofencePendingIntent.send()
-
-        //        val intent = Intent(this, GeofenceReceiver::class.java)
-//            .putExtra("key", key)
-//            .putExtra("message", "Geofence alert - ${location.latitude}, ${location.longitude}")
     }
 
-    override fun onResume() {
-        super.onResume()
-        LocalBroadcastManager.getInstance(this).registerReceiver(
-            foregroundOnlyBroadcastReceiver,
-            IntentFilter(
-                CurrentLocationService.ACTION_FOREGROUND_ONLY_LOCATION_BROADCAST
-            )
+    fun setAlarm(hour: Int, minute: Int, interval: String, notificationId: Int, timeId: Int){
+        manageNotificationChannel(context, notificationId.toString())
+        val alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
+        Log.e(TAG,sharedViewModel.notificationItems[notificationId].name)
+        val bundle = Bundle()
+            bundle.putInt("NotificationId",notificationId)
+            bundle.putString("Title",sharedViewModel.notificationItems[notificationId].name)
+            bundle.putInt("TimeId",timeId)
+        val intent = Intent(context, NotificationsBroadcastReceiver::class.java)
+        intent.putExtras(bundle)
+
+        val pendingIntent = PendingIntent.getBroadcast(context, notificationId*3 + timeId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        var alarmInterval = AlarmManager.INTERVAL_DAY
+        if(interval.equals("Co 2 dni")){
+            alarmInterval *= 2
+        }
+        if(interval.equals("Co tydzień")){
+            alarmInterval *= 7
+        }
+
+        val calendar = GregorianCalendar.getInstance().apply {
+            if (get(Calendar.HOUR_OF_DAY) >= hour && get(Calendar.MINUTE)>=minute) {
+                add(Calendar.DAY_OF_MONTH, 1)
+            }
+
+            set(Calendar.HOUR_OF_DAY, hour)
+            set(Calendar.MINUTE, minute)
+            set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+        }
+
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            alarmInterval,
+            pendingIntent
         )
     }
 
-    override fun onSharedPreferenceChanged(
-        sharedPreferences: SharedPreferences,
-        key: String
-    ) {
-//        if (key == SharedPreferenceUtil.KEY_FOREGROUND_ENABLED) {
-//
-//            )
-//        }
+    fun cancelAllAlarms(){
+        for(i in 0 until sharedViewModel.notificationItems.size){
+            for(j in 0 until sharedViewModel.notificationItems[i].timeList.size){
+
+                cancelAlarm(
+                    context,
+                    i,
+                    j
+                )
+            }
+
+        }
     }
 
-    override fun onPause() {
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(
-            foregroundOnlyBroadcastReceiver
-        )
-        super.onPause()
+    fun cancelAlarm(context: Context?, notificationId: Int, timeId: Int){
+
+        val notificationManager = NotificationManagerCompat.from(context!!)
+        notificationManager.cancel(notificationId*3+timeId)
+        notificationManager.deleteNotificationChannel("$notificationId")
     }
 
-    override fun onStop() {
-        if (currentOnlyLocationService != null) {
-            currentOnlyLocationService?.unSubscribeToLocationUpdates()
-        }
 
-        if (foregroundOnlyLocationServiceBound) {
-            unbindService(foregroundOnlyServiceConnection)
-            foregroundOnlyLocationServiceBound = false
-        }
-        sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
 
-        super.onStop()
+
+    private fun handleGeofence() {
+        Log.d("CreateGeofence", "Main")
+        sharedViewModel.onGeofenceRequest.value = false
+        sharedViewModel.geofenceLocation.value = sharedViewModel.newGeofenceLocation.value
+        sharedViewModel.geofenceRadius.value = sharedViewModel.newGeofenceRadius.value
+
+        // Zapis Geofence do firebase pod adres seniora
+        val geoFenceLocation = GeofenceDAO(sharedViewModel.geofenceLocation.value.latitude, sharedViewModel.geofenceLocation.value.longitude, sharedViewModel.geofenceRadius.value)
+        sharedViewModel.saveGeofenceToFirebase(geoFenceLocation)
+        sharedViewModel.deleteShowAlarm()
+        sharedViewModel.listenToGeofenceStatus()
+    }
+
+
+
+    override fun onDestroy(){
+        super.onDestroy()
     }
 
 
@@ -467,17 +536,26 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
         if (provideRationale) {
             ActivityCompat.requestPermissions(
                 this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.SEND_SMS
+                ),
                 REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
         } else {
             ActivityCompat.requestPermissions(
                 this@MainActivity,
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.CALL_PHONE,
+                    Manifest.permission.SEND_SMS
+                ),
                 REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
             )
         }
     }
+
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
@@ -497,8 +575,9 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE -> when {
                 grantResults.isEmpty() ->
                     Log.d(TAG, "User interaction was cancelled.")
-                grantResults[0] == PackageManager.PERMISSION_GRANTED ->
-                    currentOnlyLocationService?.subscribeToLocationUpdates()
+               // grantResults[0] == PackageManager.PERMISSION_GRANTED ->
+                   // if (sharedViewModel.userData.value != null )
+                   // currentOnlyLocationService?.subscribeToLocationUpdates()
                 else -> {
 
                     val intent = Intent()
@@ -515,28 +594,5 @@ class MainActivity : ComponentActivity(), SharedPreferences.OnSharedPreferenceCh
             }
         }
     }
-    private inner class ForegroundOnlyBroadcastReceiver : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent) {
-            val location = intent.getParcelableExtra<Location>(
-                CurrentLocationService.EXTRA_LOCATION
-            )
-            Log.d(
-                "CurrentLocationReceiver",
-                "${locations?.latitude}, ${locations?.longitude}"
-            )
-            if (location != null) {
-                locations = location
-                sharedViewModel.seniorLocalization.value = LatLng( location.latitude, location.longitude)
-                sharedViewModel.localizationAccuracy.value = location.accuracy
-                sharedViewModel.location.value = locations
 
-            }
-        }
-    }
 }
-
-
-const val GEOFENCE_RADIUS = 200
-const val GEOFENCE_ID = "SENIOR_GEOFENCE"
-const val GEOFENCE_EXPIRATION = 10 * 24 * 60 * 60 * 1000 // 10 days
-const val GEOFENCE_LOCATION_REQUEST_CODE = 12345

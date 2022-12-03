@@ -1,12 +1,19 @@
 package com.SeniorCareMobileProject.seniorcare.data
 
 import android.util.Log
+import android.webkit.ValueCallback
 import android.widget.Toast
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshotFlow
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
-import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
-import com.SeniorCareMobileProject.seniorcare.data.dao.User
+import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.data.dao.*
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.google.android.gms.maps.model.LatLng
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -15,9 +22,13 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import kotlinx.datetime.LocalDate
+import kotlinx.datetime.LocalTime
 import kotlin.random.Random
 
 class Repository {
@@ -39,6 +50,7 @@ class Repository {
                         val userId = firebaseAuth.currentUser!!.uid
                         val newUser = User(userEmailAddress, userFirstName, userLastName, userFunction)
                         databaseUserReference.child(userId).setValue(newUser).await()
+
                         sharedViewModel._userSignUpStatus.postValue(Resource.Success(response))
                         Log.d("Rejestracja", "Udało się zarejestrować!")
                     }
@@ -53,6 +65,22 @@ class Repository {
         else {
             sharedViewModel._userSignUpStatus.postValue(Resource.Error("Empty strings"))
             Toast.makeText(MyApplication.context, "Please enter valid information", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    fun writeNewUserFromGoogle(user: LiveData<User>){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val newUser = User(user.value?.email, user.value?.firstName, user.value?.lastName, user.value?.function)
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    databaseUserReference.child(userId).setValue(newUser).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(MyApplication.context, e.message, Toast.LENGTH_LONG).show()
+                }
+            }
         }
     }
 
@@ -89,12 +117,108 @@ class Repository {
                 val user = snapshot.getValue<User>()
                 if (user != null) {
                     sharedViewModel._userData.value = user
+                    user.function?.let { sharedViewModel.saveUserFunctionToLocalRepo(it) }
                     sharedViewModel._userDataStatus.postValue(Resource.Success(user))
+                }
+                else {
+                    sharedViewModel._userDataStatus.postValue(Resource.Error("empty data"))
+                    sharedViewModel.isDataEmpty.value = true
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
                 Log.w("Database", "loadPost:onCancelled", databaseError.toException())
                 sharedViewModel._userDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
+            }
+        }
+        userReference.addValueEventListener(userListener)
+        //userReference.addListenerForSingleValueEvent(userListener)
+    }
+
+    fun getListOfSeniors(sharedViewModel: SharedViewModel){
+        val reference = databaseUserReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child("connectedWith")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = snapshot.getValue<HashMap<String, String>>()
+                if (data != null){
+                    sharedViewModel.listOfAllSeniors.addAll(data.keys)
+                    getCurrentSeniorData(sharedViewModel)
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getListOfSeniors:onCancelled", databaseError.toException())
+                sharedViewModel._currentSeniorDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
+            }
+        }
+        reference.addListenerForSingleValueEvent(listener)
+    }
+
+    fun getCurrentSeniorData(sharedViewModel: SharedViewModel){
+        val userReference = database.getReference("users/" + sharedViewModel.listOfAllSeniors[0])
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val user = snapshot.getValue<SeniorAllDAO>()
+                if (user != null) {
+                    sharedViewModel.currentSeniorData.value = User(user.email, user.firstName, user.lastName, user.function)
+                    if (user.location != null){
+                        sharedViewModel.seniorLocalization.value = LatLng(user.location.latitude!!, user.location.longitude!!)
+                        sharedViewModel.localizationAccuracy.value = user.location.accuracy!!
+                    }
+                    if (user.geofence != null){
+                        sharedViewModel.geofenceLocation.value = LatLng(user.geofence.latitude!!, user.geofence.longitude!!)
+                        sharedViewModel.geofenceRadius.value = user.geofence.radius!!
+                    }
+                    if (user.medicalInformation != null){
+                        sharedViewModel.medInfo.value = MedInfoDAO(
+                            user.medicalInformation.firstName,
+                            user.medicalInformation.lastName,
+                            user.medicalInformation.birthday,
+                            user.medicalInformation.illnesses,
+                            user.medicalInformation.bloodType,
+                            user.medicalInformation.allergies,
+                            user.medicalInformation.medication,
+                            user.medicalInformation.height,
+                            user.medicalInformation.weight,
+                            user.medicalInformation.languages,
+                            user.medicalInformation.others
+                        )
+                    }
+                    if (user.sos != null) {
+                        val newSosNumbers = mutableListOf<String>()
+                        val newSosNames = mutableListOf<String>()
+                        val newNumberState = mutableListOf<MutableState<String>>()
+                        val newNameState = mutableListOf<MutableState<String>>()
+                        for (sosNumber in user.sos) {
+                            newSosNumbers.add(sosNumber.number)
+                            newSosNames.add(sosNumber.name)
+                            newNumberState.add(
+                                mutableStateOf(sosNumber.number)
+                            )
+                            newNameState.add(
+                                mutableStateOf(sosNumber.name)
+                            )
+                        }
+                        sharedViewModel.sosCascadePhoneNumbers = newSosNumbers
+                        sharedViewModel.sosPhoneNumbersNames = newSosNames
+                        sharedViewModel.sosSettingsNumberStates = newNumberState
+                        sharedViewModel.sosSettingsNameStates = newNameState
+                    }
+                    if (user.calendar != null) {
+                        sharedViewModel.calendarEventsFirebase.clear()
+                        for (calendarEventFirebase in user.calendar) {
+                            sharedViewModel.calendarEventsFirebase.add(calendarEventFirebase)
+                        }
+                        sharedViewModel.parseCalendarEventsFirebaseToCalendarEvents()
+                    }
+                    //getSeniorLocation(sharedViewModel)
+                    sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
+                }
+                else {
+                    sharedViewModel._currentSeniorDataStatus.postValue(Resource.Error("no connected senior"))
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getCurrentSeniorData:onCancelled", databaseError.toException())
+                sharedViewModel._currentSeniorDataStatus.postValue(Resource.Error(databaseError.toException().toString()))
             }
         }
         userReference.addValueEventListener(userListener)
@@ -174,7 +298,7 @@ class Repository {
         return random
     }
 
-    fun pairingStatusListener(sharedViewModel: SharedViewModel){
+    private fun pairingStatusListener(sharedViewModel: SharedViewModel){
         val pairingDataReference = database
             .getReference("pairing")
             .child("data")
@@ -231,6 +355,28 @@ class Repository {
         pairingDataReference.addListenerForSingleValueEvent(listener)
     }
 
+    fun getSeniorIDForPairing(sharedViewModel: SharedViewModel){
+        val pairingDataReference = database.getReference("pairing")
+            .child("data")
+            .child(sharedViewModel.pairingCode.value!!)
+            .child("seniorID")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = snapshot.getValue<String>()
+                if (data != null){
+                    sharedViewModel.pairingSeniorID.value = data
+                    if (sharedViewModel.pairingSeniorID.value != firebaseAuth.currentUser!!.uid){
+                        sharedViewModel.writeNewConnectionStatus.postValue(Resource.Success(data))
+                    }
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorIDForPairing:onCancelled", databaseError.toException())
+            }
+        }
+        pairingDataReference.addListenerForSingleValueEvent(listener)
+    }
+
     fun writeSeniorIDForPairing(sharedViewModel: SharedViewModel){
         database.getReference("pairing")
             .child("data")
@@ -249,5 +395,331 @@ class Repository {
             .child(sharedViewModel.codeInput.value)
             .child("status")
             .setValue(true)
+    }
+
+    // LOCATION
+    fun saveLocationToFirebase(location: LocationDAO?){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val databaseReference = databaseUserReference.child(userId).child("location")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    databaseReference.setValue(location).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("LocationFirebase", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun getSeniorLocation(sharedViewModel: SharedViewModel){
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("location")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val location = snapshot.getValue<LocationDAO>()
+                if (location != null) {
+                    sharedViewModel.seniorLocalization.value = LatLng(location.latitude!!, location.longitude!!)
+                    sharedViewModel.localizationAccuracy.value = location.accuracy!!
+                    Log.d("Wspolrzedne", "${sharedViewModel.seniorLocalization.value.latitude} ${sharedViewModel.seniorLocalization.value.longitude}")
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorLocation:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
+    }
+
+    // GEOFENCE
+    fun saveGeofenceStatusToFirebase(geofenceStatus: String){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val databaseReference = databaseUserReference.child(userId).child("geofence").child("showAlarm")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    databaseReference.setValue(geofenceStatus).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveGeofenceStatusToFirebase", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun listenToGeofenceStatus(sharedViewModel: SharedViewModel){
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("geofence")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val status = snapshot.getValue<GeofenceDAO>()
+                if (status != null) {
+                    sharedViewModel.onNotficationShow.value = status.showAlarm
+                    Log.d("showAalarm", "zmiana na true")
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorLocation:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(listener)
+    }
+
+    fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO, sharedViewModel: SharedViewModel){
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("geofence")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(geoFenceLocation).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("LocationFirebase", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun getGeofenceForSenior(sharedViewModel: SharedViewModel){
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("geofence")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val geofence = snapshot.getValue<GeofenceDAO>()
+                if (geofence != null) {
+                    sharedViewModel.geofenceLocation.value = LatLng(geofence.latitude!!, geofence.longitude!!)
+                    sharedViewModel.geofenceRadius.value = geofence.radius!!
+                    Log.d("Wspolrzedne geofence", "${sharedViewModel.geofenceLocation.value.latitude} ${sharedViewModel.geofenceLocation.value.longitude}")
+
+                    sharedViewModel.hasSeniorData.value = true
+
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorLocation:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
+    }
+
+//    fun fetchGeofencesForSenior(): Flow<List<GeofenceDAO>?> = callbackFlow {
+//
+//        val listener = object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                val data = dataSnapshot.getValue<List<GeofenceDAO>>()
+//                trySend(data).isSuccess
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//
+//            }
+//        }
+//
+//        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+//        val reference = database.getReference("users")
+//            .child(userId)
+//            .child("geofence")
+//        reference.addListenerForSingleValueEvent(listener)
+//
+//        awaitClose{
+//            //remove listener here
+//            reference.removeEventListener(listener)
+//        }
+//    }
+
+    fun fetchGeofencesForSenior(): Flow<GeofenceDAO> = callbackFlow {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val data = dataSnapshot.getValue<GeofenceDAO>()
+                try {
+                    if (data != null)
+                    {trySend(data) }
+                }
+                finally {
+
+                }
+        }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("geofence")
+        reference.addValueEventListener(listener)
+
+        awaitClose{
+            //remove listener here
+            reference.removeEventListener(listener)
+        }
+    }
+
+    fun deleteShowAlarm(sharedViewModel: SharedViewModel){
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("geofence")
+            .child("showAlarm")
+        reference.removeValue()
+    }
+
+    fun saveMedicalInfo(sharedViewModel: SharedViewModel){
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("medicalInformation")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(sharedViewModel.medInfo.value).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("MedInfoFirebase", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun getMedicalInformationForSenior(sharedViewModel: SharedViewModel) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("medicalInformation")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val medInfo = snapshot.getValue<MedInfoDAO>()
+                if (medInfo != null) {
+                    sharedViewModel.medInfo.value = MedInfoDAO(
+                        medInfo.firstName,
+                        medInfo.lastName,
+                        medInfo.birthday,
+                        medInfo.illnesses,
+                        medInfo.bloodType,
+                        medInfo.allergies,
+                        medInfo.medication,
+                        medInfo.height,
+                        medInfo.weight,
+                        medInfo.languages,
+                        medInfo.others
+                    )
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSeniorMedInfo:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
+    }
+
+    fun getSosNumbersForSenior(sharedViewModel: SharedViewModel) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("sos")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val sosNumbers = snapshot.getValue<ArrayList<SosNumberDAO>>()
+                if (sosNumbers != null) {
+                    val newSosNumbers = mutableListOf<String>()
+                    val newSosNames = mutableListOf<String>()
+                    val newNumberState = mutableListOf<MutableState<String>>()
+                    val newNameState = mutableListOf<MutableState<String>>()
+                    for (sosNumber in sosNumbers) {
+                        newSosNumbers.add(sosNumber.number)
+                        newSosNames.add(sosNumber.name)
+                        newNumberState.add(
+                            mutableStateOf(sosNumber.number))
+                        newNameState.add(
+                            mutableStateOf(sosNumber.name))
+                    }
+                    sharedViewModel.sosCascadePhoneNumbers = newSosNumbers
+                    sharedViewModel.sosPhoneNumbersNames = newSosNames
+                    sharedViewModel.sosSettingsNumberStates = newNumberState
+                    sharedViewModel.sosSettingsNameStates = newNameState
+                    sharedViewModel.saveSosNumbersToLocalRepo()
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getSosNumbersForSenior:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
+    }
+
+    fun saveSosNumbersToFirebase(sharedViewModel: SharedViewModel) {
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("sos")
+        val allNumbers: ArrayList<SosNumberDAO> = arrayListOf()
+        for (i in 0 until sharedViewModel.sosCascadePhoneNumbers.size) {
+            val sosNumber = SosNumberDAO(
+                name = sharedViewModel.sosPhoneNumbersNames[i],
+                number = sharedViewModel.sosCascadePhoneNumbers[i]
+            )
+            allNumbers.add(sosNumber)
+        }
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(allNumbers).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveSosNumbersToFirebase:", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun saveCalendarEvents(sharedViewModel: SharedViewModel) {
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("calendar")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(sharedViewModel.calendarEventsFirebase).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveCalendarEventsToFirebase:", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun loadCalendarEventsForSenior(sharedViewModel: SharedViewModel) {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("calendar")
+        val userListener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val calendarEventsFirebase = snapshot.getValue<ArrayList<CalendarEventDAO>>()
+                if (calendarEventsFirebase != null) {
+                    sharedViewModel.calendarEventsFirebase.clear()
+                    for (calendarEventFirebase in calendarEventsFirebase) {
+                        sharedViewModel.calendarEventsFirebase.add(calendarEventFirebase)
+                    }
+                    sharedViewModel.parseCalendarEventsFirebaseToCalendarEvents()
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "loadCalendarEventsForSenior:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addValueEventListener(userListener)
     }
 }

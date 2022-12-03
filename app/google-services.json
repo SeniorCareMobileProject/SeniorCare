@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "272124790691-4fc31md4bauhuqlp0ajr1ul67o9mg4va.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.SeniorCareMobileProject.seniorcare",
+            "certificate_hash": "8b0e8ff2219fc35dc000b0ec552289266fa2ad27"
+          }
+        },
+        {
           "client_id": "272124790691-ih9ocanv6sd05ff4t6htj5qqot2ou68v.apps.googleusercontent.com",
           "client_type": 3
         }
