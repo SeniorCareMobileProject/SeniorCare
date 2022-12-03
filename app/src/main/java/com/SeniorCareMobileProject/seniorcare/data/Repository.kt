@@ -695,4 +695,27 @@ class Repository {
         }
         reference.addValueEventListener(userListener)
     }
+
+    fun saveNotificationsToFirebase(sharedViewModel: SharedViewModel) {
+        val reference = database.getReference("users")
+            .child(sharedViewModel.listOfAllSeniors[0])
+            .child("notifications")
+
+        val dataToSend: ArrayList<NotificationItem> = ArrayList()
+        for (item in sharedViewModel.notificationItems){
+            dataToSend.add(item)
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(dataToSend).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveNotificationsToFirebase", e.message.toString())
+                }
+            }
+        }
+    }
 }

@@ -384,4 +384,9 @@ class SharedViewModel() : ViewModel(), KoinComponent {
             calendarEvents.add(calendarEvent)
         }
     }
+
+    // NOTIFICATIONS - firebase
+    fun saveNotificationsToFirebase() {
+        repository.saveNotificationsToFirebase(this)
+    }
 }
