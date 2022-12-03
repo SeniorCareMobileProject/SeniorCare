@@ -1,10 +1,13 @@
 package com.SeniorCareMobileProject.seniorcare.data
 
 import android.util.Log
+import android.webkit.ValueCallback
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.asLiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.dao.*
@@ -19,6 +22,8 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
@@ -430,13 +435,13 @@ class Repository {
     }
 
     // GEOFENCE
-    fun saveGeofenceStatusToFirebase(){
+    fun saveGeofenceStatusToFirebase(geofenceStatus: String){
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val databaseReference = databaseUserReference.child(userId).child("geofence").child("showAlarm")
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
-                    databaseReference.setValue("true").await()
+                    databaseReference.setValue(geofenceStatus).await()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -496,6 +501,7 @@ class Repository {
                     Log.d("Wspolrzedne geofence", "${sharedViewModel.geofenceLocation.value.latitude} ${sharedViewModel.geofenceLocation.value.longitude}")
 
                     sharedViewModel.hasSeniorData.value = true
+
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -503,6 +509,62 @@ class Repository {
             }
         }
         reference.addValueEventListener(userListener)
+    }
+
+//    fun fetchGeofencesForSenior(): Flow<List<GeofenceDAO>?> = callbackFlow {
+//
+//        val listener = object : ValueEventListener {
+//            override fun onDataChange(dataSnapshot: DataSnapshot) {
+//                val data = dataSnapshot.getValue<List<GeofenceDAO>>()
+//                trySend(data).isSuccess
+//            }
+//
+//            override fun onCancelled(databaseError: DatabaseError) {
+//
+//            }
+//        }
+//
+//        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+//        val reference = database.getReference("users")
+//            .child(userId)
+//            .child("geofence")
+//        reference.addListenerForSingleValueEvent(listener)
+//
+//        awaitClose{
+//            //remove listener here
+//            reference.removeEventListener(listener)
+//        }
+//    }
+
+    fun fetchGeofencesForSenior(): Flow<GeofenceDAO> = callbackFlow {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val data = dataSnapshot.getValue<GeofenceDAO>()
+                try {
+                    if (data != null)
+                    {trySend(data) }
+                }
+                finally {
+
+                }
+        }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+
+            }
+        }
+
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("geofence")
+        reference.addValueEventListener(listener)
+
+        awaitClose{
+            //remove listener here
+            reference.removeEventListener(listener)
+        }
     }
 
     fun deleteShowAlarm(sharedViewModel: SharedViewModel){

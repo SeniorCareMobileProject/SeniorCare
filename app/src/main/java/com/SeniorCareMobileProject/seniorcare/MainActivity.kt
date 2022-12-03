@@ -2,7 +2,6 @@ package com.SeniorCareMobileProject.seniorcare
 
 import android.Manifest
 import android.app.*
-import android.app.job.JobInfo
 import android.app.job.JobScheduler
 import android.content.*
 import android.content.pm.PackageManager
@@ -22,7 +21,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -30,11 +28,8 @@ import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
-import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
-import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.receivers.NotificationsBroadcastReceiver
-import com.SeniorCareMobileProject.seniorcare.services.LocationJobScheduler
 import com.SeniorCareMobileProject.seniorcare.services.LocationService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
@@ -45,7 +40,6 @@ import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.*
-import com.SeniorCareMobileProject.seniorcare.utils.SharedPreferenceUtil
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
 import com.google.android.gms.location.GeofencingRequest
@@ -60,32 +54,9 @@ private var locations: Location? = null
 
 class MainActivity : ComponentActivity() {
 
-
-    private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(MyApplication.context, GeofenceBroadcastReceiver::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(
-                MyApplication.context,
-                0,
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-        } else {
-            PendingIntent.getBroadcast(
-                MyApplication.context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
-    }
-
     private val requestCall = 1
 
     private val sharedViewModel: SharedViewModel by viewModels()
-
-
-    lateinit var geofencingClient: GeofencingClient
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -93,37 +64,9 @@ class MainActivity : ComponentActivity() {
         val localSettingsRepository = LocalSettingsRepository.getInstance(application)
         sharedViewModel.localSettingsRepository = localSettingsRepository
 
-        scheduleJob()
-     //   startForegroundService(Intent(this, MainForegroundService::class.java))
-
-
         sharedViewModel.onGeofenceRequest.observe(this, Observer { value ->
             if (value) handleGeofence()
         })
-
-        sharedViewModel.hasSeniorData.observe(this, Observer { value ->
-            if (value){
-                createGeoFence(sharedViewModel.geofenceLocation.value,sharedViewModel.geofenceRadius.value, geofencingClient)
-                sharedViewModel.hasSeniorData.value = false
-                Log.d("Create GeoFence", "Utworzono geofence")
-            }
-        })
-
-
-        geofencingClient = LocationServices.getGeofencingClient(this)
-        geofencePendingIntent.send()
-
-
-
-        //TODO : na potrzeby testowania geofencingu i map, odkomentowanie poniższego kodu sprawi że trackujemy lokalizacje opiekuna a nie seniora
-////todo delete \/
-//        if (foregroundPermissionApproved()) {
-//            currentOnlyLocationService?.subscribeToLocationUpdates()
-//                ?: Log.d("TAG", "Service Not Bound")
-//        } else {
-//            requestForegroundPermissions()
-//        }
-////todo delete /\
 
         sharedViewModel.getUserFunctionFromLocalRepo()
         if (sharedViewModel.userFunctionFromLocalRepo == "Senior"){
@@ -424,22 +367,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun createNotificationChannel(context: Context?) {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Channel Name"
-            val descriptionText = "getString(R.string.channel_description)"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("CHANNEL_ID", name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
 
     private fun manageNotificationChannel(context: Context?, id: String) {
 
@@ -573,28 +500,7 @@ class MainActivity : ComponentActivity() {
         notificationManager.deleteNotificationChannel("$notificationId")
     }
 
-    fun scheduleJob() {
-        val componentName = ComponentName(this, LocationJobScheduler::class.java)
-        val info = JobInfo.Builder(123, componentName)
-            .setRequiresCharging(false)
-            .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
-            .setPersisted(true)
-            .setPeriodic((1 * 30 * 1000).toLong())
-            .build()
-        val scheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-        val resultCode = scheduler.schedule(info)
-        if (resultCode == JobScheduler.RESULT_SUCCESS) {
-            Log.d(TAG, "Job scheduled")
-        } else {
-            Log.d(TAG, "Job scheduling failed")
-        }
-    }
 
-    fun cancelJob() {
-        val scheduler = getSystemService(JOB_SCHEDULER_SERVICE) as JobScheduler
-        scheduler.cancel(123)
-        Log.d(TAG, "Job cancelled")
-    }
 
 
     private fun handleGeofence() {
@@ -610,43 +516,6 @@ class MainActivity : ComponentActivity() {
         sharedViewModel.listenToGeofenceStatus()
     }
 
-    private fun createGeoFence(location: LatLng, radius: Int, geofencingClient: GeofencingClient) {
-        val geofence = Geofence.Builder()
-            .setRequestId(GEOFENCE_ID)
-            .setCircularRegion(location.latitude, location.longitude, radius.toFloat())
-            .setExpirationDuration(GEOFENCE_EXPIRATION.toLong())
-            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_EXIT)
-            .build()
-
-        val geofenceRequest = GeofencingRequest.Builder()
-            .setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_EXIT)
-            .addGeofence(geofence)
-            .build()
-
-
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            if (ContextCompat.checkSelfPermission(
-                    applicationContext, Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                ) != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(
-                    this,
-                    arrayOf(
-                        Manifest.permission.ACCESS_BACKGROUND_LOCATION
-                    ),
-                    GEOFENCE_LOCATION_REQUEST_CODE
-                )
-            } else {
-                geofencingClient.addGeofences(geofenceRequest, geofencePendingIntent)
-            }
-        } else {
-            geofencingClient.addGeofences(geofenceRequest, geofencePendingIntent)
-        }
-
-        geofencePendingIntent.send()
-
-    }
 
 
     override fun onDestroy(){
@@ -727,8 +596,3 @@ class MainActivity : ComponentActivity() {
     }
 
 }
-
-
-const val GEOFENCE_ID = "SENIOR_GEOFENCE"
-const val GEOFENCE_EXPIRATION = 10 * 24 * 60 * 60 * 1000 // 10 days
-const val GEOFENCE_LOCATION_REQUEST_CODE = 12345

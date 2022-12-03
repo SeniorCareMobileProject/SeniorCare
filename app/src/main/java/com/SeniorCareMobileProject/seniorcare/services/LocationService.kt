@@ -10,12 +10,15 @@ import android.os.IBinder
 import android.os.Looper
 import android.util.Log
 import androidx.core.app.NotificationCompat
-import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
+import com.SeniorCareMobileProject.seniorcare.data.geofence.GeofenceManager
 import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
+import kotlinx.coroutines.*
+import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.TimeUnit
 
 class LocationService: Service() {
@@ -24,6 +27,10 @@ class LocationService: Service() {
     private lateinit var locationRequest: LocationRequest
     private lateinit var locationCallback: LocationCallback
     private lateinit var repository: Repository
+    private lateinit var geofenceDAO: GeofenceDAO
+
+    private val job = SupervisorJob()
+    private val scope = CoroutineScope(Dispatchers.IO + job)
 
     override fun onCreate() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
@@ -35,8 +42,10 @@ class LocationService: Service() {
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
+
         FirebaseAuth.getInstance()
         repository = Repository()
+
 
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult) {
@@ -47,9 +56,10 @@ class LocationService: Service() {
         }
     }
 
+
     fun sendLocation(currentLocation: Location?) {
         firebaseUpdate(currentLocation)
-        startForeground(1, generateNotification(currentLocation).build())
+        startForeground(NOTIFY_ID, generateNotification(currentLocation).build())
     }
 
     private fun firebaseUpdate(currentLocation: Location?) {
@@ -57,6 +67,14 @@ class LocationService: Service() {
             return
         }
         repository.saveLocationToFirebase(LocationDAO(currentLocation.latitude, currentLocation.longitude, currentLocation.accuracy))
+    }
+
+    private fun observeGeofences(){
+        scope.launch {
+            repository.fetchGeofencesForSenior().collectLatest { it ->
+                GeofenceManager().handleGeofence(applicationContext, it)
+            }
+        }
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -72,13 +90,15 @@ class LocationService: Service() {
     }
 
     private fun start(){
+        observeGeofences()
         Log.d("Current Location Update", "TRY")
         var currLocation: Location? = null
         try {
             fusedLocationProviderClient.lastLocation.addOnSuccessListener { location: Location? ->
                 currLocation = location
-                Log.d("Current Location Updade", "${location!!.latitude}, ${location.longitude}")
-
+                if (location != null) {
+                    Log.d("Current Location Updade", "${location.latitude}, ${location.longitude}")
+                }
             }
             fusedLocationProviderClient.requestLocationUpdates(
                 locationRequest, locationCallback, Looper.getMainLooper())
@@ -112,15 +132,7 @@ class LocationService: Service() {
         val bigTextStyle = NotificationCompat.BigTextStyle()
             .bigText(mainNotificationText)
             .setBigContentTitle(titleText)
-        val launchActivity = Intent(this, MainActivity::class.java)
-        val cancelIntent = Intent(this, LocationService::class.java)
-        cancelIntent.putExtra(EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION, true)
-        val servicePendingIntent = PendingIntent.getService(
-            this, 0, cancelIntent, PendingIntent.FLAG_UPDATE_CURRENT
-        )
-        val activityPendingIntent = PendingIntent.getActivity(
-            this, 0, launchActivity, 0
-        )
+
         val notificationCompatBuilder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
 
         return notificationCompatBuilder.setStyle(bigTextStyle)
@@ -128,6 +140,7 @@ class LocationService: Service() {
             .setContentText(mainNotificationText)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setOnlyAlertOnce(true)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
@@ -141,10 +154,10 @@ class LocationService: Service() {
     companion object {
         const val ACTION_START = "ACTION_START"
         const val ACTION_STOP = "ACTION_STOP"
-        private const val PACKAGE_NAME = "com.SeniorCareMobileProject.seniorcare"
-        private const val EXTRA_CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION = "$PACKAGE_NAME.extra.CANCEL_LOCATION_TRACKING_FROM_NOTIFICATION"
-        private const val NOTIFICATION_ID = 123
-        private const val NOTIFICATION_CHANNEL_ID = "channel_01"
+        private const val NOTIFICATION_CHANNEL_ID = "Location Channel"
+        private const val CHANNEL_NAME = "Location Service"
+        private const val DESCRIPTION = "Location Notification Channel"
+        private const val NOTIFY_ID = 200
     }
 }
 
