@@ -745,7 +745,7 @@ class Repository {
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
         val reference = database.getReference("users")
             .child(userId)
-            .child("geofence")
+            .child("notifications")
         reference.addValueEventListener(listener)
 
         awaitClose{

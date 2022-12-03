@@ -30,12 +30,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class SharedViewModel() : ViewModel(), KoinComponent {
@@ -388,5 +390,17 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     // NOTIFICATIONS - firebase
     fun saveNotificationsToFirebase() {
         repository.saveNotificationsToFirebase(this)
+    }
+
+    fun getNotificationsForSenior() {
+        viewModelScope.launch {
+            repository.getNotificationsForSenior().collectLatest {
+                notificationItems.clear()
+                for (item in it){
+                    notificationItems.add(item)
+                }
+                notificationitemsLiveData.value = notificationItems
+            }
+        }
     }
 }
