@@ -56,25 +56,6 @@ private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 
 class MainActivity : ComponentActivity() {
 
-    private val geofencePendingIntent: PendingIntent by lazy {
-        val intent = Intent(MyApplication.context, GeofenceBroadcastReceiver::class.java)
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getBroadcast(
-                MyApplication.context,
-                0,
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP),
-                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
-            )
-        } else {
-            PendingIntent.getBroadcast(
-                MyApplication.context,
-                0,
-                intent,
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
-    }
-
     private val requestCall = 1
 
     private val sharedViewModel: SharedViewModel by viewModels()
