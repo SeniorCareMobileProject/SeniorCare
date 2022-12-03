@@ -209,6 +209,13 @@ class Repository {
                         }
                         sharedViewModel.parseCalendarEventsFirebaseToCalendarEvents()
                     }
+                    if (user.notifications != null) {
+                        sharedViewModel.notificationItems.clear()
+                        for (item in user.notifications){
+                            sharedViewModel.notificationItems.add(item)
+                        }
+                        sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
+                    }
                     //getSeniorLocation(sharedViewModel)
                     sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
                 }
@@ -716,6 +723,34 @@ class Repository {
                     Log.e("saveNotificationsToFirebase", e.message.toString())
                 }
             }
+        }
+    }
+
+    fun getNotificationsForSenior(): Flow<ArrayList<NotificationItem>> = callbackFlow {
+
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val data = dataSnapshot.getValue<ArrayList<NotificationItem>>()
+                try {
+                    if (data != null)
+                    { trySend(data) }
+                }
+                finally {
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        }
+
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("geofence")
+        reference.addValueEventListener(listener)
+
+        awaitClose{
+            //remove listener here
+            reference.removeEventListener(listener)
         }
     }
 }

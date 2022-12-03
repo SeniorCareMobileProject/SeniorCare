@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.data.dao
 
+import com.SeniorCareMobileProject.seniorcare.data.NotificationItem
 import com.google.firebase.database.IgnoreExtraProperties
 
 @IgnoreExtraProperties
@@ -13,4 +14,5 @@ data class SeniorAllDAO (
     val medicalInformation: MedInfoDAO? = null,
     val sos: ArrayList<SosNumberDAO>? = null,
     val calendar: ArrayList<CalendarEventDAO>? = null,
+    val notifications: ArrayList<NotificationItem>? = null,
         )
