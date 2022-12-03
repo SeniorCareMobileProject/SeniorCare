@@ -36,9 +36,9 @@ class LocationService: Service() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
         locationRequest = LocationRequest.create().apply {
-            interval = TimeUnit.SECONDS.toMillis(3)
-            fastestInterval = TimeUnit.SECONDS.toMillis(3)
-            maxWaitTime = TimeUnit.SECONDS.toMillis(5)
+            interval = TimeUnit.SECONDS.toMillis(3000)
+            fastestInterval = TimeUnit.SECONDS.toMillis(3000)
+            maxWaitTime = TimeUnit.SECONDS.toMillis(5000)
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
 
