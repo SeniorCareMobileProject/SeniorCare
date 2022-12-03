@@ -33,6 +33,7 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.receivers.NotificationsBroadcastReceiver
+import com.SeniorCareMobileProject.seniorcare.services.LocationService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapsAddGeofenceComponent
@@ -72,10 +73,15 @@ class MainActivity : ComponentActivity() {
         })
 
 
+        requestForegroundPermissions()
+
         sharedViewModel.getUserFunctionFromLocalRepo()
         if (sharedViewModel.userFunctionFromLocalRepo == "Senior"){
             sharedViewModel.getSosNumbersFromLocalRepo()
             sharedViewModel.getFallDetectionStateFromLocalRepo()
+            Intent(applicationContext, LocationService::class.java).apply {
+                action = LocationService.ACTION_START
+                startService(this) }
             if (sharedViewModel.isFallDetectorTurnOn.value == true) {
                 val fallDetectorService = FallDetectorService()
                 val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
@@ -83,7 +89,6 @@ class MainActivity : ComponentActivity() {
             }
         }
 
-        requestForegroundPermissions()
 
         sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
             if (value >= 0) {
