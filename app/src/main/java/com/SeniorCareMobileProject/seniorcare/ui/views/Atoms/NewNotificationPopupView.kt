@@ -390,6 +390,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                 Log.e(TAG,sharedViewModel.notificationItems.toString())
                                 navController.navigate(rout)
                                 sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
+                                sharedViewModel.saveNotificationsToFirebase()
                             }
                         },
 

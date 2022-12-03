@@ -30,12 +30,14 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
 import org.koin.core.component.KoinComponent
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class SharedViewModel() : ViewModel(), KoinComponent {
@@ -56,8 +58,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val mapFullscreen = mutableStateOf(false)
     val resetCamera = mutableStateOf(false)
     val locationBeforeFreeingCam = mutableStateOf(LatLng(52.408839, 16.906782))
-
-    val onNotficationShow = MutableLiveData<String>("false")
 
     //geofence
     val geofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
@@ -287,14 +287,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
         repository.getGeofenceForSenior(this)
     }
 
-    fun listenToGeofenceStatus() {
-        repository.listenToGeofenceStatus(this)
-    }
-
-    fun deleteShowAlarm() {
-        repository.deleteShowAlarm(this)
-    }
-
     // MEDICAL INFO
     fun saveMedicalInfoToFirebase(){
         repository.saveMedicalInfo(this)
@@ -392,6 +384,23 @@ class SharedViewModel() : ViewModel(), KoinComponent {
                 calendarEventFirebase.eventDescription
             )
             calendarEvents.add(calendarEvent)
+        }
+    }
+
+    // NOTIFICATIONS - firebase
+    fun saveNotificationsToFirebase() {
+        repository.saveNotificationsToFirebase(this)
+    }
+
+    fun getNotificationsForSenior() {
+        viewModelScope.launch {
+            repository.getNotificationsForSenior().collectLatest {
+                notificationItems.clear()
+                for (item in it){
+                    notificationItems.add(item)
+                }
+                notificationitemsLiveData.value = notificationItems
+            }
         }
     }
 }

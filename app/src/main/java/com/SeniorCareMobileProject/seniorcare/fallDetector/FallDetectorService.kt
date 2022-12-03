@@ -11,11 +11,15 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.location.Location
+import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.NotificationCompat
+import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.services.LocationService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import java.time.LocalDateTime
 
@@ -85,21 +89,36 @@ class FallDetectorService: Service(), SensorEventListener {
     }
 
     private fun startForeground() {
-        val channel = NotificationChannel(
-            "falldetection.permanence",
-            "Fall Detection Service",
-            NotificationManager.IMPORTANCE_DEFAULT
+        startForeground(2, generateNotification().build())
+    }
+
+    private fun generateNotification() : NotificationCompat.Builder {
+        val mainNotificationText = getString(R.string.fall_detection_notification_text)
+        val titleText = getString(R.string.app_name)
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                "Fall Detector Channel", titleText, NotificationManager.IMPORTANCE_DEFAULT
+            )
+            notificationManager.createNotificationChannel(notificationChannel)
+        }
+
+        val bigTextStyle = NotificationCompat.BigTextStyle()
+            .bigText(mainNotificationText)
+            .setBigContentTitle(titleText)
+
+        val notificationCompatBuilder = NotificationCompat.Builder(applicationContext,
+            "Fall Detector Channel"
         )
-        channel.lightColor = Color.BLUE
-        channel.lockscreenVisibility = Notification.VISIBILITY_PUBLIC
-        notificationManager.createNotificationChannel(channel)
-        val notification = NotificationCompat.Builder(this, "falldetection.permanence")
+
+        return notificationCompatBuilder.setStyle(bigTextStyle)
+            .setContentTitle(titleText)
+            .setContentText(mainNotificationText)
+            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setDefaults(NotificationCompat.DEFAULT_ALL)
+            .setOnlyAlertOnce(true)
             .setOngoing(true)
-            .setContentTitle("Senior Care")
-            .setContentText("Detektor upadku jest włączony")
-            .setPriority(NotificationManager.IMPORTANCE_DEFAULT)
-            .setCategory(Notification.CATEGORY_SERVICE)
-            .build()
-        startForeground(2, notification)
+            .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+
     }
 }
