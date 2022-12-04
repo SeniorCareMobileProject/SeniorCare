@@ -21,7 +21,20 @@ enum class NavigationScreens(val title: String) {
     LoadingDataView("LoadingDataView"),
     LoadingLoginView("LoadingLoginView"),
     LoadingRegisterView("LoadingRegisterView"),
-    LoadingPairingDataView("LoadingPairingDataView")
+    LoadingPairingDataView("LoadingPairingDataView"),
+    LoadingSeniorDataView("LoadingSeniorDataView"),
+    MapsAddGeofenceComponent("MapsAddGeofenceComponent"),
+    MapComponentView("MapComponentView"),
+    CarerMedicalInfoDataUpdateScreen("CarerMedicalInfoDataUpdateScreen"),
+    CarerSettingsListScreen("CarerSettingsListScreen"),
+    CarerSettingsSOSScreen("CarerSettingsSOSScreen"),
+    CarerSettingsSOSUpdateScreen("CarerSettingsSOSUpdateScreen"),
+    SeniorSettingsScreen("SeniorSettingsScreen"),
+    SeniorGoingOutInfoScreen("SeniorGoingOutInfoScreen"),
+    SettingsFallDetectorScreen("SettingsFallDetectorScreen"),
+    SeniorCarersListScreen("SeniorCarersListScreen"),
+    SosCascadeView("SosCascadeView"),
+    CarerSettingsSafeZoneScreen("CarerSettingsSafeZoneScreen")
 
 
 }

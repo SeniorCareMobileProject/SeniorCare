@@ -1,15 +1,72 @@
 <resources>
     <string name="app_name">Senior Care</string>
+    <string name="localization_title_notification">Localization</string>
+    <string name="localization_notification_text">Localization tracking is enabled</string>
     <string name="template_string">Template String Button Part 1</string>
     <string name="template_string2">Template String Button Part 2</string>
+    <string name="title_activity_maps">MapsActivity</string>
+    <string name="safe_zone">Safe Zone</string>
+    <string name="safe_zone_left">You have left the safe zone</string>
+    <string name="sms_senior_left">Senior left the safe zone. Check application to track location</string>
+    <string name="sms_senior_safe">Senior is in safe zone</string>
+    <string name="safe_zone_in">You are in safe zone</string>
+    <string name="title_activity_maps_test">MapsTest</string>
+
+    <string name="launch_activity">Launch activity</string>
+    <string name="location_unknown">Location Unknown</string>
+    <string name="location_updates_label">Location Updates</string>
+
+
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
-    <string name="continue_with_Google">Kontynuuj z Google</string>
+
     <string name="welcome_to">Witamy w</string>
     <string name="medical_info">Dane medyczne</string>
     <string name="calendar">Kalendarz</string>
     <string name="location">Lokalizacja</string>
     <string name="notifications">Powiadomienia</string>
     <string name="webclient_id">272124790691-ih9ocanv6sd05ff4t6htj5qqot2ou68v.apps.googleusercontent.com</string>
+
+    <string name="permission_rationale">Location permission needed for core functionality</string>
+    <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
+    <string name="settings">Settings</string>
+    <string name="ok">OK</string>
+
+    <string name="start_location_updates_button_text">Start receiving location updates</string>
+    <string name="stop_location_updates_button_text">Stop receiving location updates</string>
+
+    <string name="location_updated">Location Updated: %1$s</string>
+
+    <string name="preference_file_key">My_location_PREFERENCE_FILE_KEY</string>
+    <string name="no_location_text">No current location</string>
+    <string name="continue_with_Google">Kontynuuj z Google</string>
+
+    <string name="first_name">Imię</string>
+    <string name="last_name">Nazwisko</string>
+    <string name="birthday">Data urodzenia</string>
+    <string name="illnesses">Choroby</string>
+    <string name="blood_type">Grupa krwi</string>
+    <string name="allergies">Alergie</string>
+    <string name="medication">Przyjmowane leki</string>
+    <string name="height">Wzrost</string>
+    <string name="weight">Waga</string>
+    <string name="languages">Główny język</string>
+    <string name="others">Inne</string>
+
+    <string name="today">Dzisiaj</string>
+    <string name="tomorrow">Jutro</string>
+    <string name="event_delete_confirmation">Czy na pewno chcesz usunąć?</string>
+    <string name="yes">Tak</string>
+    <string name="no">Nie</string>
+
+    <string name="this_field_cannot_be_empty">To pole nie może być puste</string>
+    <string name="field_length_limit_exceeded">Przekroczono limit długości pola</string>
+    <string name="start_time_cannot_be_greater_then_end_time">Czas rozpoczęcia nie może być pożniejszy
+                                                           od czasu zakończenia</string>
+
+    <string name="logout_confirmation">Czy na pewno chczesz się wylogować?</string>
+
+    <string name="fall_detection_alert_message">UWAGA! Potencjalny upadek podopiecznego!</string>
+    <string name="fall_detection_notification_text">Fall detector is working</string>
 </resources>

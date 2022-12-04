@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,27 +21,17 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun ItemsList() {
-    NotificationItem(
-        title = "IBUPROM",
-        howOften = "Codziennie",
-        listOfTime = listOf<String>("10:00", "15:00", "20:00")
-    )
-    NotificationItem(
-        title = "Donepezil",
-        howOften = "Co 2 dni",
-        listOfTime = listOf<String>("10:00", "20:00")
-    )
-    NotificationItem(
-        title = "Zatogrip",
-        howOften = "Co 3 dni",
-        listOfTime = listOf<String>("13:00", "16:00", "27:00", "21:00")
-    )
-    NotificationItem(
-        title = "Dezaftan",
-        howOften = "Codziennie",
-        listOfTime = listOf<String>("10:00")
-    )
+fun ItemsList(sharedViewModel: SharedViewModel,navController: NavController) {
+    for(i in 0 until sharedViewModel.notificationItems.size){
+        NotificationItem(title = sharedViewModel.notificationItems[i].name,
+        howOften = sharedViewModel.notificationItems[i].interval,
+        listOfTime = sharedViewModel.notificationItems[i].timeList,
+        sharedViewModel = sharedViewModel,
+        index = i,
+        navController = navController,
+        rout = Screen.Notifications.route)
+    }
+
 }
 
 @Composable
@@ -51,17 +41,22 @@ fun CarerNotificationsView(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
+    val showDialog = remember { mutableStateOf(false) }
+    if (showDialog.value) {
+        NewNotificationPopupView(setShowDialog = { showDialog.value = it },sharedViewModel,navController,Screen.Notifications.route)
+    }
     Scaffold(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
-        topBar = { TopBar(navController, scope, scaffoldState) },
-        floatingActionButton = { FloatingButton() },
-        bottomBar = { BottomNavigationBarView(navController) },
+        topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
+        floatingActionButton = { FloatingButtonNotifications(setShowDialog = { showDialog.value = it }) },
+        bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(
                 scope = scope,
                 scaffoldState = scaffoldState,
-                navController = navController
+                navController = navController,
+                sharedViewModel = sharedViewModel
             )
         }) {
         val scrollState = remember { ScrollState(0) }
@@ -78,7 +73,7 @@ fun CarerNotificationsView(
                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                ItemsList()
+                ItemsList(sharedViewModel,navController)
             }
 
 

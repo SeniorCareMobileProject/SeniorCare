@@ -1,39 +1,26 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Carer
 
-import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.LiveData
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
-import com.SeniorCareMobileProject.seniorcare.data.Database
-import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
+import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavigationBarView
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.BottomNavBarView
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.StatusWidget
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBarLocation
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBar
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
@@ -44,80 +31,97 @@ fun CarerMainView(
     scaffoldState: ScaffoldState
 ) {
     Scaffold(
-        bottomBar = { BottomNavigationBarView(navController) },
+        bottomBar = { BottomNavBarView(navController, sharedViewModel) },
+        topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         drawerContent = {
             Drawer(
                 scope = scope,
                 scaffoldState = scaffoldState,
-                navController = navController
+                navController = navController,
+                sharedViewModel = sharedViewModel
             )
-        }) {
-        val scrollState = remember { ScrollState(0) }
-
+        }) { innerPadding ->
+        var mapModifier by remember { mutableStateOf(Modifier.height(350.dp)) }
+        val fullScreen by remember { sharedViewModel.mapFullscreen }
+        mapModifier = if (fullScreen) {
+            Modifier
+                .fillMaxSize()
+                .padding(bottom = innerPadding.calculateBottomPadding())
+        } else {
+            Modifier
+        }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .fillMaxHeight()
         ) {
-            TopBarLocation(
-                navController = navController,
-                scope = scope,
-                scaffoldState = scaffoldState
-            )
 
             Column(
-                modifier = Modifier
-                    .fillMaxHeight()
-                    .verticalScroll(scrollState),
-                verticalArrangement = Arrangement.Bottom
+                modifier = mapModifier.weight(50f)
             ) {
+                MapWindowComponent(sharedViewModel = sharedViewModel)
+            }
+
+            if (!fullScreen) {
                 Column(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .height(375.dp)
+                        .weight(50f)
                         .border(
                             width = 1.dp,
                             color = Color(0xFFE6E6E6),
                             shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
-                        ),
-                    verticalArrangement = Arrangement.spacedBy(18.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        )
+                        .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
+                        .background(Color.Transparent)
+                        .padding(bottom = innerPadding.calculateBottomPadding()),
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Text(
-                        modifier = Modifier.padding(top = 22.dp),
-                        text = "Grzegorz Brzęczyszczykiewicz",
-                        fontSize = 20.sp,
-                        fontWeight = FontWeight.Medium,
-                        color = MaterialTheme.colors.primary
-                    )
-                    StatusWidget(
-                        navController = navController,
-                        title = "Stan baterii:",
-                        text = "67%",
-                        iconName = "battery_4_bar"
-                    )
-                    StatusWidget(
-                        navController = navController,
-                        title = "Ostatnio przyjęty lek:",
-                        text = "Ibuprom - 12:00",
-                        iconName = "medication"
-                    )
-                    StatusWidget(
-                        navController = navController,
-                        title = "Najbliższe wydarzenie:",
-                        text = "Wizyta u lekarza\n" +
-                                "Data: 12.05.22 - godzina: 08:00",
-                        iconName = "calendar_month"
-                    )
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentHeight()
+                            .background(Color.White),
+//                        verticalArrangement = Arrangement.spacedBy(18.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val spacedByWeight = 24f
+                        Spacer(modifier = Modifier.weight(spacedByWeight * 2))
 
+                        StatusWidget(
+                            navController = navController,
+                            title = "Stan baterii:",
+                            text = "67%",
+                            iconName = "battery_4_bar"
+                        )
+
+                        Spacer(modifier = Modifier.weight(spacedByWeight))
+
+                        StatusWidget(
+                            navController = navController,
+                            title = "Ostatnio przyjęty lek:",
+                            text = "Ibuprom - 12:00",
+                            iconName = "medication"
+                        )
+
+                        Spacer(modifier = Modifier.weight(spacedByWeight))
+
+                        StatusWidget(
+                            navController = navController,
+                            title = "Najbliższe wydarzenie:",
+                            text = "Wizyta u lekarza\n" +
+                                    "Data: 12.05.22 - godzina: 08:00",
+                            iconName = "calendar_month"
+                        )
+
+                        Spacer(modifier = Modifier.weight(spacedByWeight * 2))
+                    }
                 }
             }
 
         }
     }
-
 }
 
 @Preview(showBackground = true)

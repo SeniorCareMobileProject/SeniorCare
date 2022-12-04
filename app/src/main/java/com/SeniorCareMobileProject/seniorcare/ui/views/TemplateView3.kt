@@ -15,10 +15,11 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.PairingScreenCodeView
 
 
 @Composable
-fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedViewModel) {
+fun TemplateView3(navController: NavController) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -36,12 +37,11 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun PairingScreenCodeViewPreview() {
+fun TemplateView3Preview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        val sharedViewModel = SharedViewModel()
-        PairingScreenCodeView(navController, sharedViewModel)
+        TemplateView3(navController)
     }
 }

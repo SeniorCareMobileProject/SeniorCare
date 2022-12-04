@@ -26,8 +26,9 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.CommonTemplateButton
+import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.example.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.R
 
 
 @Composable
@@ -39,8 +40,17 @@ fun TemplateView(navController: NavController, sharedViewModel: SharedViewModel)
             .fillMaxHeight()
 
     ) {
-        TemplateText()
-        TemplateNavButton(navController)
+        Column(Modifier.weight(8f)) {
+            TemplateText()
+        }
+        Column(Modifier.weight(20f)) {
+            MapWindowComponent(sharedViewModel)
+        }
+        Column(Modifier.weight(8f)) {
+            TemplateNavButton(navController)
+        }
+
+
     }
 }
 
