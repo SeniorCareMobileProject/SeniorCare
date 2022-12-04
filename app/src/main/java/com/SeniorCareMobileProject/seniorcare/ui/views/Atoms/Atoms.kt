@@ -1259,6 +1259,7 @@ fun NotificationItem(title: String, howOften: String, listOfTime: List<String>,s
                 sharedViewModel.notificationItems.remove(sharedViewModel.notificationItems[index])
                 navController.navigate(rout)
                 sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
+                sharedViewModel.saveNotificationsToFirebase()
             }){
                 Icon(
                     painter = painterResource(id = LocalContext.current.resources.getIdentifier(
