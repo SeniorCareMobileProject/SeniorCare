@@ -119,7 +119,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                         mTime1.value = "$mHour1:$mMinute1"
                                     }
                                 }
-                            }, mHour1, mMinute1, false
+                            }, mHour1, mMinute1, true
                         )
 
                         Text(
@@ -163,7 +163,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                             mTime2.value = "$mHour2:$mMinute2"
                                         }
                                     }
-                                }, mHour2, mMinute2, false
+                                }, mHour2, mMinute2, true
                             )
 
                             Text(
@@ -212,7 +212,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                             mTime3.value = "$mHour3:$mMinute3"
                                         }
                                     }
-                                }, mHour3, mMinute3, false
+                                }, mHour3, mMinute3, true
                             )
 
                             Text(
