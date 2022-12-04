@@ -12,6 +12,7 @@ import android.telephony.SmsManager
 import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.data.geofence.GEOFENCE_ID
 import com.SeniorCareMobileProject.seniorcare.services.AuthenticationCheckService
 import com.SeniorCareMobileProject.seniorcare.utils.SendSmsUtil
 import com.google.android.gms.location.Geofence
@@ -23,6 +24,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context?, intent: Intent?) {
         val geofencingEvent = intent?.let { GeofencingEvent.fromIntent(it) }
         //showNotification(context, "GEOFENCE", "SET")
+
 
         if (geofencingEvent != null) {
             if (geofencingEvent.hasError()) {

@@ -57,6 +57,7 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val seniorLocalizationZoom = mutableStateOf(17f)
     val mapFullscreen = mutableStateOf(false)
     val resetCamera = mutableStateOf(false)
+    val isHighAccuracyEnabled = MutableLiveData(true)
     val locationBeforeFreeingCam = mutableStateOf(LatLng(52.408839, 16.906782))
 
     //geofence
