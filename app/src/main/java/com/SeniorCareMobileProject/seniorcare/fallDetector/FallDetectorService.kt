@@ -19,7 +19,6 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.NotificationCompat
 import com.SeniorCareMobileProject.seniorcare.R
-import com.SeniorCareMobileProject.seniorcare.services.LocationService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import java.time.LocalDateTime
 

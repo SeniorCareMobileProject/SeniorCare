@@ -81,7 +81,7 @@
             android:exported="true"
             android:permission="android.permission.ACCESS_FINE_LOCATION" />
 
-        <service android:name="com.SeniorCareMobileProject.seniorcare.services.LocationService" />
+        <service android:name="com.SeniorCareMobileProject.seniorcare.services.SeniorService" />
 
         <service
             android:name=".fallDetector.FallDetectorService"

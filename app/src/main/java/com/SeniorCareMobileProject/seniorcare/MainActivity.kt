@@ -33,7 +33,7 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.receivers.NotificationsBroadcastReceiver
-import com.SeniorCareMobileProject.seniorcare.services.LocationService
+import com.SeniorCareMobileProject.seniorcare.services.SeniorService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapsAddGeofenceComponent
@@ -79,8 +79,8 @@ class MainActivity : ComponentActivity() {
         if (sharedViewModel.userFunctionFromLocalRepo == "Senior"){
             sharedViewModel.getSosNumbersFromLocalRepo()
             sharedViewModel.getFallDetectionStateFromLocalRepo()
-            Intent(applicationContext, LocationService::class.java).apply {
-                action = LocationService.ACTION_START
+            Intent(applicationContext, SeniorService::class.java).apply {
+                action = SeniorService.ACTION_START
                 startService(this) }
             if (sharedViewModel.isFallDetectorTurnOn.value == true) {
                 val fallDetectorService = FallDetectorService()
@@ -111,7 +111,7 @@ class MainActivity : ComponentActivity() {
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
         }
 
-        sharedViewModel.notificationitemsLiveData.observe(this) { value ->
+        /**sharedViewModel.notificationitemsLiveData.observe(this) { value ->
             if (currentUser != null) {
                 if (sharedViewModel.userData.value?.function == "Senior"){
                     if (value.size != sharedViewModel.notificationItemsNumber) {
@@ -122,7 +122,7 @@ class MainActivity : ComponentActivity() {
 
                 }
             }
-        }
+        }**/
 
         sharedViewModel.batteryPct.observe(this) { value ->
             if (currentUser != null) {
@@ -429,26 +429,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun manageNotificationChannel(context: Context?, id: String) {
 
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(id, "channel_name", importance)
-            channel.description = "channel desc"
-
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-
-            val a : NotificationManager? = null
-            val notificationManager = NotificationManagerCompat.from(context!!)
-            notificationManager.createNotificationChannel(channel)
-        }
-
-
-
-    }
 
     private fun showBatteryNotification(context: Context?, batteryPct: Int) {
 
@@ -510,90 +491,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    fun scheduleNotifications(){
-        Log.e(TAG, "onStartCommand")
-        Log.e(TAG,sharedViewModel.notificationItems.size.toString())
-        Log.e(TAG,sharedViewModel.notificationitemsLiveData.value.toString())
-        //startTimer()
-
-        for(i in 0 until sharedViewModel.notificationItems.size){
-            for(j in 0 until sharedViewModel.notificationItems[i].timeList.size){
-                Log.e(TAG,sharedViewModel.notificationItems[i].name)
-
-
-                Log.e(TAG, Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()).toString() + " " + Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()).toString() )
-                setAlarm(
-                    Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(0,2).toString()),
-                    Integer.parseInt(sharedViewModel.notificationItems[i].timeList[j].subSequence(3,5).toString()),
-                    sharedViewModel.notificationItems[i].interval,
-                    i,
-                    j
-                )
-            }
-
-        }
-    }
-
-    fun setAlarm(hour: Int, minute: Int, interval: String, notificationId: Int, timeId: Int){
-        manageNotificationChannel(context, notificationId.toString())
-        val alarmManager = context?.getSystemService(ALARM_SERVICE) as AlarmManager
-        Log.e(TAG,sharedViewModel.notificationItems[notificationId].name)
-        val bundle = Bundle()
-            bundle.putInt("NotificationId",notificationId)
-            bundle.putString("Title",sharedViewModel.notificationItems[notificationId].name)
-            bundle.putInt("TimeId",timeId)
-        val intent = Intent(context, NotificationsBroadcastReceiver::class.java)
-        intent.putExtras(bundle)
-
-        val pendingIntent = PendingIntent.getBroadcast(context, notificationId*3 + timeId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
-
-        var alarmInterval = AlarmManager.INTERVAL_DAY
-        if(interval.equals("Co 2 dni")){
-            alarmInterval *= 2
-        }
-        if(interval.equals("Co tydzień")){
-            alarmInterval *= 7
-        }
-
-        val calendar = GregorianCalendar.getInstance().apply {
-            if (get(Calendar.HOUR_OF_DAY) >= hour && get(Calendar.MINUTE)>=minute) {
-                add(Calendar.DAY_OF_MONTH, 1)
-            }
-
-            set(Calendar.HOUR_OF_DAY, hour)
-            set(Calendar.MINUTE, minute)
-            set(Calendar.SECOND, 0)
-            set(Calendar.MILLISECOND, 0)
-        }
-
-        alarmManager.setRepeating(
-            AlarmManager.RTC_WAKEUP,
-            calendar.timeInMillis,
-            alarmInterval,
-            pendingIntent
-        )
-    }
-
-    fun cancelAllAlarms(){
-        for(i in 0 until sharedViewModel.notificationItems.size){
-            for(j in 0 until sharedViewModel.notificationItems[i].timeList.size){
-
-                cancelAlarm(
-                    context,
-                    i,
-                    j
-                )
-            }
-
-        }
-    }
-
-    fun cancelAlarm(context: Context?, notificationId: Int, timeId: Int){
-
-        val notificationManager = NotificationManagerCompat.from(context!!)
-        notificationManager.cancel(notificationId*3+timeId)
-        notificationManager.deleteNotificationChannel("$notificationId")
-    }
 
     fun batteryStatusCheck() {
 

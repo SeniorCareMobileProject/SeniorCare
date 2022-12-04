@@ -15,13 +15,14 @@ import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
 import com.SeniorCareMobileProject.seniorcare.data.geofence.GeofenceManager
+import com.SeniorCareMobileProject.seniorcare.data.notifications.NotificationsManager
 import com.google.android.gms.location.*
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.collectLatest
 import java.util.concurrent.TimeUnit
 
-class LocationService: Service() {
+class SeniorService: Service() {
     private lateinit var notificationManager: NotificationManager
     private lateinit var fusedLocationProviderClient: FusedLocationProviderClient
     private lateinit var locationRequest: LocationRequest
@@ -69,10 +70,19 @@ class LocationService: Service() {
         repository.saveLocationToFirebase(LocationDAO(currentLocation.latitude, currentLocation.longitude, currentLocation.accuracy))
     }
 
-    private fun observeGeofences(){
+    private fun observeData(){
         scope.launch {
+            Log.e("scope","jego")
             repository.fetchGeofencesForSenior().collectLatest { it ->
                 GeofenceManager().handleGeofence(applicationContext, it)
+            }
+
+        }
+        scope.launch{
+            Log.e("scope", "moj")
+            repository.getNotificationsForSenior().collectLatest { it ->
+                NotificationsManager().cancelAllAlarms(applicationContext,it)
+                NotificationsManager().scheduleNotifications(applicationContext,it)
             }
         }
     }
@@ -90,7 +100,7 @@ class LocationService: Service() {
     }
 
     private fun start(){
-        observeGeofences()
+        observeData()
         Log.d("Current Location Update", "TRY")
         var currLocation: Location? = null
         try {
