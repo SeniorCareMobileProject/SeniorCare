@@ -1,26 +1,20 @@
 package com.SeniorCareMobileProject.seniorcare.fallDetector
 
-import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
-import android.location.Location
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.core.app.NotificationCompat
 import com.SeniorCareMobileProject.seniorcare.R
-import com.SeniorCareMobileProject.seniorcare.services.LocationService
-import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import java.time.LocalDateTime
 
 class FallDetectorService: Service(), SensorEventListener {
