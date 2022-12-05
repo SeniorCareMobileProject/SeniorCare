@@ -326,17 +326,19 @@ class Repository {
     }
 
     fun removePairingCode(sharedViewModel: SharedViewModel){
-        val dataReference = database
-            .getReference("pairing")
-            .child("data")
-            .child(sharedViewModel.pairingCode.value.toString())
-        dataReference.removeValue()
+        if (sharedViewModel.pairingCode.value != "") {
+            val dataReference = database
+                .getReference("pairing")
+                .child("data")
+                .child(sharedViewModel.pairingCode.value.toString())
+            dataReference.removeValue()
 
-        val codeReference = database
-            .getReference("pairing")
-            .child("codes")
-            .child(sharedViewModel.pairingCode.value.toString())
-        codeReference.removeValue()
+            val codeReference = database
+                .getReference("pairing")
+                .child("codes")
+                .child(sharedViewModel.pairingCode.value.toString())
+            codeReference.removeValue()
+        }
     }
 
     fun getPairingData(sharedViewModel: SharedViewModel){
