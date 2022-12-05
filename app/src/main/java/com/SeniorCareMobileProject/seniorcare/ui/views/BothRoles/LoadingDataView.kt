@@ -61,6 +61,7 @@ fun LoadingDataView(navController: NavController, sharedViewModel: SharedViewMod
                         }
                         else {
                             // get geofence information
+                            sharedViewModel.getListOfCarers()
                             sharedViewModel.getGeofenceForSenior()
                             sharedViewModel.getMedicalInformationForSenior()
                             sharedViewModel.getSosNumbersForSenior()
