@@ -39,6 +39,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.BothRoles.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.*
 import com.SeniorCareMobileProject.seniorcare.ui.views.Senior.*
+import com.SeniorCareMobileProject.seniorcare.utils.HighAccuracyLocation
 import com.google.firebase.auth.FirebaseAuth
 import java.util.*
 
@@ -66,12 +67,14 @@ class MainActivity : ComponentActivity() {
         requestForegroundPermissions()
 
         sharedViewModel.getUserFunctionFromLocalRepo()
-        if (sharedViewModel.userFunctionFromLocalRepo == "Senior"){
+        if (sharedViewModel.userFunctionFromLocalRepo == "Senior") {
             sharedViewModel.getSosNumbersFromLocalRepo()
             sharedViewModel.getFallDetectionStateFromLocalRepo()
+            HighAccuracyLocation().askForHighAccuracy(this)
             Intent(applicationContext, SeniorService::class.java).apply {
                 action = SeniorService.ACTION_START
-                startService(this) }
+                startService(this)
+            }
             if (sharedViewModel.isFallDetectorTurnOn.value == true) {
                 val fallDetectorService = FallDetectorService()
                 val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
@@ -105,12 +108,13 @@ class MainActivity : ComponentActivity() {
         sharedViewModel.batteryPct.observe(this) { value ->
             if (currentUser != null) {
                 Handler().postDelayed({
-                Log.e(TAG, sharedViewModel.userData.value?.function.toString())
-                if (sharedViewModel.userData.value?.function == "Carer") {
-                    if(value<=25.0){
-                        showBatteryNotification(context,value.toInt())
+                    Log.e(TAG, sharedViewModel.userData.value?.function.toString())
+                    if (sharedViewModel.userData.value?.function == "Carer") {
+                        if (value <= 25.0) {
+                            showBatteryNotification(context, value.toInt())
+                        }
                     }
-                }},10000)
+                }, 10000)
 
             }
 
@@ -127,16 +131,16 @@ class MainActivity : ComponentActivity() {
                 } finally {
                     // 100% guarantee that this always happens, even if
                     // your update method throws an exception
-                    mHandler.postDelayed(this, 1000*60*30)
+                    mHandler.postDelayed(this, 1000 * 60 * 30)
                 }
             }
         }
-        if(currentUser!=null){
+        if (currentUser != null) {
             Handler().postDelayed({
-            if (sharedViewModel.userData.value?.function == "Senior"){
-                startRepeatingTask(mStatusChecker)
-            }
-        },10000)
+                if (sharedViewModel.userData.value?.function == "Senior") {
+                    startRepeatingTask(mStatusChecker)
+                }
+            }, 10000)
         }
 
 
@@ -375,7 +379,7 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-    private fun setMedInfoToNotBeNull(){
+    private fun setMedInfoToNotBeNull() {
         sharedViewModel.medInfo.value = MedInfoDAO(
             "",
             "",
@@ -408,6 +412,7 @@ class MainActivity : ComponentActivity() {
     }
 
 
+
     private fun showBatteryNotification(context: Context?, batteryPct: Int) {
 
         createNotificationChannel(context)
@@ -419,7 +424,7 @@ class MainActivity : ComponentActivity() {
             .setContentText("Stan baterii: $batteryPct%")
             .setPriority(NotificationCompat.PRIORITY_MAX)
 
-        val contentIntent =  if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+        val contentIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
             PendingIntent.getActivity(
                 context,
                 0,
@@ -428,8 +433,10 @@ class MainActivity : ComponentActivity() {
             )
         } else {
             PendingIntent.getActivity(
-                context, 0,
-                Intent(context, GeofenceBroadcastReceiver::class.java), PendingIntent.FLAG_UPDATE_CURRENT
+                context,
+                0,
+                Intent(context, GeofenceBroadcastReceiver::class.java),
+                PendingIntent.FLAG_UPDATE_CURRENT
             )
         }
 
@@ -471,15 +478,15 @@ class MainActivity : ComponentActivity() {
 
     fun batteryStatusCheck() {
 
-                    val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->
-                        context?.registerReceiver(null, ifilter)
-                    }
-                    sharedViewModel.batteryPct.value = batteryStatus?.let { intent ->
-                        val level: Int = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-                        val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-                        level * 100 / scale.toFloat()
-                    }
-                    Log.e(TAG,sharedViewModel.batteryPct.value.toString())
+        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->
+            context?.registerReceiver(null, ifilter)
+        }
+        sharedViewModel.batteryPct.value = batteryStatus?.let { intent ->
+            val level: Int = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+            val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+            level * 100 / scale.toFloat()
+        }
+        Log.e(TAG, sharedViewModel.batteryPct.value.toString())
     }
 
 
@@ -488,10 +495,8 @@ class MainActivity : ComponentActivity() {
     }
 
     /**fun stopRepeatingTask() {
-        mHandler.removeCallbacks(mStatusChecker)
+    mHandler.removeCallbacks(mStatusChecker)
     }**/
-
-
 
 
     private fun handleGeofence() {
@@ -501,7 +506,11 @@ class MainActivity : ComponentActivity() {
         sharedViewModel.geofenceRadius.value = sharedViewModel.newGeofenceRadius.value
 
         // Zapis Geofence do firebase pod adres seniora
-        val geoFenceLocation = GeofenceDAO(sharedViewModel.geofenceLocation.value.latitude, sharedViewModel.geofenceLocation.value.longitude, sharedViewModel.geofenceRadius.value)
+        val geoFenceLocation = GeofenceDAO(
+            sharedViewModel.geofenceLocation.value.latitude,
+            sharedViewModel.geofenceLocation.value.longitude,
+            sharedViewModel.geofenceRadius.value
+        )
         sharedViewModel.saveGeofenceToFirebase(geoFenceLocation)
     }
 
