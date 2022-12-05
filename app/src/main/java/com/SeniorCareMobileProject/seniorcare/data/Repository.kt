@@ -1,15 +1,11 @@
 package com.SeniorCareMobileProject.seniorcare.data
 
 import android.util.Log
-import android.webkit.ValueCallback
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import com.SeniorCareMobileProject.seniorcare.MyApplication
-import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.dao.*
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -27,8 +23,6 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
-import kotlinx.datetime.LocalDate
-import kotlinx.datetime.LocalTime
 import kotlin.random.Random
 
 class Repository {
@@ -140,8 +134,9 @@ class Repository {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val data = snapshot.getValue<HashMap<String, String>>()
                 if (data != null){
-                    sharedViewModel.listOfAllSeniors.addAll(data.keys)
+                    sharedViewModel.listOfAllConnectedUsersID.addAll(data.keys)
                     getCurrentSeniorData(sharedViewModel)
+                    getListOfConnectedUsersNames(sharedViewModel)
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {
@@ -152,8 +147,46 @@ class Repository {
         reference.addListenerForSingleValueEvent(listener)
     }
 
+    fun getListOfCarers(sharedViewModel: SharedViewModel){
+        val reference = databaseUserReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child("connectedWith")
+        val listener = object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                val data = snapshot.getValue<HashMap<String, String>>()
+                if (data != null){
+                    sharedViewModel.listOfAllConnectedUsersID.addAll(data.keys)
+                    getListOfConnectedUsersNames(sharedViewModel)
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.w("Database", "getListOfCarers:onCancelled", databaseError.toException())
+            }
+        }
+        reference.addListenerForSingleValueEvent(listener)
+    }
+
+    fun getListOfConnectedUsersNames(sharedViewModel: SharedViewModel) {
+        sharedViewModel.listOfConnectedUsers.clear()
+        for (userId in sharedViewModel.listOfAllConnectedUsersID){
+            val reference = databaseUserReference.child(userId)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val data = snapshot.getValue<User>()
+                    if (data != null){
+                        sharedViewModel.listOfConnectedUsers.add(
+                            data.firstName.toString() + " " + data.lastName.toString()
+                        )
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.w("Database", "getListOfConnectedUsersNames:onCancelled", databaseError.toException())
+                }
+            }
+            reference.addListenerForSingleValueEvent(listener)
+        }
+    }
+
     fun getCurrentSeniorData(sharedViewModel: SharedViewModel){
-        val userReference = database.getReference("users/" + sharedViewModel.listOfAllSeniors[0])
+        val userReference = database.getReference("users/" + sharedViewModel.listOfAllConnectedUsersID[0])
         val userListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue<SeniorAllDAO>()
@@ -326,17 +359,19 @@ class Repository {
     }
 
     fun removePairingCode(sharedViewModel: SharedViewModel){
-        val dataReference = database
-            .getReference("pairing")
-            .child("data")
-            .child(sharedViewModel.pairingCode.value.toString())
-        dataReference.removeValue()
+        if (sharedViewModel.pairingCode.value != "") {
+            val dataReference = database
+                .getReference("pairing")
+                .child("data")
+                .child(sharedViewModel.pairingCode.value.toString())
+            dataReference.removeValue()
 
-        val codeReference = database
-            .getReference("pairing")
-            .child("codes")
-            .child(sharedViewModel.pairingCode.value.toString())
-        codeReference.removeValue()
+            val codeReference = database
+                .getReference("pairing")
+                .child("codes")
+                .child(sharedViewModel.pairingCode.value.toString())
+            codeReference.removeValue()
+        }
     }
 
     fun getPairingData(sharedViewModel: SharedViewModel){
@@ -423,7 +458,7 @@ class Repository {
 
     fun getSeniorLocation(sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllSeniors[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[0])
             .child("location")
         val userListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -460,7 +495,7 @@ class Repository {
 
     fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO, sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllSeniors[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[0])
             .child("geofence")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -557,7 +592,7 @@ class Repository {
 
     fun saveMedicalInfo(sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllSeniors[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[0])
             .child("medicalInformation")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -640,7 +675,7 @@ class Repository {
 
     fun saveSosNumbersToFirebase(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllSeniors[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[0])
             .child("sos")
         val allNumbers: ArrayList<SosNumberDAO> = arrayListOf()
         for (i in 0 until sharedViewModel.sosCascadePhoneNumbers.size) {
@@ -665,7 +700,7 @@ class Repository {
 
     fun saveCalendarEvents(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllSeniors[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[0])
             .child("calendar")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -705,7 +740,7 @@ class Repository {
 
     fun saveNotificationsToFirebase(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllSeniors[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[0])
             .child("notifications")
 
         val dataToSend: ArrayList<NotificationItem> = ArrayList()

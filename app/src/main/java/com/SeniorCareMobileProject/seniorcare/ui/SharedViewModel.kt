@@ -95,8 +95,10 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val userData: LiveData<User> = _userData
     val isNewUser: MutableLiveData<Boolean> = MutableLiveData(false)
     val functionLiveData: MutableLiveData<String> = MutableLiveData(userData.value?.function)
-    val listOfAllSeniors = mutableListOf<String>()
+    val listOfAllConnectedUsersID = mutableListOf<String>()
     val currentSeniorData: MutableLiveData<User> = MutableLiveData()
+
+    val listOfConnectedUsers = mutableListOf<String>()
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
@@ -403,5 +405,9 @@ class SharedViewModel() : ViewModel(), KoinComponent {
                 notificationitemsLiveData.value = notificationItems
             }
         }
+    }
+
+    fun getListOfCarers() {
+        repository.getListOfCarers(this)
     }
 }
