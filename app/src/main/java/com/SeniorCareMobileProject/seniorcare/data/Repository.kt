@@ -129,6 +129,7 @@ class Repository {
     }
 
     fun getListOfSeniors(sharedViewModel: SharedViewModel){
+        sharedViewModel.listOfAllConnectedUsersID.clear()
         val reference = databaseUserReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child("connectedWith")
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -148,6 +149,7 @@ class Repository {
     }
 
     fun getListOfCarers(sharedViewModel: SharedViewModel){
+        sharedViewModel.listOfAllConnectedUsersID.clear()
         val reference = databaseUserReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child("connectedWith")
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -172,10 +174,14 @@ class Repository {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val data = snapshot.getValue<User>()
                     if (data != null){
+                        //sharedViewModel.listOfConnectedUsers.clear()
+                        Log.d("AAAAA - data", data.toString())
                         sharedViewModel.listOfConnectedUsers.add(
                             data.firstName.toString() + " " + data.lastName.toString()
                         )
+                        sharedViewModel.listOfConnectedUsers.distinct()
                     }
+                    Log.d("AAAAA - onDataChange", sharedViewModel.listOfConnectedUsers.toString())
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
                     Log.w("Database", "getListOfConnectedUsersNames:onCancelled", databaseError.toException())
