@@ -191,7 +191,9 @@ fun LoginButton(navController: NavController, text: String, sharedViewModel: Sha
     Button(
         onClick = {
             sharedViewModel.loginUser(sharedViewModel.email.value, sharedViewModel.password.value)
-            navController.navigate("LoadingLoginView")
+            navController.navigate("LoadingLoginView") {
+                popUpTo(0)
+            }
         },
         shape = RoundedCornerShape(20.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff7929e8)),
