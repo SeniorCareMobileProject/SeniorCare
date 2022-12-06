@@ -23,6 +23,8 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.coroutines.withContext
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import kotlin.random.Random
 
 class Repository {
@@ -193,6 +195,8 @@ class Repository {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue<SeniorAllDAO>()
                 if (user != null) {
+                    sharedViewModel.lastUpdateTime = LocalDateTime.now().toLocalTime().format(
+                        DateTimeFormatter.ofPattern("HH:mm"))
                     sharedViewModel.currentSeniorData.value = User(user.email, user.firstName, user.lastName, user.function)
                     if (user.location != null){
                         sharedViewModel.seniorLocalization.value = LatLng(user.location.latitude!!, user.location.longitude!!)

@@ -35,7 +35,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toKotlinLocalDate
 import org.koin.core.component.KoinComponent
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -46,6 +50,9 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     // Bottom navigation bar
     val navBarIndex = mutableStateOf(0)
+
+    var lastUpdateTime = LocalDateTime.now().toLocalTime().format(
+        DateTimeFormatter.ofPattern("HH:mm"))
 
     var userFunctionFromLocalRepo = ""
 
