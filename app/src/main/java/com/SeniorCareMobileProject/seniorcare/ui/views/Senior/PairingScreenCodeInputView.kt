@@ -134,11 +134,10 @@ fun PairingScreenCodeInputView(navController: NavController, sharedViewModel: Sh
                     modifier = Modifier
                         .width(48.dp)
                         .height(48.dp)
-                        .clickable { navController.navigate(NavigationScreens.LoginScreen.name) }
+                        .clickable { navController.navigateUp() }
                 )
             }
         }
-
 
         Column(
             modifier = Modifier
@@ -166,22 +165,29 @@ fun PairingScreenCodeInputView(navController: NavController, sharedViewModel: Sh
                 viewModelVariable = sharedViewModel.codeInput
             )
         }
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .padding(top = 100.dp),
-            horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 100.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
             InputPairingCodeButton(navController, "Ok", "LoadingPairingDataView", sharedViewModel)
         }
     }
 }
 
 @Composable
-fun InputPairingCodeButton(navController: NavController, text: String, rout: String, sharedViewModel: SharedViewModel) {
+fun InputPairingCodeButton(
+    navController: NavController,
+    text: String,
+    rout: String,
+    sharedViewModel: SharedViewModel
+) {
     Button(
         onClick = {
             sharedViewModel.getPairingData()
             navController.navigate(rout)
-                  },
+        },
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff7929e8)),
         modifier = Modifier

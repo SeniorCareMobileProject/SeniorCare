@@ -355,7 +355,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(NavigationScreens.SeniorGoingOutInfoScreen.name) {
-                        SeniorGoingOutInfoView(navController)
+                        SeniorGoingOutInfoView(navController, sharedViewModel)
 
                     }
 

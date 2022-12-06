@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -30,36 +31,43 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Carer.PairingScreenCodeVi
 
 @Composable
 fun SeniorCarersListView(navController: NavController, sharedViewModel: SharedViewModel) {
-    val scrollState = remember { ScrollState(0) }
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .padding(top = 54.dp)
-            .verticalScroll(scrollState),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-
-    ) {
-        Text(
-            text = "Lista opiekunów",
-            fontWeight = FontWeight.Medium,
-            fontSize = 36.sp,
+    Scaffold(topBar = {
+        SeniorTopBar(
+            navController = navController,
+            sharedViewModel = sharedViewModel
         )
+    }) {
+        val scrollState = remember { ScrollState(0) }
 
         Column(
-            modifier = Modifier.padding(horizontal = 12.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(top = 54.dp)
+                .verticalScroll(scrollState),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+
         ) {
-            sharedViewModel.listOfConnectedUsers.forEach { item ->
-                SeniorButton(
-                    navController = navController,
-                    text = item,
-                    iconName = "",
-                    rout = "",
-                    sharedViewModel = sharedViewModel
-                )
+            Text(
+                text = "Lista opiekunów",
+                fontWeight = FontWeight.Medium,
+                fontSize = 36.sp,
+            )
+
+            Column(
+                modifier = Modifier.padding(horizontal = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp),
+            ) {
+                sharedViewModel.listOfConnectedUsers.forEach { item ->
+                    SeniorButton(
+                        navController = navController,
+                        text = item,
+                        iconName = "",
+                        rout = "",
+                        sharedViewModel = sharedViewModel
+                    )
+                }
             }
         }
     }

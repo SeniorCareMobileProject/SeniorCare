@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
+import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
@@ -33,50 +34,56 @@ import com.SeniorCareMobileProject.seniorcare.R
 
 @Composable
 fun SeniorCalendarScreenView(navController: NavController, sharedViewModel: SharedViewModel) {
-    val scrollState = rememberScrollState()
+    Scaffold(topBar = {
+        SeniorTopBar(
+            navController = navController,
+            sharedViewModel = sharedViewModel
+        )
+    }) {
+        val scrollState = rememberScrollState()
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color(0xFFF1ECF8))
-            .verticalScroll(scrollState),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        val currentJavaDate = java.time.LocalDate.now()
-        val nextSevenDays = mutableListOf<List<CalendarEvent>>()
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(Color(0xFFF1ECF8))
+                .verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            val currentJavaDate = java.time.LocalDate.now()
+            val nextSevenDays = mutableListOf<List<CalendarEvent>>()
 
-        // Search for events in next 7 days
-        for (day in 0..6) {
-            val date = currentJavaDate.plusDays(day.toLong()).toKotlinLocalDate()
-            val filteredEvents =
-                sharedViewModel.calendarEvents.filter { event ->
-                    date == event.date
-                }.sortedBy { it.startTime }
+            // Search for events in next 7 days
+            for (day in 0..6) {
+                val date = currentJavaDate.plusDays(day.toLong()).toKotlinLocalDate()
+                val filteredEvents =
+                    sharedViewModel.calendarEvents.filter { event ->
+                        date == event.date
+                    }.sortedBy { it.startTime }
 
-            if (filteredEvents.isNotEmpty()) {
-                nextSevenDays.add(filteredEvents)
+                if (filteredEvents.isNotEmpty()) {
+                    nextSevenDays.add(filteredEvents)
+                }
             }
-        }
-        val context = LocalContext.current
-        for (dayEvents in nextSevenDays) {
-            if (currentJavaDate.toKotlinLocalDate() == dayEvents[0].date) {
-                DaySeparator(context.getString(R.string.today))
-            } else if (currentJavaDate.plusDays(1).toKotlinLocalDate() == dayEvents[0].date) {
-                DaySeparator(context.getString(R.string.tomorrow))
-            }
-            else {
-                DaySeparator(dayEvents[0].date.toString())
-            }
+            val context = LocalContext.current
+            for (dayEvents in nextSevenDays) {
+                if (currentJavaDate.toKotlinLocalDate() == dayEvents[0].date) {
+                    DaySeparator(context.getString(R.string.today))
+                } else if (currentJavaDate.plusDays(1).toKotlinLocalDate() == dayEvents[0].date) {
+                    DaySeparator(context.getString(R.string.tomorrow))
+                } else {
+                    DaySeparator(dayEvents[0].date.toString())
+                }
 
-            for (event in dayEvents) {
-                event.eventDescription?.let {
-                    SeniorCalendarEventItemView(
-                        event.startTime,
-                        event.endTime,
-                        event.eventName,
-                        it
-                    )
+                for (event in dayEvents) {
+                    event.eventDescription?.let {
+                        SeniorCalendarEventItemView(
+                            event.startTime,
+                            event.endTime,
+                            event.eventName,
+                            it
+                        )
+                    }
                 }
             }
         }
