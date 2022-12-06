@@ -68,7 +68,7 @@ fun SignUpEmailVerificationView(navController: NavController, sharedViewModel: S
             modifier = Modifier
                 .width(48.dp)
                 .height(48.dp)
-                .clickable { navController.navigate(NavigationScreens.SignUpEmailScreen.name) }
+                .clickable { navController.navigateUp() }
         )
 
         Column(

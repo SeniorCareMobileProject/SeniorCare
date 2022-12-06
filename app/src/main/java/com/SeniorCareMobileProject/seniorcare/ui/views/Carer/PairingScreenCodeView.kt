@@ -140,7 +140,7 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
                     modifier = Modifier
                         .width(48.dp)
                         .height(48.dp)
-                        .clickable { navController.navigate(NavigationScreens.LoginScreen.name) }
+                        .clickable { navController.navigateUp() }
                 )
             }
         }

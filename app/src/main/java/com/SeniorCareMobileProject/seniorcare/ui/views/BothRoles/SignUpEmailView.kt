@@ -56,7 +56,7 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
             modifier = Modifier
                 .width(48.dp)
                 .height(48.dp)
-                .clickable { navController.navigate(NavigationScreens.ChooseLoginMethodScreen.name) }
+                .clickable { navController.navigateUp() }
         )
 
         Column(
