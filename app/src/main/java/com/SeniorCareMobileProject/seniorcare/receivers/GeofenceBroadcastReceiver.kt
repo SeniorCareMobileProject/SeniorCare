@@ -35,7 +35,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             } else {
                 try {
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-                        checkAuthStatus(context, true)
+                        checkAuthStatus(context)
                         Log.d("GEOFENCE ACTIVATED", "SENIOR LEFT SAFE ZONE")
                         SendSmsUtil().sendOneMessage(context, context!!.getString(R.string.sms_senior_left))
                         //sendMessage(context, "LEFT")
@@ -43,7 +43,7 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
                     }
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                        checkAuthStatus(context, false)
+                        checkAuthStatus(context)
                         Log.d("GEOFENCE ACTIVATED", "SENIOR IS IN SAFE ZONE")
                         SendSmsUtil().sendOneMessage(context, context!!.getString(R.string.sms_senior_safe))
                        // sendMessage(context, "SAFE")
@@ -68,9 +68,8 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
 
 
 
-    private fun checkAuthStatus(context: Context?, geofenceStatus: Boolean) {
+    private fun checkAuthStatus(context: Context?) {
         val authCheckIntent = Intent(context, AuthenticationCheckService::class.java)
-        authCheckIntent.putExtra("STATE", geofenceStatus.toString())
         context?.startService(authCheckIntent)
     }
 
