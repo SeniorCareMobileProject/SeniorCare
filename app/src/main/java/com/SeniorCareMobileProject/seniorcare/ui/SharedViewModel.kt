@@ -99,6 +99,7 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val currentSeniorData: MutableLiveData<User> = MutableLiveData()
 
     val listOfConnectedUsers = mutableListOf<String>()
+    var currentSeniorIndex = 0
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
@@ -409,5 +410,21 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     fun getListOfCarers() {
         repository.getListOfCarers(this)
+    }
+
+    fun clearVariablesToChangeSenior() {
+        seniorLocalization.value = LatLng(52.237049, 21.017532)
+        localizationAccuracy.value = 50f
+        geofenceLocation.value = LatLng(1.0, 1.0)
+        geofenceRadius.value = 1
+        medInfo.value = MedInfoDAO()
+        sosCascadePhoneNumbers.clear()
+        sosPhoneNumbersNames.clear()
+        sosSettingsNumberStates.clear()
+        sosSettingsNameStates.clear()
+        calendarEvents.clear()
+        calendarEventsFirebase.clear()
+        notificationItems.clear()
+        notificationitemsLiveData.value = notificationItems
     }
 }

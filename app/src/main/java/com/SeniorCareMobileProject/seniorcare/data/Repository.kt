@@ -129,6 +129,7 @@ class Repository {
     }
 
     fun getListOfSeniors(sharedViewModel: SharedViewModel){
+        sharedViewModel.listOfAllConnectedUsersID.clear()
         val reference = databaseUserReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child("connectedWith")
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -148,6 +149,7 @@ class Repository {
     }
 
     fun getListOfCarers(sharedViewModel: SharedViewModel){
+        sharedViewModel.listOfAllConnectedUsersID.clear()
         val reference = databaseUserReference.child(FirebaseAuth.getInstance().currentUser!!.uid).child("connectedWith")
         val listener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -186,7 +188,7 @@ class Repository {
     }
 
     fun getCurrentSeniorData(sharedViewModel: SharedViewModel){
-        val userReference = database.getReference("users/" + sharedViewModel.listOfAllConnectedUsersID[0])
+        val userReference = database.getReference("users/" + sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
         val userListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue<SeniorAllDAO>()
@@ -458,7 +460,7 @@ class Repository {
 
     fun getSeniorLocation(sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("location")
         val userListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -495,7 +497,7 @@ class Repository {
 
     fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO, sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("geofence")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -592,7 +594,7 @@ class Repository {
 
     fun saveMedicalInfo(sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("medicalInformation")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -675,7 +677,7 @@ class Repository {
 
     fun saveSosNumbersToFirebase(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("sos")
         val allNumbers: ArrayList<SosNumberDAO> = arrayListOf()
         for (i in 0 until sharedViewModel.sosCascadePhoneNumbers.size) {
@@ -700,7 +702,7 @@ class Repository {
 
     fun saveCalendarEvents(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("calendar")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -740,7 +742,7 @@ class Repository {
 
     fun saveNotificationsToFirebase(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("notifications")
 
         val dataToSend: ArrayList<NotificationItem> = ArrayList()
