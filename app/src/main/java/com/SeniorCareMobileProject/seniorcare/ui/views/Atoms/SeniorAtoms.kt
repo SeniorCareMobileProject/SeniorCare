@@ -84,9 +84,11 @@ fun SeniorButton(
 
 
     Surface(
+        shape = RoundedCornerShape(20.dp),
         modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 86.dp)
+            .clip(RoundedCornerShape(20.dp))
 //            .height(86.dp)
             .clickable {
                 if ((rout != "") && (rout != "sign out")){
@@ -102,7 +104,6 @@ fun SeniorButton(
                 }
                 else inProgressToastView(context)
                        },
-        shape = RoundedCornerShape(20.dp),
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor
     ) {

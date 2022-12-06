@@ -3,37 +3,29 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 import android.app.Activity
 import android.content.Intent
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.*
+import androidx.compose.foundation.ScrollState
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Outline
-import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.Density
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MainActivity
-import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -42,7 +34,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun DrawerItem(item: NavDrawerItem, selected: Boolean, onItemClick: (NavDrawerItem) -> Unit) {
+fun DrawerItem(selected: Boolean, onItemClick: (NavDrawerItem) -> Unit, fullName: String) {
     val context = LocalContext.current
     val iconId = remember("account_circle") {
         context.resources.getIdentifier(
@@ -59,9 +51,9 @@ fun DrawerItem(item: NavDrawerItem, selected: Boolean, onItemClick: (NavDrawerIt
         modifier = Modifier
             .fillMaxWidth()
             .padding(end = 12.dp)
-            .clickable(onClick = { onItemClick(item) })
-            .height(50.dp)
             .clip(RoundedCornerShape(0.dp, 30.dp, 30.dp, 0.dp))
+            .clickable(onClick = { })
+            .height(50.dp)
             .background(color = background)
     ) {
         Row(
@@ -80,7 +72,7 @@ fun DrawerItem(item: NavDrawerItem, selected: Boolean, onItemClick: (NavDrawerIt
 
             Text(
                 modifier = Modifier.padding(start = 20.dp),
-                text = item.title,
+                text = fullName,
                 fontSize = 16.sp,
                 color = Color.Black
             )
@@ -138,61 +130,40 @@ fun Header(sharedViewModel: SharedViewModel) {
 }
 
 @Composable
-fun SeniorsList(scope: CoroutineScope, scaffoldState: ScaffoldState, navController: NavController) {
-    val context = LocalContext.current
-
-    val items = listOf(
-        NavDrawerItem.User1,
-        NavDrawerItem.User2
-    )
+fun SeniorsList(
+    scope: CoroutineScope,
+    scaffoldState: ScaffoldState,
+    navController: NavController,
+    sharedViewModel: SharedViewModel
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(top = 30.dp)
+            .padding(top = 30.dp, bottom = 200.dp)
+            .padding(bottom = 12.dp)
     ) {
         Text(
             modifier = Modifier.padding(start = 20.dp, bottom = 20.dp),
             text = "Podopieczni:", color = Color(0xFF48474A)
         )
 
-        // List of navigation items
-        val navBackStackEntry by navController.currentBackStackEntryAsState()
-        val currentRoute = navBackStackEntry?.destination?.route
-        /**
-         * Ten kod jest tymczasowy, kod niżej musi być użyty (skomentowany)
-         */
-        items.forEach { item ->
-            DrawerItem(
-                item = item,
-                selected = currentRoute == item.route,
-                onItemClick = { inProgressToastView(context) })
+//        // List of navigation items
+//        val navBackStackEntry by navController.currentBackStackEntryAsState()
+//        val currentRoute = navBackStackEntry?.destination?.route
+
+        sharedViewModel.listOfConnectedUsers.forEach { item ->
+            var isSelected = false
+            if (item == "${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}") {
+                isSelected = true
+            }
+            DrawerItem(selected = isSelected, onItemClick = {
+                // Close drawer
+                scope.launch {
+                    scaffoldState.drawerState.close()
+                }
+            }, fullName = item)
         }
-
-
-//        items.forEach { item ->
-//            DrawerItem(item = item, selected = currentRoute == item.route, onItemClick = {
-//                navController.navigate(item.route) {
-//                    // Pop up to the start destination of the graph to
-//                    // avoid building up a large stack of destinations
-//                    // on the back stack as users select items
-//                    navController.graph.startDestinationRoute?.let { route ->
-//                        popUpTo(route) {
-//                            saveState = true
-//                        }
-//                    }
-//                    // Avoid multiple copies of the same destination when
-//                    // reselecting the same item
-//                    launchSingleTop = true
-//                    // Restore state when reselecting a previously selected item
-//                    restoreState = true
-//                }
-//                // Close drawer
-//                scope.launch {
-//                    scaffoldState.drawerState.close()
-//                }
-//            })
-//        }
     }
 }
 
@@ -266,7 +237,8 @@ fun BottomButtons(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .fillMaxHeight(),
+//            .fillMaxHeight()
+        ,
         verticalArrangement = Arrangement.Bottom
     ) {
         Divider(
@@ -324,30 +296,37 @@ fun Drawer(
     }
     val scrollState = remember { ScrollState(0) }
 
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color(0xFFF1ECF8))
-            .verticalScroll(scrollState)
-    ) {
-        Header(sharedViewModel)
+    Surface(modifier = Modifier
+        .fillMaxSize(),
+        color = Color(0xFFF1ECF8)) {
+        Box() {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFF1ECF8))
+            ) {
+                Header(sharedViewModel)
 
-        Divider(
-            modifier = Modifier.fillMaxWidth(),
-            color = Color.Black,
-            thickness = 1.dp
-        )
-
-        SeniorsList(scope, scaffoldState, navController)
-    }
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color(0xFFF1ECF8)),
-        verticalArrangement = Arrangement.Bottom
-    ) {
-        BottomButtons(navController, scaffoldState, sharedViewModel = sharedViewModel)
+                Divider(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = Color.Black,
+                    thickness = 1.dp
+                )
+                Column(modifier = Modifier.verticalScroll(scrollState)) {
+                    SeniorsList(scope, scaffoldState, navController, sharedViewModel)
+                }
+            }
+        }
+        Box(contentAlignment = Alignment.BottomCenter) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFFF1ECF8)),
+                verticalArrangement = Arrangement.Bottom
+            ) {
+                BottomButtons(navController, scaffoldState, sharedViewModel = sharedViewModel)
+            }
+        }
     }
 }
 
