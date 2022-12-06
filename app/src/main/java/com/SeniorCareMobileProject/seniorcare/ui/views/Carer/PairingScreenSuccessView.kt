@@ -151,26 +151,26 @@ fun PairingScreenSuccessView(navController: NavController, sharedViewModel: Shar
             )
         }
 
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(top = 38.dp)
-                .padding(horizontal = 43.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Text(
-                text = "Sparowano z użytkownikiem:",
-                fontWeight = FontWeight.Normal
-            )
-            Text(
-                text = "${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}",
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                text = "${sharedViewModel.currentSeniorData.value?.email}",
-                fontWeight = FontWeight.Normal
-            )
-        }
+//        Column(
+//            modifier = Modifier
+//                .fillMaxWidth()
+//                .padding(top = 38.dp)
+//                .padding(horizontal = 43.dp),
+//            horizontalAlignment = Alignment.CenterHorizontally
+//        ) {
+//            Text(
+//                text = "Sparowano z użytkownikiem:",
+//                fontWeight = FontWeight.Normal
+//            )
+//            Text(
+//                text = "${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}",
+//                fontWeight = FontWeight.Bold
+//            )
+//            Text(
+//                text = "${sharedViewModel.currentSeniorData.value?.email}",
+//                fontWeight = FontWeight.Normal
+//            )
+//        }
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(top = 100.dp),
