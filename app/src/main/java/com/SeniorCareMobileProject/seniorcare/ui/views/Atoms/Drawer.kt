@@ -2,6 +2,8 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.app.Activity
 import android.content.Intent
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
@@ -34,7 +36,7 @@ import kotlinx.coroutines.launch
 
 
 @Composable
-fun DrawerItem(selected: Boolean, onItemClick: (NavDrawerItem) -> Unit, fullName: String) {
+fun DrawerItem(selected: Boolean, onItemClick: () -> Unit, fullName: String) {
     val context = LocalContext.current
     val iconId = remember("account_circle") {
         context.resources.getIdentifier(
@@ -52,7 +54,9 @@ fun DrawerItem(selected: Boolean, onItemClick: (NavDrawerItem) -> Unit, fullName
             .fillMaxWidth()
             .padding(end = 12.dp)
             .clip(RoundedCornerShape(0.dp, 30.dp, 30.dp, 0.dp))
-            .clickable(onClick = { })
+            .clickable(onClick = {
+                onItemClick.invoke()
+            })
             .height(50.dp)
             .background(color = background)
     ) {
@@ -151,13 +155,17 @@ fun SeniorsList(
 //        // List of navigation items
 //        val navBackStackEntry by navController.currentBackStackEntryAsState()
 //        val currentRoute = navBackStackEntry?.destination?.route
+        val context = LocalContext.current
 
-        sharedViewModel.listOfConnectedUsers.forEach { item ->
+        sharedViewModel.listOfConnectedUsers.forEachIndexed { index, item ->
             var isSelected = false
             if (item == "${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}") {
                 isSelected = true
             }
             DrawerItem(selected = isSelected, onItemClick = {
+                sharedViewModel.currentSeniorIndex = index
+                sharedViewModel.clearVariablesToChangeSenior()
+                navController.navigate("LoadingDataView")
                 // Close drawer
                 scope.launch {
                     scaffoldState.drawerState.close()

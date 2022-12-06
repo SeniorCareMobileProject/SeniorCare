@@ -174,14 +174,10 @@ class Repository {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     val data = snapshot.getValue<User>()
                     if (data != null){
-                        //sharedViewModel.listOfConnectedUsers.clear()
-                        Log.d("AAAAA - data", data.toString())
                         sharedViewModel.listOfConnectedUsers.add(
                             data.firstName.toString() + " " + data.lastName.toString()
                         )
-                        sharedViewModel.listOfConnectedUsers.distinct()
                     }
-                    Log.d("AAAAA - onDataChange", sharedViewModel.listOfConnectedUsers.toString())
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
                     Log.w("Database", "getListOfConnectedUsersNames:onCancelled", databaseError.toException())
@@ -192,7 +188,7 @@ class Repository {
     }
 
     fun getCurrentSeniorData(sharedViewModel: SharedViewModel){
-        val userReference = database.getReference("users/" + sharedViewModel.listOfAllConnectedUsersID[0])
+        val userReference = database.getReference("users/" + sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
         val userListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val user = snapshot.getValue<SeniorAllDAO>()
@@ -464,7 +460,7 @@ class Repository {
 
     fun getSeniorLocation(sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("location")
         val userListener = object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -501,7 +497,7 @@ class Repository {
 
     fun saveGeofenceToFirebase(geoFenceLocation: GeofenceDAO, sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("geofence")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -598,7 +594,7 @@ class Repository {
 
     fun saveMedicalInfo(sharedViewModel: SharedViewModel){
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("medicalInformation")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -681,7 +677,7 @@ class Repository {
 
     fun saveSosNumbersToFirebase(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("sos")
         val allNumbers: ArrayList<SosNumberDAO> = arrayListOf()
         for (i in 0 until sharedViewModel.sosCascadePhoneNumbers.size) {
@@ -706,7 +702,7 @@ class Repository {
 
     fun saveCalendarEvents(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("calendar")
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -746,7 +742,7 @@ class Repository {
 
     fun saveNotificationsToFirebase(sharedViewModel: SharedViewModel) {
         val reference = database.getReference("users")
-            .child(sharedViewModel.listOfAllConnectedUsersID[0])
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
             .child("notifications")
 
         val dataToSend: ArrayList<NotificationItem> = ArrayList()
