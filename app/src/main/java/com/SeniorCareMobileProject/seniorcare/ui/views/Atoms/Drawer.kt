@@ -199,6 +199,9 @@ fun BottomButton(
     Button(
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xFFF1ECF8)),
         onClick = {
+            if (rout == "PairingScreenCodeScreen") {
+                sharedViewModel.createPairingCode()
+            }
             if ((rout != "") && (rout != "sign out")) {
                 navController.navigate(rout)
             } else if (rout == "sign out") {
