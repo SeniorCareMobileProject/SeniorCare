@@ -434,4 +434,16 @@ class SharedViewModel() : ViewModel(), KoinComponent {
         notificationItems.clear()
         notificationitemsLiveData.value = notificationItems
     }
+
+    fun saveBatteryInfoToFirebase(){
+        repository.saveBatteryInfoToFirebase()
+    }
+
+    fun getBatteryInfo() {
+        viewModelScope.launch {
+            repository.getBatteryInfoFromAllSeniors().collectLatest {
+                Log.d("All Seniors with battery info:", it.toString())
+            }
+        }
+    }
 }

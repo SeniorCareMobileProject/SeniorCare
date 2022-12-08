@@ -19,13 +19,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.ktx.getValue
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.*
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
-import kotlinx.coroutines.withContext
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import kotlin.random.Random
@@ -825,6 +822,66 @@ class Repository {
                     Log.e("saveBatteryInfoToFirebase", e.message.toString())
                 }
             }
+        }
+    }
+
+    fun getBatteryInfoFromAllSeniors(): Flow<HashMap<String, Float>> = callbackFlow {
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val data = dataSnapshot.getValue<HashMap<String, String>>()
+                try {
+                    if (data != null) {
+                        val dataToSend = ArrayList<String>()
+                        dataToSend.addAll(data.keys)
+                        CoroutineScope(Dispatchers.Main).launch {
+                            getBatteryInfoFromAllSeniors(dataToSend).collectLatest {
+                                trySend(it)
+                            }
+                        }
+                    }
+                }
+                finally {
+                }
+            }
+            override fun onCancelled(databaseError: DatabaseError) {}
+        }
+
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("connectedWith")
+        reference.addValueEventListener(listener)
+
+        awaitClose{
+            //remove listener here
+            reference.removeEventListener(listener)
+        }
+    }
+
+    private fun getBatteryInfoFromAllSeniors(listOfId: ArrayList<String>): Flow<HashMap<String, Float>> = callbackFlow {
+        val batteryInfoWithName = HashMap<String, Float>()
+        for (userId in listOfId) {
+            val reference = databaseUserReference.child(userId)
+            val listener = object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    val data = snapshot.getValue<User>()
+                    if (data != null){
+                        batteryInfoWithName[data.firstName.toString() + " " + data.lastName.toString()] =
+                            data.battery!!
+                    }
+                    if (batteryInfoWithName.size == listOfId.size){
+                        trySend(batteryInfoWithName)
+                    }
+                }
+                override fun onCancelled(databaseError: DatabaseError) {
+                    Log.w("Database", "getListOfConnectedUsersNames:onCancelled", databaseError.toException())
+                }
+            }
+            reference.addListenerForSingleValueEvent(listener)
+        }
+        awaitClose{
+            //remove listener here
+            //reference.removeEventListener(listener)
         }
     }
 
