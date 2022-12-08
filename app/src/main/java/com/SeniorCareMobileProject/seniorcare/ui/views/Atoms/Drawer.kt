@@ -214,6 +214,8 @@ fun BottomButton(
                 navController.navigate(rout)
             } else if (rout == "sign out") {
                 showConfirmDialog.value = true
+            } else if (rout == "about") {
+
             } else inProgressToastView(context)
         }
     ) {
@@ -274,9 +276,9 @@ fun BottomButtons(
 
         BottomButton(
             navController = navController,
-            iconName = "settings_outfilled",
-            text = "Ustawienia",
-            rout = "",
+            iconName = "info",
+            text = "O aplikacji",
+            rout = "CarerAboutAppView",
             sharedViewModel = sharedViewModel
         )
 
