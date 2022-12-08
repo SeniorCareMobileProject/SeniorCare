@@ -60,6 +60,9 @@
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
     <string name="senior_empty_calendar">Nie ma wydarzeń w najbliższe siedem dni</string>
+    <string name="upcoming_event">Najbliższe wydarzenie:</string>
+    <string name="date">Data:</string>
+    <string name="time">godzina:</string>
 
 
     <string name="this_field_cannot_be_empty">To pole nie może być puste</string>
@@ -74,4 +77,6 @@
     <string name="fall_detection_notification_text">Fall detector is working</string>
     <string name="about_app">\nMobilny Opiekun - aplikacja mobilna na telefony z systemem Android ułatwiająca opiekę nad osobami starszymi. Wykonana na potrzebę projektu inżynierskiego przez 4-osobowy zespół w składzie:</string>
     <string name="about_app_2">Głównymi funkcjami aplikacji są: śledzenie lokalizacji podopiecznej osoby starszej, wygodna organizacja dnia podopiecznego (kalendarz, przypomnienie o wzięciu lekarstw), zakładka z informacjami medycznymi z łatwą możliwością udostępnienia oraz moduły odpowiedzialne za bezpieczeństwo (przycisk SOS, detektor upadków). Naszym celem jest pomóc wszystkim osobom opiekującym się osobami starszymi.  \n\nOpieka nad osobą starszą, zwłaszcza z chorobami neurodegeneracyjnymi wymaga stałego nadzoru. Nasza aplikacja ułatwi komunikację i opiekę zdalną spoza domu.</string>
+
+    <string name="hyphen">-</string>
 </resources>
