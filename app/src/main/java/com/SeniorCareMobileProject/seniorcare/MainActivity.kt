@@ -378,6 +378,10 @@ class MainActivity : ComponentActivity() {
                         CarerNoConnectedSeniorsView(navController, sharedViewModel)
                     }
 
+                    composable(NavigationScreens.CarerAboutAppView.name) {
+                        CarerAboutAppView(navController, sharedViewModel, scope, scaffoldState)
+                    }
+
                 }
             }
         }

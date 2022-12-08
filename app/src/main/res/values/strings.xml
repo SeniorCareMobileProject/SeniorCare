@@ -70,4 +70,6 @@
 
     <string name="fall_detection_alert_message">UWAGA! Potencjalny upadek podopiecznego!</string>
     <string name="fall_detection_notification_text">Fall detector is working</string>
+    <string name="about_app">\nMobilny Opiekun - aplikacja mobilna na telefony z systemem Android ułatwiająca opiekę nad osobami starszymi. Wykonana na potrzebę projektu inżynierskiego przez 4-osobowy zespół w składzie:</string>
+    <string name="about_app_2">Głównymi funkcjami aplikacji są: śledzenie lokalizacji podopiecznej osoby starszej, wygodna organizacja dnia podopiecznego (kalendarz, przypomnienie o wzięciu lekarstw), zakładka z informacjami medycznymi z łatwą możliwością udostępnienia oraz moduły odpowiedzialne za bezpieczeństwo (przycisk SOS, detektor upadków). Naszym celem jest pomóc wszystkim osobom opiekującym się osobami starszymi.  \n\nOpieka nad osobą starszą, zwłaszcza z chorobami neurodegeneracyjnymi wymaga stałego nadzoru. Nasza aplikacja ułatwi komunikację i opiekę zdalną spoza domu.</string>
 </resources>
