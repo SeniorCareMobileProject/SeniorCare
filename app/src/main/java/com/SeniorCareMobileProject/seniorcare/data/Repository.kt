@@ -897,8 +897,8 @@ class Repository {
         }
     }
 
-    fun saveTrackingSettings(sharedViewModel: SharedViewModel) {
-        val path: String = if (sharedViewModel.userFunctionFromLocalRepo == "Carer"){
+    fun saveTrackingSettings(sharedViewModel: SharedViewModel?, dataToSend: SeniorTrackingSettingsDao) {
+        val path: String = if (sharedViewModel != null && sharedViewModel.userFunctionFromLocalRepo == "Carer"){
             sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
         } else {
             FirebaseAuth.getInstance().currentUser!!.uid
@@ -907,8 +907,6 @@ class Repository {
         val reference = database.getReference("users")
             .child(path)
             .child("trackingSettings")
-
-        val dataToSend = sharedViewModel.trackingSettings
 
         CoroutineScope(Dispatchers.IO).launch {
             try {

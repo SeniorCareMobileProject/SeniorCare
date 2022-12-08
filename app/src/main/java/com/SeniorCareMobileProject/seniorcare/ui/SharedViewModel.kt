@@ -165,7 +165,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     var batteryPct: MutableLiveData<Float> = MutableLiveData(100.0F)
 
-    val trackingSettings: SeniorTrackingSettingsDao = SeniorTrackingSettingsDao()
 
 
     private val repository = Repository()
