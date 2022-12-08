@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.Repository
@@ -41,6 +42,7 @@ class CarerService: Service() {
             repository.getBatteryInfoFromAllSeniors().collectLatest { it ->
                 for(item in it){
                     if(item.value <=20){
+                        Log.d("dsds","Weszlo1")
                         NotificationsManager().showBatteryNotification(applicationContext, item.key)
                     }
                 }

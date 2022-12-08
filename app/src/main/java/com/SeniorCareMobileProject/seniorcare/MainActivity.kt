@@ -86,7 +86,7 @@ class MainActivity : ComponentActivity() {
         if(sharedViewModel.userFunctionFromLocalRepo == "Carer") {
             Intent(applicationContext, CarerService::class.java).apply {
                 action = SeniorService.ACTION_START
-                startService(this)
+                    startService(this)
             }
         }
 

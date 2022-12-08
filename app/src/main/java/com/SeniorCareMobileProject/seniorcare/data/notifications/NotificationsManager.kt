@@ -23,7 +23,7 @@ class NotificationsManager {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel(id, "channel_name", importance)
+            val channel = NotificationChannel(id, "Notification channel", importance)
             channel.description = "channel desc"
 
 
@@ -123,7 +123,9 @@ class NotificationsManager {
 
     fun showBatteryNotification(context: Context?, seniorName: String) {
 
-        createBatteryNotificationChannel(context)
+        val notificationId = seniorName.encodeToByteArray().sum()+1
+
+        createBatteryNotificationChannel(context,notificationId.toString())
         Log.d("Notification", "showing")
 
         val mBuilder = NotificationCompat.Builder(context!!, "CHANNEL_ID")
@@ -154,17 +156,17 @@ class NotificationsManager {
         mBuilder.setAutoCancel(true)
         val mNotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(1, mBuilder.build())
+        mNotificationManager.notify(notificationId, mBuilder.build())
     }
 
-    private fun createBatteryNotificationChannel(context: Context?) {
+    private fun createBatteryNotificationChannel(context: Context?, channelId: String) {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Channel Name"
+            val name = "Battery channel"
             val descriptionText = "getString(R.string.channel_description)"
             val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("CHANNEL_ID", name, importance).apply {
+            val channel = NotificationChannel(channelId, name, importance).apply {
                 description = descriptionText
             }
             // Register the channel with the system
