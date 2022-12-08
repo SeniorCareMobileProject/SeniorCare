@@ -10,8 +10,8 @@ import com.google.firebase.auth.FirebaseAuth
 
 class AuthenticationCheckService : IntentService("AuthenticationCheckService") {
     override fun onHandleIntent(@Nullable intent: Intent?) {
-        val geofenceStatus = intent?.getStringExtra("STATE")
-        checkAuthenticationStatus(geofenceStatus.toString())
+      //  val geofenceStatus = intent?.getStringExtra("STATE")
+      //  checkAuthenticationStatus(geofenceStatus.toString())
     }
 
     private fun checkAuthenticationStatus(geofenceStatus: String) {
@@ -19,7 +19,7 @@ class AuthenticationCheckService : IntentService("AuthenticationCheckService") {
             val user = firebaseAuth.currentUser
             if (user != null) {
                 val repository = Repository()
-                repository.saveGeofenceStatusToFirebase(geofenceStatus)
+               // repository.saveGeofenceStatusToFirebase(geofenceStatus)
                 Log.d("GEOFENCE STATUS", "Zapis do bazy danych")
             } else {
                 //Resolve to authentication activity

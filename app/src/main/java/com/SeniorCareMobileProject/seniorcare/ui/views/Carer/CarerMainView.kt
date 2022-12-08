@@ -10,8 +10,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -92,7 +94,7 @@ fun CarerMainView(
                         StatusWidget(
                             navController = navController,
                             title = "Stan baterii:",
-                            text = "67%",
+                            text = "${sharedViewModel.batteryPct.value}%",
                             iconName = "battery_4_bar"
                         )
 
@@ -115,7 +117,15 @@ fun CarerMainView(
                             iconName = "calendar_month"
                         )
 
-                        Spacer(modifier = Modifier.weight(spacedByWeight * 2))
+                        Spacer(modifier = Modifier.weight(spacedByWeight))
+
+                        Text(
+                            "Ostatnia aktualizacja danych: ${sharedViewModel.lastUpdateTime}",
+                            fontWeight = FontWeight.Thin,
+                            fontSize = 12.sp
+                        )
+
+                        Spacer(modifier = Modifier.weight(spacedByWeight))
                     }
                 }
             }

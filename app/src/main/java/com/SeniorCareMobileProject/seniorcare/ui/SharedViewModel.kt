@@ -35,7 +35,11 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.datetime.LocalDate
 import kotlinx.datetime.LocalTime
+import kotlinx.datetime.toKotlinLocalDate
 import org.koin.core.component.KoinComponent
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.time.format.FormatStyle
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -46,6 +50,9 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     // Bottom navigation bar
     val navBarIndex = mutableStateOf(0)
+
+    var lastUpdateTime = LocalDateTime.now().toLocalTime().format(
+        DateTimeFormatter.ofPattern("HH:mm"))
 
     var userFunctionFromLocalRepo = ""
 
@@ -99,6 +106,8 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val currentSeniorData: MutableLiveData<User> = MutableLiveData()
 
     val listOfConnectedUsers = mutableListOf<String>()
+    var currentSeniorIndex = 0
+    var haveConnectedUsers = true
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
@@ -155,7 +164,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     //Battery
 
     var batteryPct: MutableLiveData<Float> = MutableLiveData(100.0F)
-
 
 
 
@@ -409,5 +417,43 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     fun getListOfCarers() {
         repository.getListOfCarers(this)
+    }
+
+    fun clearVariablesToChangeSenior() {
+        seniorLocalization.value = LatLng(52.237049, 21.017532)
+        localizationAccuracy.value = 50f
+        geofenceLocation.value = LatLng(1.0, 1.0)
+        geofenceRadius.value = 1
+        medInfo.value = MedInfoDAO()
+        sosCascadePhoneNumbers.clear()
+        sosPhoneNumbersNames.clear()
+        sosSettingsNumberStates.clear()
+        sosSettingsNameStates.clear()
+        calendarEvents.clear()
+        calendarEventsFirebase.clear()
+        notificationItems.clear()
+        notificationitemsLiveData.value = notificationItems
+    }
+
+
+    fun disconnectWithSenior() {
+        repository.disconnectUsers(this)
+        listOfAllConnectedUsersID.removeAt(currentSeniorIndex)
+        if (listOfAllConnectedUsersID.isEmpty()) {
+            haveConnectedUsers = false
+        }
+        currentSeniorIndex = 0
+    }
+
+    fun saveBatteryInfoToFirebase(){
+        repository.saveBatteryInfoToFirebase()
+    }
+
+    fun getBatteryInfo() {
+        viewModelScope.launch {
+            repository.getBatteryInfoFromAllSeniors().collectLatest {
+                Log.d("All Seniors with battery info:", it.toString())
+            }
+        }
     }
 }

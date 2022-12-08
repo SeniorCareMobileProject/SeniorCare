@@ -8,5 +8,6 @@ data class User(
     val firstName: String? = null,
     val lastName: String? = null,
     val function: String? = null,
-    val connectedWith: Any? = null
+    val connectedWith: Any? = null,
+    val battery: Float? = null,
 )

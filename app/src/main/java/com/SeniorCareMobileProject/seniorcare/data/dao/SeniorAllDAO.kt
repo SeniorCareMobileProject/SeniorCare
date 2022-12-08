@@ -15,4 +15,6 @@ data class SeniorAllDAO (
     val sos: ArrayList<SosNumberDAO>? = null,
     val calendar: ArrayList<CalendarEventDAO>? = null,
     val notifications: ArrayList<NotificationItem>? = null,
+    val trackingSettings: SeniorTrackingSettingsDao? = null,
+    val battery: Float? = null,
         )

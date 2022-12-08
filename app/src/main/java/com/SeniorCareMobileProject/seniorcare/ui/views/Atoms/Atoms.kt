@@ -723,19 +723,47 @@ fun TopBarSettings(
 @Composable
 fun SettingsItem(
     navController: NavController,
+    sharedViewModel: SharedViewModel,
     text: String,
     rout: String
 ) {
     val context = LocalContext.current
+
+    val showDisconnectConfirmDialog = remember { mutableStateOf(false) }
+    if (showDisconnectConfirmDialog.value) {
+        SubmitOrDenyDialogView(
+            context.getString(
+                R.string.disconnect_confirmation,
+                sharedViewModel.currentSeniorData.value!!.firstName,
+                sharedViewModel.currentSeniorData.value!!.lastName
+            ),
+            { showDisconnectConfirmDialog.value = false }, sharedViewModel, showDisconnectConfirmDialog, {
+
+                sharedViewModel.disconnectWithSenior()
+                Toast.makeText(context, "Rozłączono z użytkownikiem", Toast.LENGTH_LONG).show()
+
+                if (sharedViewModel.haveConnectedUsers) {
+                    navController.navigate("LoadingDataView"){
+                        popUpTo("CarerSettingsListScreen") {inclusive = true}
+                    }
+                } else {
+                    navController.navigate("CarerNoConnectedSeniorsView"){
+                        popUpTo("CarerSettingsListScreen") {inclusive = true}
+                    }
+                }
+            })
+    }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
             .clickable {
-                if (rout != "") navController.navigate(rout) else inProgressToastView(
-                    context
-                )
+                if (rout != "") {
+                    navController.navigate(rout)
+                } else {
+                    showDisconnectConfirmDialog.value = true
+                }
             }
     ) {
         Text(
@@ -1508,10 +1536,11 @@ fun SignUpViewPreview() {
                 rout = ""
             )
             TopBarSettings(navController = navController, sharedViewModel = sharedViewModel)
-            SettingsItem(navController, "Przycisk SOS", "")
-            SettingsItemWithIcon(navController, sharedViewModel, "Przycisk SOS", "", "edit")
-            SettingsNumberElement(0, sharedViewModel, navController, "CarerSettingsSOSScreen")
-            SettingsNumberElement(1, sharedViewModel, navController, "CarerSettingsSOSScreen")
+            SettingsItem(navController, sharedViewModel, "Przycisk SOS", "")
+            SettingsItemWithIcon(navController, sharedViewModel,"Przycisk SOS", "", "edit")
+            SettingsNumberElement(0,sharedViewModel,navController,"CarerSettingsSOSScreen")
+            SettingsNumberElement(1,sharedViewModel,navController,"CarerSettingsSOSScreen")
+
 //            StatusWidget(
 //                navController, title = "Najbliższe wydarzenie:",
 //                text = "Wizyta u lekarza\nData: 12.05.22 - godzina: 08:00",
