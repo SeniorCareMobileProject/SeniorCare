@@ -103,7 +103,7 @@ fun CarerMainView(
                         StatusWidget(
                             navController = navController,
                             title = "Ostatnio przyjęty lek:",
-                            text = "Ibuprom - 12:00",
+                            text = "${sharedViewModel.latestNotification.value!!.name} - ${sharedViewModel.latestNotification.value!!.timeList[0]}",
                             iconName = "medication"
                         )
 
