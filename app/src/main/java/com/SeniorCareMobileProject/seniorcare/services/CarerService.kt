@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.Repository
+import com.SeniorCareMobileProject.seniorcare.data.notifications.NotificationsManager
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,11 +32,22 @@ class CarerService: Service() {
     }
 
     private fun observeData() {
-        scope.launch {
+        /**scope.launch {
            // repository.getTrackingSettings().collectLatest { it ->
                 TODO()
             //}
 
+        }**/
+        scope.launch{
+            repository.getBatteryInfoFromAllSeniors().collectLatest { it ->
+                for(item in it){
+                    if(item.value <=20){
+                        Log.d("dsds","Weszlo1")
+                        NotificationsManager().showBatteryNotification(applicationContext, item.key)
+                    }
+                }
+
+            }
         }
 
     }

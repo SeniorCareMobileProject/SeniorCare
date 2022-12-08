@@ -102,7 +102,8 @@ fun SeniorButton(
                     activity.finish()
                     val intent = Intent(context, MainActivity::class.java)
                     activity.startActivity(intent)
-                } else inProgressToastView(context)
+                }
+                //else inProgressToastView(context)
             },
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor

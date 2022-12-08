@@ -270,6 +270,9 @@ class Repository {
                     if (user.battery != null) {
                         sharedViewModel.batteryPct.value = user.battery
                     }
+                    if (user.latestNotification != null){
+                        sharedViewModel.latestNotification.value = user.latestNotification
+                    }
                     //getSeniorLocation(sharedViewModel)
                     sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
                 }
@@ -809,6 +812,23 @@ class Repository {
         awaitClose{
             //remove listener here
             reference.removeEventListener(listener)
+        }
+    }
+
+    fun saveLatestNotification(notificationItem: NotificationItem) {
+        val reference = database.reference.child("users")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child("latestNotification")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(notificationItem).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveLatestNotification", e.message.toString())
+                }
+            }
         }
     }
 

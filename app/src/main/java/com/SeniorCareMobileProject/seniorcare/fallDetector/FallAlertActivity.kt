@@ -65,8 +65,8 @@ fun FallAlertScreen(mediaPlayer: MediaPlayer, startServiceAgain: () -> Unit, sto
             ticks--
         }
         if (ticks == 0){
-            messageSent = "Sms z alarmem został wysłany do twoich opiekunów"
-            SendSmsUtil().sendMultipleSms(context, context.getString(R.string.fall_detection_alert_message),)
+            messageSent = context.getString(R.string.fall_detection_screen_message)
+            SendSmsUtil().sendMultipleSms(context, context.getString(R.string.fall_detection_alert_message))
         }
     }
     Column(
@@ -77,26 +77,26 @@ fun FallAlertScreen(mediaPlayer: MediaPlayer, startServiceAgain: () -> Unit, sto
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "UWAGA",
+            text = context.getString(R.string.warning),
             color = Color.White,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Potencjalny upadek!",
+            text = context.getString(R.string.potential_fall),
             color = Color.White,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold
         )
         Text(
-            text = "Jeżeli wszystko jest w porządku i jest to fałszywy alarm wciśnij poniższy przycisk w ciągu:",
+            text = context.getString(R.string.if_everything_is_ok),
             color = Color.White,
             fontSize = 30.sp,
             modifier = Modifier.padding(30.dp),
             textAlign = TextAlign.Center
         )
         Text(
-            text = "$ticks sekund",
+            text = "$ticks " + context.getString(R.string.seconds),
             color = Color.White,
             fontSize = 30.sp,
             modifier = Modifier.padding(10.dp),
@@ -117,6 +117,7 @@ fun FallAlertScreen(mediaPlayer: MediaPlayer, startServiceAgain: () -> Unit, sto
 @Composable
 fun CancelAlarmButton(mediaPlayer: MediaPlayer, startServiceAgain: () -> Unit, stopActivity: () -> Unit) {
     val backgroundColor: Color = Color.White
+    val context = LocalContext.current
     Surface(
         modifier = Modifier
             .fillMaxWidth()
@@ -142,7 +143,7 @@ fun CancelAlarmButton(mediaPlayer: MediaPlayer, startServiceAgain: () -> Unit, s
                 horizontalAlignment = Alignment.Start
             ) {
                 Text(
-                    text = "Odwołaj alarm",
+                    text = context.getString(R.string.cancel_alarm),
                     color = Color(0xff070707),
                     textAlign = TextAlign.Start,
                     lineHeight = 36.sp,
