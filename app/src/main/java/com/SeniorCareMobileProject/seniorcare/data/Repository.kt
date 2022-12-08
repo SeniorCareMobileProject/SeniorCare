@@ -288,7 +288,7 @@ class Repository {
 
     // PAIRING
     fun createPairingCodeAndWriteToFirebase(sharedViewModel: SharedViewModel){
-        val pairingCodesReference = database.getReference("pairing").child("codes")
+        val pairingCodesReference = database.reference.child("pairing").child("codes")
         pairingCodesReference.get().addOnSuccessListener {
             if (it != null){
                 val allCodesList = it.getValue<HashMap<String, String>>()
@@ -311,7 +311,7 @@ class Repository {
                     userData.value!!.email,
                     false
                 )
-                val pairingDataReference = database.getReference("pairing").child("data")
+                val pairingDataReference = database.reference.child("pairing").child("data")
                 pairingDataReference
                     .child(uniqueCode.toString())
                     .setValue(pairingData)
@@ -334,7 +334,7 @@ class Repository {
                     userData.value!!.email,
                     false
                 )
-                val pairingDataReference = database.getReference("pairing").child("data")
+                val pairingDataReference = database.reference.child("pairing").child("data")
                 pairingDataReference
                     .child(uniqueCode.toString())
                     .setValue(pairingData)
