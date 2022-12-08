@@ -1,5 +1,8 @@
 package com.SeniorCareMobileProject.seniorcare.data
 
+import android.content.Intent
+import android.content.IntentFilter
+import android.os.BatteryManager
 import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.MutableState
@@ -254,6 +257,9 @@ class Repository {
                             sharedViewModel.notificationItems.add(item)
                         }
                         sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
+                    }
+                    if (user.battery != null) {
+                        sharedViewModel.batteryPct.value = user.battery
                     }
                     //getSeniorLocation(sharedViewModel)
                     sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
@@ -791,6 +797,34 @@ class Repository {
         awaitClose{
             //remove listener here
             reference.removeEventListener(listener)
+        }
+    }
+
+    fun saveBatteryInfoToFirebase() {
+        val userId = FirebaseAuth.getInstance().currentUser!!.uid
+        val reference = database.getReference("users")
+            .child(userId)
+            .child("battery")
+
+        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->
+            MyApplication.context?.registerReceiver(null, ifilter)
+        }
+        val dataToSend = batteryStatus?.let { intent ->
+            val level: Int = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
+            val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
+            level * 100 / scale.toFloat()
+        }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(dataToSend).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveBatteryInfoToFirebase", e.message.toString())
+                }
+            }
         }
     }
 
