@@ -59,6 +59,8 @@
     <string name="event_delete_confirmation">Czy na pewno chcesz usunąć?</string>
     <string name="yes">Tak</string>
     <string name="no">Nie</string>
+    <string name="senior_empty_calendar">Nie ma wydarzeń w najbliższe siedem dni</string>
+
 
     <string name="this_field_cannot_be_empty">To pole nie może być puste</string>
     <string name="field_length_limit_exceeded">Przekroczono limit długości pola</string>
