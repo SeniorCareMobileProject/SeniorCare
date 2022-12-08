@@ -2,76 +2,68 @@
     <string name="app_name">Senior Care</string>
     <string name="localization_title_notification">Localization</string>
     <string name="localization_notification_text">Localization tracking is enabled</string>
-    <string name="template_string">Template String Button Part 1</string>
-    <string name="template_string2">Template String Button Part 2</string>
-    <string name="title_activity_maps">MapsActivity</string>
+    <string name="title_activity_maps" translatable="false">MapsActivity</string>
     <string name="safe_zone">Safe Zone</string>
     <string name="safe_zone_left">You have left the safe zone</string>
     <string name="sms_senior_left">Senior left the safe zone. Check application to track location</string>
     <string name="sms_senior_safe">Senior is in safe zone</string>
     <string name="safe_zone_in">You are in safe zone</string>
-    <string name="title_activity_maps_test">MapsTest</string>
-
-    <string name="launch_activity">Launch activity</string>
+    <string name="title_activity_maps_test" translatable="false">MapsTest</string>
+    <string name="launch_activity" translatable="false">Launch activity</string>
     <string name="location_unknown">Location Unknown</string>
     <string name="location_updates_label">Location Updates</string>
-
-
     <string name="appwidget_text">EXAMPLE</string>
     <string name="add_widget">Add widget</string>
     <string name="app_widget_description">This is an app widget description</string>
-
-    <string name="welcome_to">Witamy w</string>
-    <string name="medical_info">Dane medyczne</string>
-    <string name="calendar">Kalendarz</string>
-    <string name="location">Lokalizacja</string>
-    <string name="notifications">Powiadomienia</string>
-    <string name="webclient_id">272124790691-ih9ocanv6sd05ff4t6htj5qqot2ou68v.apps.googleusercontent.com</string>
-
+    <string name="webclient_id" translatable="false">272124790691-ih9ocanv6sd05ff4t6htj5qqot2ou68v.apps.googleusercontent.com</string>
     <string name="permission_rationale">Location permission needed for core functionality</string>
     <string name="permission_denied_explanation">Permission was denied, but is needed for core functionality.</string>
     <string name="settings">Settings</string>
-    <string name="ok">OK</string>
-
+    <string name="ok" translatable="false">OK</string>
     <string name="start_location_updates_button_text">Start receiving location updates</string>
     <string name="stop_location_updates_button_text">Stop receiving location updates</string>
-
     <string name="location_updated">Location Updated: %1$s</string>
-
-    <string name="preference_file_key">My_location_PREFERENCE_FILE_KEY</string>
+    <string name="preference_file_key" translatable="false">My_location_PREFERENCE_FILE_KEY</string>
     <string name="no_location_text">No current location</string>
-    <string name="continue_with_Google">Kontynuuj z Google</string>
-
-    <string name="first_name">Imię</string>
-    <string name="last_name">Nazwisko</string>
-    <string name="birthday">Data urodzenia</string>
-    <string name="illnesses">Choroby</string>
-    <string name="blood_type">Grupa krwi</string>
-    <string name="allergies">Alergie</string>
-    <string name="medication">Przyjmowane leki</string>
-    <string name="height">Wzrost</string>
-    <string name="weight">Waga</string>
-    <string name="languages">Główny język</string>
-    <string name="others">Inne</string>
-
-    <string name="today">Dzisiaj</string>
-    <string name="tomorrow">Jutro</string>
-    <string name="event_delete_confirmation">Czy na pewno chcesz usunąć?</string>
-    <string name="yes">Tak</string>
-    <string name="no">Nie</string>
-    <string name="senior_empty_calendar">Nie ma wydarzeń w najbliższe siedem dni</string>
-
-
-    <string name="this_field_cannot_be_empty">To pole nie może być puste</string>
-    <string name="field_length_limit_exceeded">Przekroczono limit długości pola</string>
-    <string name="start_time_cannot_be_greater_then_end_time">Czas rozpoczęcia nie może być pożniejszy
-                                                           od czasu zakończenia</string>
-
-    <string name="logout_confirmation">Czy na pewno chczesz się wylogować?</string>
-    <string name="disconnect_confirmation">Czy na pewno chcesz się rozłączyć z użytkownikiem: %1$s %2$s?</string>
-
-    <string name="fall_detection_alert_message">UWAGA! Potencjalny upadek podopiecznego!</string>
+    <string name="logout_confirmation">Are you sure you want to sign out?</string>
+    <string name="disconnect_confirmation">Are you sure you want to connect with user: %1$s %2$s?</string>
+    <string name="fall_detection_alert_message">WARNING! Potential fall of the senior!</string>
     <string name="fall_detection_notification_text">Fall detector is working</string>
-    <string name="about_app">\nMobilny Opiekun - aplikacja mobilna na telefony z systemem Android ułatwiająca opiekę nad osobami starszymi. Wykonana na potrzebę projektu inżynierskiego przez 4-osobowy zespół w składzie:</string>
-    <string name="about_app_2">Głównymi funkcjami aplikacji są: śledzenie lokalizacji podopiecznej osoby starszej, wygodna organizacja dnia podopiecznego (kalendarz, przypomnienie o wzięciu lekarstw), zakładka z informacjami medycznymi z łatwą możliwością udostępnienia oraz moduły odpowiedzialne za bezpieczeństwo (przycisk SOS, detektor upadków). Naszym celem jest pomóc wszystkim osobom opiekującym się osobami starszymi.  \n\nOpieka nad osobą starszą, zwłaszcza z chorobami neurodegeneracyjnymi wymaga stałego nadzoru. Nasza aplikacja ułatwi komunikację i opiekę zdalną spoza domu.</string>
+    <string name="about_app">Senior Care - mobile app for Android aiding in senior care. Developed for engineering project purposes by a 4-member team consisting of:</string>
+    <string name="welcome_to">Welcome to</string>
+    <string name="medical_info">Medical Information</string>
+    <string name="calendar">Calendar</string>
+    <string name="location">Localization</string>
+    <string name="notifications">Notifications</string>
+    <string name="continue_with_Google">Sign in with Google</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="birthday">Birthday</string>
+    <string name="illnesses">Illnesses</string>
+    <string name="blood_type">Blood type</string>
+    <string name="allergies">Allergies</string>
+    <string name="medication">Medication</string>
+    <string name="height">Height</string>
+    <string name="weight">Weight</string>
+    <string name="languages">Languages</string>
+    <string name="others">Others</string>
+    <string name="today">Today</string>
+    <string name="tomorrow">Tomorrow</string>
+    <string name="event_delete_confirmation">Are you sure you want to delete?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="senior_empty_calendar">You have no plans for next week</string>
+    <string name="this_field_cannot_be_empty">This field cannot be empty</string>
+    <string name="field_length_limit_exceeded">Field length limit exceeded</string>
+    <string name="start_time_cannot_be_greater_then_end_time">Start time cannot be greater then                                                            end time</string>
+    <string name="about_app_2">The main features of the application are: tracking the location of the senior, convenient organization of the senior\'s day (calendar, reminder to take medication), a tab with medical information with easy sharing, and modules responsible for safety (SOS button, fall detector). Our goal is to help all those caring for the elderly.    Caring for an elderly person, especially with neurodegenerative diseases, requires constant supervision. Our app will facilitate communication and remote care from outside the home.</string>
+    <string name="template_string" translatable="false">Template string</string>
+    <string name="template_string2" translatable="false">Template string 2</string>
+    <string name="warning">WARNING</string>
+    <string name="potential_fall">Possible fall!</string>
+    <string name="seconds">seconds</string>
+    <string name="fall_detection_screen_message">An alarm SMS has been sent to your carer</string>
+    <string name="cancel_alarm">Cancel alarm</string>
+    <string name="if_everything_is_ok">If everything is OK and it is a false alarm, press the following button within:</string>
+    <string name="localization_safe_zone">Localization - Safe Zone</string>
 </resources>
