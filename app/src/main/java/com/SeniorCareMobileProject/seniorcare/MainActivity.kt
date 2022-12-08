@@ -29,6 +29,7 @@ import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.receivers.GeofenceBroadcastReceiver
 import com.SeniorCareMobileProject.seniorcare.receivers.NotificationsBroadcastReceiver
+import com.SeniorCareMobileProject.seniorcare.services.CarerService
 import com.SeniorCareMobileProject.seniorcare.services.SeniorService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
@@ -82,6 +83,13 @@ class MainActivity : ComponentActivity() {
             }
         }
 
+        if(sharedViewModel.userFunctionFromLocalRepo == "Carer") {
+            Intent(applicationContext, CarerService::class.java).apply {
+                action = SeniorService.ACTION_START
+                    startService(this)
+            }
+        }
+
 
         sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
             if (value >= 0) {
@@ -93,7 +101,6 @@ class MainActivity : ComponentActivity() {
         }
         )
 
-
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
         var startDestination = ""
@@ -103,46 +110,6 @@ class MainActivity : ComponentActivity() {
         } else {
             startDestination = NavigationScreens.ChooseLoginMethodScreen.name
         }
-
-
-        sharedViewModel.batteryPct.observe(this) { value ->
-            if (currentUser != null) {
-                Handler().postDelayed({
-                    Log.e(TAG, sharedViewModel.userData.value?.function.toString())
-                    if (sharedViewModel.userData.value?.function == "Carer") {
-                        if (value <= 25.0) {
-                            showBatteryNotification(context, value.toInt())
-                        }
-                    }
-                }, 10000)
-
-            }
-
-
-        }
-
-        val mHandler = Handler()
-        var mStatusChecker: Runnable = object : Runnable {
-            override fun run() {
-                try {
-                    if (currentUser != null) {
-                        batteryStatusCheck()
-                    }
-                } finally {
-                    // 100% guarantee that this always happens, even if
-                    // your update method throws an exception
-                    mHandler.postDelayed(this, 1000 * 60 * 30)
-                }
-            }
-        }
-        if (currentUser != null) {
-            Handler().postDelayed({
-                if (sharedViewModel.userData.value?.function == "Senior") {
-                    startRepeatingTask(mStatusChecker)
-                }
-            }, 10000)
-        }
-
 
 
         setContent {
@@ -402,61 +369,6 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun createNotificationChannel(context: Context?) {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val name = "Channel Name"
-            val descriptionText = "getString(R.string.channel_description)"
-            val importance = NotificationManager.IMPORTANCE_DEFAULT
-            val channel = NotificationChannel("CHANNEL_ID", name, importance).apply {
-                description = descriptionText
-            }
-            // Register the channel with the system
-            val notificationManager: NotificationManager =
-                context!!.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-            notificationManager.createNotificationChannel(channel)
-        }
-    }
-
-
-
-    private fun showBatteryNotification(context: Context?, batteryPct: Int) {
-
-        createNotificationChannel(context)
-        Log.d("Notification", "showing")
-
-        var mBuilder = NotificationCompat.Builder(context!!, "CHANNEL_ID")
-            .setSmallIcon(R.drawable.ic_launcher_background)
-            .setContentTitle("Bateria seniora w niskim stanie!")
-            .setContentText("Stan baterii: $batteryPct%")
-            .setPriority(NotificationCompat.PRIORITY_MAX)
-
-        val contentIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-            PendingIntent.getActivity(
-                context,
-                0,
-                Intent(context, GeofenceBroadcastReceiver::class.java),
-                PendingIntent.FLAG_MUTABLE
-            )
-        } else {
-            PendingIntent.getActivity(
-                context,
-                0,
-                Intent(context, GeofenceBroadcastReceiver::class.java),
-                PendingIntent.FLAG_UPDATE_CURRENT
-            )
-        }
-
-        mBuilder.setContentIntent(contentIntent)
-
-        mBuilder.setDefaults(Notification.DEFAULT_SOUND)
-        mBuilder.setAutoCancel(true)
-        val mNotificationManager =
-            context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        mNotificationManager.notify(1, mBuilder.build())
-    }
-
 
     fun makePhoneCall(number: String) {
         if (number.trim { it <= ' ' }.isNotEmpty()) {
@@ -482,29 +394,6 @@ class MainActivity : ComponentActivity() {
             ).show()
         }
     }
-
-
-    fun batteryStatusCheck() {
-
-        val batteryStatus: Intent? = IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->
-            context?.registerReceiver(null, ifilter)
-        }
-        sharedViewModel.batteryPct.value = batteryStatus?.let { intent ->
-            val level: Int = intent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1)
-            val scale: Int = intent.getIntExtra(BatteryManager.EXTRA_SCALE, -1)
-            level * 100 / scale.toFloat()
-        }
-        Log.e(TAG, sharedViewModel.batteryPct.value.toString())
-    }
-
-
-    fun startRepeatingTask(mStatusChecker: Runnable) {
-        mStatusChecker.run()
-    }
-
-    /**fun stopRepeatingTask() {
-    mHandler.removeCallbacks(mStatusChecker)
-    }**/
 
 
     private fun handleGeofence() {
