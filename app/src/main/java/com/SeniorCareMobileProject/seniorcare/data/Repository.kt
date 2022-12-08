@@ -953,4 +953,17 @@ class Repository {
             reference.removeEventListener(listener)
         }
     }
+
+    fun disconnectUsers(sharedViewModel: SharedViewModel) {
+        val seniorReference = database.getReference("users")
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
+            .child("connectedWith")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+        seniorReference.removeValue()
+        val carerReference = database.getReference("users")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child("connectedWith")
+            .child(sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex])
+        carerReference.removeValue()
+    }
 }

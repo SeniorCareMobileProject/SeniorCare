@@ -66,6 +66,7 @@
                                                            od czasu zakończenia</string>
 
     <string name="logout_confirmation">Czy na pewno chczesz się wylogować?</string>
+    <string name="disconnect_confirmation">Czy na pewno chcesz się rozłączyć z użytkownikiem: %1$s %2$s?</string>
 
     <string name="fall_detection_alert_message">UWAGA! Potencjalny upadek podopiecznego!</string>
     <string name="fall_detection_notification_text">Fall detector is working</string>
