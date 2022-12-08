@@ -89,15 +89,7 @@ fun CarerMainView(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         val spacedByWeight = 24f
-                        Spacer(modifier = Modifier.weight(spacedByWeight))
-
-                        Text(
-                            "Ostatnia aktualizacja: ${sharedViewModel.lastUpdateTime}",
-                            fontWeight = FontWeight.Thin,
-                            fontSize = 12.sp
-                        )
-
-                        Spacer(modifier = Modifier.weight(spacedByWeight))
+                        Spacer(modifier = Modifier.weight(spacedByWeight * 2))
 
                         StatusWidget(
                             navController = navController,
@@ -125,7 +117,15 @@ fun CarerMainView(
                             iconName = "calendar_month"
                         )
 
-                        Spacer(modifier = Modifier.weight(spacedByWeight * 2))
+                        Spacer(modifier = Modifier.weight(spacedByWeight))
+
+                        Text(
+                            "Ostatnia aktualizacja danych: ${sharedViewModel.lastUpdateTime}",
+                            fontWeight = FontWeight.Thin,
+                            fontSize = 12.sp
+                        )
+
+                        Spacer(modifier = Modifier.weight(spacedByWeight))
                     }
                 }
             }

@@ -768,7 +768,6 @@ class Repository {
     }
 
     fun getNotificationsForSenior(): Flow<ArrayList<NotificationItem>> = callbackFlow {
-
         val listener = object : ValueEventListener {
             override fun onDataChange(dataSnapshot: DataSnapshot) {
                 val data = dataSnapshot.getValue<ArrayList<NotificationItem>>()
@@ -787,6 +786,63 @@ class Repository {
         val reference = database.getReference("users")
             .child(userId)
             .child("notifications")
+        reference.addValueEventListener(listener)
+
+        awaitClose{
+            //remove listener here
+            reference.removeEventListener(listener)
+        }
+    }
+
+    fun saveTrackingSettings(sharedViewModel: SharedViewModel) {
+        val path: String = if (sharedViewModel.userFunctionFromLocalRepo == "Carer"){
+            sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
+        } else {
+            FirebaseAuth.getInstance().currentUser!!.uid
+        }
+
+        val reference = database.getReference("users")
+            .child(path)
+            .child("trackingSettings")
+
+        val dataToSend = sharedViewModel.trackingSettings
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(dataToSend).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveTrackingSettings", e.message.toString())
+                }
+            }
+        }
+    }
+
+    fun getTrackingSettings(sharedViewModel: SharedViewModel): Flow<SeniorTrackingSettingsDao> = callbackFlow {
+        val listener = object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                val data = dataSnapshot.getValue<SeniorTrackingSettingsDao>()
+                try {
+                    if (data != null)
+                    { trySend(data) }
+                }
+                finally {
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {}
+        }
+
+        val path: String = if (sharedViewModel.userFunctionFromLocalRepo == "Carer"){
+            sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
+        } else {
+            FirebaseAuth.getInstance().currentUser!!.uid
+        }
+        val reference = database.getReference("users")
+            .child(path)
+            .child("trackingSettings")
         reference.addValueEventListener(listener)
 
         awaitClose{
