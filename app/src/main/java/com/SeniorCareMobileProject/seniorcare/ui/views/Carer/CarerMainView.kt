@@ -10,12 +10,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.data.CalendarEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.MapWindowComponent
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -24,6 +27,62 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.StatusWidget
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBar
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.datetime.plus
+import kotlinx.datetime.toKotlinLocalDate
+import kotlinx.datetime.toKotlinLocalTime
+
+
+fun getFirstEvent(events: MutableList<CalendarEvent>): CalendarEvent? {
+    var currentJavaDate = java.time.LocalDate.now()
+    val currentTime = java.time.LocalTime.now()
+    val eventsToCheck: MutableList<CalendarEvent> = mutableListOf()
+    var eventsToCheckOfOneDay: MutableList<CalendarEvent> = mutableListOf()
+    val firstEvent: CalendarEvent
+
+    for (event in events) {
+        if (event.date >= currentJavaDate.toKotlinLocalDate()) {
+            eventsToCheck.add(event)
+        }
+    }
+
+    while (eventsToCheck.isNotEmpty()) {
+        // Found all events of one day
+        eventsToCheckOfOneDay =
+            eventsToCheck.filter { event ->
+                currentJavaDate.toKotlinLocalDate() == event.date
+            }
+                .sortedBy { it.startTime }.toMutableList()
+
+        if (eventsToCheckOfOneDay.isNotEmpty()) {
+            // Remove event from current day
+            eventsToCheck.removeAll(eventsToCheckOfOneDay)
+            // If the same day, delete events before current time
+            if (java.time.LocalDate.now() == currentJavaDate) {
+                for (event in eventsToCheckOfOneDay) {
+                    if (event.startTime < currentTime.toKotlinLocalTime()) {
+                        eventsToCheckOfOneDay.remove(event)
+                    }
+                }
+            }
+            // Sort by time and get first element
+            if (eventsToCheckOfOneDay.isNotEmpty()) {
+                firstEvent = eventsToCheckOfOneDay.sortedBy { it.startTime }[0]
+                return firstEvent
+            }
+        }
+        currentJavaDate = currentJavaDate.plusDays(1)
+    }
+    return null
+}
+
+
+fun getDescriptionOrEmpty(eventDescription: String?): String {
+    if (eventDescription.isNullOrEmpty()) {
+        return ""
+    }
+    return eventDescription + "\n"
+}
+
 
 @Composable
 fun CarerMainView(
@@ -54,6 +113,9 @@ fun CarerMainView(
         } else {
             Modifier
         }
+
+        val context = LocalContext.current
+
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -67,6 +129,11 @@ fun CarerMainView(
             }
 
             if (!fullScreen) {
+                val firstEvent = getFirstEvent(sharedViewModel.calendarEvents)
+                for (notification in sharedViewModel.notificationItems) {
+                    print(notification)
+                }
+
                 Column(
                     modifier = Modifier
                         .weight(50f)
@@ -109,13 +176,38 @@ fun CarerMainView(
 
                         Spacer(modifier = Modifier.weight(spacedByWeight))
 
-                        StatusWidget(
-                            navController = navController,
-                            title = "Najbliższe wydarzenie:",
-                            text = "Wizyta u lekarza\n" +
-                                    "Data: 12.05.22 - godzina: 08:00",
-                            iconName = "calendar_month"
-                        )
+                        if (firstEvent == null) {
+                            StatusWidget(
+                                navController = navController,
+                                title = context.getString(R.string.upcoming_event),
+                                text = context.getString(R.string.hyphen),
+                                iconName = "calendar_month"
+                            )
+                        } else {
+                            StatusWidget(
+                                navController = navController,
+                                title = context.getString(R.string.upcoming_event),
+                                text =
+                                firstEvent.eventName
+                                        + "\n"
+                                        + getDescriptionOrEmpty(firstEvent.eventDescription)
+                                        + context.getString(R.string.date)
+                                        + " "
+                                        + firstEvent.date
+                                        + " "
+                                        + context.getString(R.string.hyphen)
+                                        + " "
+                                        + context.getString(R.string.time)
+                                        + " "
+                                        + firstEvent.startTime
+                                        + " "
+                                        + context.getString(R.string.hyphen)
+                                        + " "
+                                        + firstEvent.endTime,
+                                iconName = "calendar_month"
+                            )
+                        }
+
 
                         Spacer(modifier = Modifier.weight(spacedByWeight))
 
