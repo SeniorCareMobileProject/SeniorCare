@@ -107,6 +107,7 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     val listOfConnectedUsers = mutableListOf<String>()
     var currentSeniorIndex = 0
+    var haveConnectedUsers = true
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
@@ -433,6 +434,16 @@ class SharedViewModel() : ViewModel(), KoinComponent {
         calendarEventsFirebase.clear()
         notificationItems.clear()
         notificationitemsLiveData.value = notificationItems
+    }
+
+
+    fun disconnectWithSenior() {
+        repository.disconnectUsers(this)
+        listOfAllConnectedUsersID.removeAt(currentSeniorIndex)
+        if (listOfAllConnectedUsersID.isEmpty()) {
+            haveConnectedUsers = false
+        }
+        currentSeniorIndex = 0
     }
 
     fun saveBatteryInfoToFirebase(){

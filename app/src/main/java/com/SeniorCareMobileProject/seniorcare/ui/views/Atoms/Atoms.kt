@@ -1,8 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
-import android.content.ContentValues.TAG
 import android.content.Context
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -14,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Password
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.runtime.*
@@ -36,11 +33,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
-import androidx.navigation.Navigation.findNavController
 import androidx.navigation.compose.rememberNavController
-import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -729,19 +723,47 @@ fun TopBarSettings(
 @Composable
 fun SettingsItem(
     navController: NavController,
+    sharedViewModel: SharedViewModel,
     text: String,
     rout: String
 ) {
     val context = LocalContext.current
+
+    val showDisconnectConfirmDialog = remember { mutableStateOf(false) }
+    if (showDisconnectConfirmDialog.value) {
+        SubmitOrDenyDialogView(
+            context.getString(
+                R.string.disconnect_confirmation,
+                sharedViewModel.currentSeniorData.value!!.firstName,
+                sharedViewModel.currentSeniorData.value!!.lastName
+            ),
+            { showDisconnectConfirmDialog.value = false }, sharedViewModel, showDisconnectConfirmDialog, {
+
+                sharedViewModel.disconnectWithSenior()
+                Toast.makeText(context, "Rozłączono z użytkownikiem", Toast.LENGTH_LONG).show()
+
+                if (sharedViewModel.haveConnectedUsers) {
+                    navController.navigate("LoadingDataView"){
+                        popUpTo("CarerSettingsListScreen") {inclusive = true}
+                    }
+                } else {
+                    navController.navigate("CarerNoConnectedSeniorsView"){
+                        popUpTo("CarerSettingsListScreen") {inclusive = true}
+                    }
+                }
+            })
+    }
 
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
             .clickable {
-                if (rout != "") navController.navigate(rout) else inProgressToastView(
-                    context
-                )
+                if (rout != "") {
+                    navController.navigate(rout)
+                } else {
+                    showDisconnectConfirmDialog.value = true
+                }
             }
     ) {
         Text(
@@ -1485,7 +1507,7 @@ fun SignUpViewPreview() {
                 rout = ""
             )
             TopBarSettings(navController = navController, sharedViewModel = sharedViewModel)
-            SettingsItem(navController, "Przycisk SOS", "")
+            SettingsItem(navController, sharedViewModel, "Przycisk SOS", "")
             SettingsItemWithIcon(navController, sharedViewModel,"Przycisk SOS", "", "edit")
             SettingsNumberElement(0,sharedViewModel,navController,"CarerSettingsSOSScreen")
             SettingsNumberElement(1,sharedViewModel,navController,"CarerSettingsSOSScreen")

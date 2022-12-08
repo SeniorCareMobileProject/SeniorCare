@@ -25,9 +25,9 @@ fun CarerSettingsListView(navController: NavController, sharedViewModel: SharedV
     Scaffold(
         topBar = { TopBarSettings(navController, sharedViewModel) }) {
         Column(modifier = Modifier.fillMaxSize()) {
-            SettingsItem(navController, "Przycisk SOS", "CarerSettingsSOSScreen")
-            SettingsItem(navController, "Lokalizacja", "CarerSettingsSafeZoneScreen")
-            SettingsItem(navController, "Rozłącz się z seniorem", "")
+            SettingsItem(navController, sharedViewModel, "Przycisk SOS", "CarerSettingsSOSScreen")
+            SettingsItem(navController, sharedViewModel, "Lokalizacja", "CarerSettingsSafeZoneScreen")
+            SettingsItem(navController, sharedViewModel, "Rozłącz się z seniorem", "")
         }
     }
 }

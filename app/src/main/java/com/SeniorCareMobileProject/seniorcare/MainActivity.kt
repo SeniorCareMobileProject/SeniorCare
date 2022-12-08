@@ -374,6 +374,10 @@ class MainActivity : ComponentActivity() {
 
                     }
 
+                    composable(NavigationScreens.CarerNoConnectedSeniorsView.name) {
+                        CarerNoConnectedSeniorsView(navController, sharedViewModel)
+                    }
+
                 }
             }
         }
