@@ -290,7 +290,7 @@ class Repository {
     fun createPairingCodeAndWriteToFirebase(sharedViewModel: SharedViewModel){
         val pairingCodesReference = database.reference.child("pairing").child("codes")
         pairingCodesReference.get().addOnSuccessListener {
-            if (it != null){
+            if (it.value != null){
                 val allCodesList = it.getValue<HashMap<String, String>>()
                 val allCodesString = allCodesList!!.keys
                 val allCodes = allCodesString.map { string -> string.toInt()}
@@ -325,6 +325,9 @@ class Repository {
                 pairingCodesReference
                     .child(uniqueCode.toString())
                     .setValue(FirebaseAuth.getInstance().currentUser?.uid)
+
+                sharedViewModel.pairingCode.value = uniqueCode.toString()
+
                 // WRITE USER DATA FOR PAIRING TO FIREBASE
                 val userData = sharedViewModel.userData
                 val pairingData = PairingData(
