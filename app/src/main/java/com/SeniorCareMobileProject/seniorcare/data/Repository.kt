@@ -44,7 +44,13 @@ class Repository {
                         firebaseAuth.currentUser?.sendEmailVerification()
 
                         val userId = firebaseAuth.currentUser!!.uid
-                        val newUser = User(userEmailAddress, userFirstName, userLastName, userFunction)
+                        val newUser = User(
+                            email = userEmailAddress,
+                            firstName = userFirstName,
+                            lastName = userLastName,
+                            function = userFunction,
+                            battery = 100.0f
+                        )
                         databaseUserReference.child(userId).setValue(newUser).await()
 
                         sharedViewModel._userSignUpStatus.postValue(Resource.Success(response))
@@ -66,7 +72,13 @@ class Repository {
 
     fun writeNewUserFromGoogle(user: LiveData<User>){
         val userId = FirebaseAuth.getInstance().currentUser!!.uid
-        val newUser = User(user.value?.email, user.value?.firstName, user.value?.lastName, user.value?.function)
+        val newUser = User(
+            email = user.value?.email,
+            firstName = user.value?.firstName,
+            lastName = user.value?.lastName,
+            function = user.value?.function,
+            battery = 100.0f
+        )
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
