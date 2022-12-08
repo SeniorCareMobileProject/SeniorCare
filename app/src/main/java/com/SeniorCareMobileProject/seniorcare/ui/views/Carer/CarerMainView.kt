@@ -33,14 +33,14 @@ import kotlinx.datetime.toKotlinLocalTime
 
 
 fun getFirstEvent(events: MutableList<CalendarEvent>): CalendarEvent? {
-    var currentJavaDate = java.time.LocalDate.now().minusDays(1)
+    var currentJavaDate = java.time.LocalDate.now()
     val currentTime = java.time.LocalTime.now()
     val eventsToCheck: MutableList<CalendarEvent> = mutableListOf()
     var eventsToCheckOfOneDay: MutableList<CalendarEvent> = mutableListOf()
     val firstEvent: CalendarEvent
 
     for (event in events) {
-        if (event.date > currentJavaDate.toKotlinLocalDate()) {
+        if (event.date >= currentJavaDate.toKotlinLocalDate()) {
             eventsToCheck.add(event)
         }
     }
@@ -49,7 +49,7 @@ fun getFirstEvent(events: MutableList<CalendarEvent>): CalendarEvent? {
         // Found all events of one day
         eventsToCheckOfOneDay =
             eventsToCheck.filter { event ->
-                currentJavaDate.plusDays(1).toKotlinLocalDate() == event.date
+                currentJavaDate.toKotlinLocalDate() == event.date
             }
                 .sortedBy { it.startTime }.toMutableList()
 
@@ -57,7 +57,7 @@ fun getFirstEvent(events: MutableList<CalendarEvent>): CalendarEvent? {
             // Remove event from current day
             eventsToCheck.removeAll(eventsToCheckOfOneDay)
             // If the same day, delete events before current time
-            if (java.time.LocalDate.now().isEqual(currentJavaDate)) {
+            if (java.time.LocalDate.now() == currentJavaDate) {
                 for (event in eventsToCheckOfOneDay) {
                     if (event.startTime < currentTime.toKotlinLocalTime()) {
                         eventsToCheckOfOneDay.remove(event)
@@ -70,8 +70,17 @@ fun getFirstEvent(events: MutableList<CalendarEvent>): CalendarEvent? {
                 return firstEvent
             }
         }
+        currentJavaDate = currentJavaDate.plusDays(1)
     }
     return null
+}
+
+
+fun getDescriptionOrEmpty(eventDescription: String?): String {
+    if (eventDescription.isNullOrEmpty()) {
+        return ""
+    }
+    return eventDescription + "\n"
 }
 
 
@@ -181,8 +190,7 @@ fun CarerMainView(
                                 text =
                                 firstEvent.eventName
                                         + "\n"
-                                        + firstEvent.eventDescription
-                                        + "\n"
+                                        + getDescriptionOrEmpty(firstEvent.eventDescription)
                                         + context.getString(R.string.date)
                                         + " "
                                         + firstEvent.date
@@ -190,6 +198,7 @@ fun CarerMainView(
                                         + context.getString(R.string.hyphen)
                                         + " "
                                         + context.getString(R.string.time)
+                                        + " "
                                         + firstEvent.startTime
                                         + " "
                                         + context.getString(R.string.hyphen)
