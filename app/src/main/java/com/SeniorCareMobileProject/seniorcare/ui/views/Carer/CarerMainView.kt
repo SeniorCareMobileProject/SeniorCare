@@ -94,7 +94,7 @@ fun CarerMainView(
                         StatusWidget(
                             navController = navController,
                             title = "Stan baterii:",
-                            text = "67%",
+                            text = "${sharedViewModel.batteryPct.value}%",
                             iconName = "battery_4_bar"
                         )
 

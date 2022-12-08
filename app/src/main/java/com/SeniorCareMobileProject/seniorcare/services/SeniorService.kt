@@ -63,10 +63,14 @@ class SeniorService: Service() {
     }
 
     private fun firebaseUpdate(currentLocation: Location?) {
-        if (currentLocation == null){
-            return
+        if (currentLocation != null){
+            repository.saveLocationToFirebase(LocationDAO(currentLocation.latitude, currentLocation.longitude, currentLocation.accuracy))
+            repository.saveBatteryInfoToFirebase()
         }
-        repository.saveLocationToFirebase(LocationDAO(currentLocation.latitude, currentLocation.longitude, currentLocation.accuracy))
+        else {
+            repository.saveBatteryInfoToFirebase()
+        }
+
     }
 
     private fun observeData(){
