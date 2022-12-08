@@ -240,10 +240,10 @@ class MainActivity : ComponentActivity() {
 //
 //                    }
 
-                    composable(NavigationScreens.CarerPairingScreen.name) {
-                        CarerPairingView(navController, sharedViewModel)
-
-                    }
+//                    composable(NavigationScreens.CarerPairingScreen.name) {
+//                        CarerPairingView(navController, sharedViewModel)
+//
+//                    }
 
                     composable(NavigationScreens.SeniorCalendarScreen.name) {
                         SeniorCalendarScreenView(navController, sharedViewModel)
@@ -355,7 +355,7 @@ class MainActivity : ComponentActivity() {
                     }
 
                     composable(NavigationScreens.SeniorGoingOutInfoScreen.name) {
-                        SeniorGoingOutInfoView(navController)
+                        SeniorGoingOutInfoView(navController, sharedViewModel)
 
                     }
 

@@ -132,7 +132,7 @@ fun PairingScreenConfirmationView(navController: NavController, sharedViewModel:
                     modifier = Modifier
                         .width(48.dp)
                         .height(48.dp)
-                        .clickable { navController.navigate(NavigationScreens.PairingScreenCodeInputScreen.name) }
+                        .clickable { navController.navigateUp() }
                 )
             }
         }

@@ -131,7 +131,7 @@ fun PairingScreenSuccessView(navController: NavController, sharedViewModel: Shar
                     modifier = Modifier
                         .width(48.dp)
                         .height(48.dp)
-                        .clickable { navController.navigate(NavigationScreens.PairingScreenCodeScreen.name) }
+                        .clickable { navController.navigateUp() }
                 )
             }
         }

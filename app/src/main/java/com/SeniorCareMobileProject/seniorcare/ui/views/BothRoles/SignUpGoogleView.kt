@@ -79,7 +79,7 @@ fun SignUpGoogleView(navController: NavController, sharedViewModel: SharedViewMo
             modifier = Modifier
                 .width(48.dp)
                 .height(48.dp)
-                .clickable { navController.navigate(NavigationScreens.ChooseLoginMethodScreen.name) }
+                .clickable { navController.navigateUp() }
         )
 
         Column(

@@ -3,6 +3,7 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Senior
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,42 +23,56 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 
 @Composable
 fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewModel) {
-    Column(
-        modifier = Modifier
-            .onPlaced { sharedViewModel.sosCascadeTimer.start() }
-            .fillMaxWidth()
-            .background(Color.White)
-            .fillMaxHeight()
-            .wrapContentHeight(Alignment.CenterVertically)
-    ) {
+    Scaffold(topBar = {
+        SeniorTopBar(
+            navController = navController,
+            sharedViewModel = sharedViewModel,
+            isCustomOnClick = true,
+            customOnClick = {
+                sharedViewModel.sosCascadeIndex.value = -3
+                navController.navigateUp()
+                sharedViewModel.sosCascadeTimer.cancel()
+            }
+        )
+    }) {
         Column(
             modifier = Modifier
+                .onPlaced { sharedViewModel.sosCascadeTimer.start() }
                 .fillMaxWidth()
-                .fillMaxHeight(),
-//                .padding(top = 54.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+                .background(Color.White)
+                .fillMaxHeight()
+                .wrapContentHeight(Alignment.CenterVertically)
         ) {
             Column(
-                modifier = Modifier.padding(horizontal = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(10.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(),
+//                .padding(top = 54.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
+                Column(
+                    modifier = Modifier.padding(horizontal = 12.dp),
+                    verticalArrangement = Arrangement.spacedBy(10.dp),
+                ) {
 
-                Text(modifier = Modifier.padding(horizontal = 12.dp),
-                    text = "W ciągu 10 sekund wykona się kolejne połączenie",
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 36.sp,
-                )
+                    Text(
+                        modifier = Modifier.padding(horizontal = 12.dp),
+                        text = "W ciągu 10 sekund wykona się kolejne połączenie",
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 36.sp,
+                    )
 
-                Spacer(modifier = Modifier.height(16.dp))
-                
-                SosCascadeStop(
-                    navController = navController,
-                    text = "Zakończ połączenia",
-                    iconName = "clear",
-                    sharedViewModel = sharedViewModel,
-                    color = ""
-                )
+                    Spacer(modifier = Modifier.height(16.dp))
+
+                    SosCascadeStop(
+                        navController = navController,
+                        text = "Zakończ połączenia",
+                        iconName = "clear",
+                        sharedViewModel = sharedViewModel,
+                        color = ""
+                    )
+                }
             }
         }
     }

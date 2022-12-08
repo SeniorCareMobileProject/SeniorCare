@@ -161,17 +161,45 @@ fun CarerCalendarView(
         // Calendar small and full view switcher transparent button
         Box(
             modifier = Modifier
-                .width(300.dp)
+//                .width(300.dp)
+                .fillMaxWidth()
                 .height(65.dp)
-                .clickable {
-                    fullKalendarView.value = !fullKalendarView.value
-                    pickedDay.value = LocalDataJava
-                        .now()
-                        .toKotlinLocalDate()
-                },
+//                .clickable {
+//                    fullKalendarView.value = !fullKalendarView.value
+//                    pickedDay.value = LocalDataJava
+//                        .now()
+//                        .toKotlinLocalDate()
+//                }
+//                .background(Color.Red.copy(alpha = 0.5f))
+            ,
             contentAlignment = Alignment.TopStart
         )
         {
+            Column(modifier = Modifier.fillMaxWidth()) {
+                Row(
+                    modifier = Modifier
+//                        .background(Color.Red.copy(alpha = 0.5f))
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .weight(269f)
+                            .clickable {
+                                fullKalendarView.value = !fullKalendarView.value
+                                pickedDay.value = LocalDataJava
+                                    .now()
+                                    .toKotlinLocalDate()
+                            }
+                    ) {
+                        Spacer(modifier = Modifier.weight(1f))
+                    }
+                    Column(
+                        modifier = Modifier
+                            .weight(100f)
+                            .background(Color.Blue.copy(alpha = 0.5f))
+                    ) {
+                    }
+                }
+            }
         }
 
         if (showDialog.value) {
