@@ -66,4 +66,8 @@
     <string name="cancel_alarm">Cancel alarm</string>
     <string name="if_everything_is_ok">If everything is OK and it is a false alarm, press the following button within:</string>
     <string name="localization_safe_zone">Localization - Safe Zone</string>
+    <string name="upcoming_event">Next event:</string>
+    <string name="date">Date:</string>
+    <string name="time">time:</string>
+    <string name="hyphen" translatable="false">-</string>
 </resources>

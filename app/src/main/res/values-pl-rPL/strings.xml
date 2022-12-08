@@ -59,4 +59,7 @@
     <string name="cancel_alarm">Odwołaj alarm</string>
     <string name="if_everything_is_ok">Jeżeli wszystko jest w porządku i jest to fałszywy alarm wciśnij poniższy przycisk w ciągu:</string>
     <string name="localization_safe_zone">Lokalizacja - Bezpieczny obszar</string>
+    <string name="upcoming_event">Najbliższe wydarzenie:</string>
+    <string name="date">Data:</string>
+    <string name="time">godzina:</string>
 </resources>
