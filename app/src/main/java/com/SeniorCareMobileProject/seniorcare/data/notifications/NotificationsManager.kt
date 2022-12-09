@@ -69,7 +69,12 @@ class NotificationsManager {
         val intent = Intent(context, NotificationsBroadcastReceiver::class.java)
         intent.putExtras(bundle)
 
-        val pendingIntent = PendingIntent.getBroadcast(context, notificationId*3 + timeId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val contentIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            PendingIntent.getBroadcast(context, notificationId*3 + timeId, intent, PendingIntent.FLAG_MUTABLE)
+        } else {
+            PendingIntent.getBroadcast(context, notificationId*3 + timeId, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        }
+
 
         var alarmInterval = AlarmManager.INTERVAL_DAY
         if(interval.equals("Co 2 dni")){
@@ -94,7 +99,7 @@ class NotificationsManager {
             AlarmManager.RTC_WAKEUP,
             calendar.timeInMillis,
             alarmInterval,
-            pendingIntent
+            contentIntent
         )
     }
 
