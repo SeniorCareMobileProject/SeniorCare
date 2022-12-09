@@ -56,7 +56,7 @@ class LocalSettingsRepository private constructor(application: Context) {
     }
 
     fun getSeniorIsAware(): Boolean {
-        return sharedPreferences.getBoolean("senior_safezone", false)
+        return sharedPreferences.getBoolean("senior_aware", false)
     }
 
     fun saveSeniorIsInSafeZone(boolean: Boolean){

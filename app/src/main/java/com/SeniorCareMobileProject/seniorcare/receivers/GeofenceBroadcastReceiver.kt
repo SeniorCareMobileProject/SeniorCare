@@ -34,13 +34,13 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             } else {
                 try {
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_EXIT) {
-                        notifySeniorStateChanged(context, context!!.getString(R.string.sms_senior_left), false)
+                        notifySeniorStateChanged(context, "exit")
                         Log.d("GEOFENCE ACTIVATED", "SENIOR LEFT SAFE ZONE")
                         showNotification(context, context!!.getString(R.string.safe_zone), context.getString(R.string.safe_zone_left))
 
                     }
                     if (geofencingEvent.geofenceTransition == Geofence.GEOFENCE_TRANSITION_ENTER) {
-                        notifySeniorStateChanged(context, context!!.getString(R.string.sms_senior_safe), true)
+                        notifySeniorStateChanged(context, "enter")
                         Log.d("GEOFENCE ACTIVATED", "SENIOR IS IN SAFE ZONE")
                         showNotification(context, context!!.getString(R.string.safe_zone), context.getString(R.string.safe_zone_in))
                     }
@@ -52,23 +52,24 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
     }
 
 
-    private fun notifySeniorStateChanged(context: Context?, content: String, seniorInSafeZone: Boolean) {
+    private fun notifySeniorStateChanged(context: Context?, transition: String) {
         if (context == null) return
         val localSettingsRepository = LocalSettingsRepository.getInstance(context)
+        val isSeniorAwareLocal = localSettingsRepository.getSeniorIsAware()
 
-        var isSeniorAware = localSettingsRepository.getSeniorIsAware()
+        Log.d("GEOFENCE", "trans $transition, aware $isSeniorAwareLocal")
 
-        if (seniorInSafeZone) {
-            localSettingsRepository.saveSeniorIsAware(false)
-            localSettingsRepository.saveSeniorIsInSafeZone(true)
-            isSeniorAware = false
-        } else {
-            localSettingsRepository.saveSeniorIsInSafeZone(false)
-            if (!isSeniorAware) SendSmsUtil().sendOneMessage(context, content)
+        if (transition == "exit"){
+            val messageContent = context.getString(R.string.sms_senior_left)
+            Repository().saveTrackingSettingsSenior(seniorInSafeZone = false, isSeniorAware = isSeniorAwareLocal)
+            if (isSeniorAwareLocal) return
+            SendSmsUtil().sendOneMessage(context, messageContent)
         }
-
-        localSettingsRepository.saveSeniorIsInSafeZone(seniorInSafeZone)
-        Repository().saveTrackingSettingsSenior(seniorInSafeZone, isSeniorAware)
+        if (transition == "enter"){
+            Repository().saveTrackingSettingsSenior(seniorInSafeZone = true, isSeniorAware = false)
+            localSettingsRepository.saveSeniorIsInSafeZone(true)
+            localSettingsRepository.saveSeniorIsAware(false)
+        }
     }
 
     private fun createNotificationChannel(context: Context?) {

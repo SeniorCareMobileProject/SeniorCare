@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -59,7 +61,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                     comeHomeColor = "main"
                     comeHomeText = "Wychodzę z domu"
                 }
-
+                var context = LocalContext.current
                 Column(modifier = Modifier.weight(1f)) {
                     SeniorButtonWithAction(
                         navController = navController,
@@ -67,9 +69,12 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                         iconName = "my_location",
                         rout = "SeniorGoingOutInfoScreen",
                         color = comeHomeColor,
-                        sharedViewModel = sharedViewModel,
-                        {Repository().saveTrackingSettingsSenior(null, true)}
-                    )
+                        sharedViewModel = sharedViewModel
+                    ) {
+                        Repository().saveTrackingSettingsSenior(null, true)
+                        val localSettingsRepository = LocalSettingsRepository.getInstance(context)
+                        localSettingsRepository.saveSeniorIsAware(true)
+                    }
                 }
                 Column(modifier = Modifier.weight(1f)) {
                     SeniorButton(

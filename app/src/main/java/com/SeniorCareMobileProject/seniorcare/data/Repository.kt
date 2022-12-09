@@ -932,10 +932,9 @@ class Repository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
-                    if (seniorInSafeZone != null)
-                        reference.child("seniorInSafeZone").setValue(seniorInSafeZone).await()
-                    if (isSeniorAware != null)
+                    if (isSeniorAware != null) {
                         reference.child("isSeniorAware").setValue(isSeniorAware).await()
+                    }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -947,8 +946,8 @@ class Repository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
-                    if (isSeniorAware != null)
-                        reference.child("isSeniorAware").setValue(isSeniorAware).await()
+                    if (seniorInSafeZone != null)
+                        reference.child("seniorInSafeZone").setValue(seniorInSafeZone).await()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -956,6 +955,8 @@ class Repository {
                 }
             }
         }
+
+
     }
 
     fun getTrackingSettingsSenior(): Flow<SeniorTrackingSettingsDao> = callbackFlow {
@@ -1048,7 +1049,7 @@ class Repository {
                     val data = snapshot.getValue<SeniorAllDAO>()
                     if (data != null){
                         trackingSettingAll[data.firstName.toString() + " " + data.lastName.toString()] =
-                            data.trackingSettings!!
+                          data.trackingSettings!!
                     }
                     if (trackingSettingAll.size == listOfId.size){
                         trySend(trackingSettingAll)

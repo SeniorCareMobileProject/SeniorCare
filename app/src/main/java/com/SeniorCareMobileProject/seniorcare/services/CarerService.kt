@@ -150,11 +150,12 @@ class CarerService: Service() {
     }
 
     private fun notificationTextHelper(seniorSettings: SeniorTrackingSettingsDao): Pair<String, String>{
+        Log.d("NOTIFICATION", "aware: ${seniorSettings.isSeniorAware}, safezone: ${seniorSettings.seniorInSafeZone}")
         if (!seniorSettings.isSeniorAware && !seniorSettings.seniorInSafeZone) {
             return Pair(applicationContext.getString(R.string.notification_senior_left), getString(R.string.notification_senior_left_unaware_desc))
         }
         if (seniorSettings.isSeniorAware && !seniorSettings.seniorInSafeZone) {
-            return Pair(applicationContext.getString(R.string.safe_zone_in), getString(R.string.notification_senior_left_aware_desc))
+            return Pair(applicationContext.getString(R.string.notification_senior_left), getString(R.string.notification_senior_left_aware_desc))
         }
         return Pair(applicationContext.getString(R.string.notification_senior_in), getString(R.string.notification_senior_in_desc))
 
