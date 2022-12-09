@@ -67,4 +67,21 @@
     <string name="notification_senior_left_aware_desc">opuścił strefę świadomie</string>
     <string name="notification_senior_in">Senior jest teraz w bezpiecznej strefie</string>
     <string name="notification_senior_in_desc">jest teraz w bezpiecznej strefie</string>
+    <string name="role">Rola</string>
+    <string name="top_bar_settings_senior_name">Ustawienia - %1$s %2$s</string>
+    <string name="disconnected_with_user">Rozłączono z użytkownikiem</string>
+    <string name="carer_settings_item">Opiekun:</string>
+    <string name="phone_number_settings_item">Numer telefonu:</string>
+    <string name="work_in_progress">W budowie</string>
+    <string name="change">Zmień</string>
+    <string name="delete">Usuń</string>
+    <string name="add_new_calendar_event">Dodaj nowe wydarzenie do kalendarza</string>
+    <string name="calendar_event_name">Nazwa wydarzenia</string>
+    <string name="event_description">Opis wydarzenia</string>
+    <string name="choose_time_span">Wybierz czas</string>
+    <string name="beginning">Początek</string>
+    <string name="end">Koniec</string>
+    <string name="cancel">Anuluj</string>
+    <string name="add">Dodaj</string>
+    <string name="save">Zapisz</string>
 </resources>

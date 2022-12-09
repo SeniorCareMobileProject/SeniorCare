@@ -75,4 +75,21 @@
     <string name="date">Date:</string>
     <string name="time">time:</string>
     <string name="hyphen" translatable="false">-</string>
+    <string name="role">Role</string>
+    <string name="top_bar_settings_senior_name">Settings - %1$s %2$s</string>
+    <string name="disconnected_with_user">Disconnected with the user</string>
+    <string name="carer_settings_item">Carer:</string>
+    <string name="phone_number_settings_item">Phone number:</string>
+    <string name="work_in_progress">Work in progress</string>
+    <string name="change">Change</string>
+    <string name="delete">Delete</string>
+    <string name="add_new_calendar_event">Add new calendar event</string>
+    <string name="calendar_event_name">Calendar event name</string>
+    <string name="event_description">Event description</string>
+    <string name="choose_time_span">Choose time span</string>
+    <string name="beginning">Beginning</string>
+    <string name="end">End</string>
+    <string name="cancel">Cancel</string>
+    <string name="add">Add</string>
+    <string name="save">Save</string>
 </resources>

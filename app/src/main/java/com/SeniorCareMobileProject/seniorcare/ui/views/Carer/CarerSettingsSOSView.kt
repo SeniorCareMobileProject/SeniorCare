@@ -40,7 +40,7 @@ fun CarerSettingsSOSView(navController: NavController, sharedViewModel: SharedVi
                 "Dodaj numer",
                 setShowDialog = { showDialog.value = it }
             )
-            SettingsItemWithIcon(
+            SOSSettingsItemWithIcon(
                 navController,
                 sharedViewModel,
                 "Lista opiekunów",
