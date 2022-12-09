@@ -22,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -32,6 +33,7 @@ import androidx.lifecycle.LiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
@@ -91,9 +93,7 @@ fun SignUpEmailVerificationView(navController: NavController, sharedViewModel: S
                 )
             }
             Text(
-                text = "Wysłaliśmy maila na twoje konto email z linkiem weryfikacyjnym.\n" +
-                        "\n" +
-                        "Kliknij link, aby zweryfikować swój adres email.",
+                text = stringResource(id = R.string.send_mail_with_verification),
                 modifier = Modifier.padding(horizontal = 42.dp), fontWeight = FontWeight.Medium
             )
         }
@@ -102,13 +102,13 @@ fun SignUpEmailVerificationView(navController: NavController, sharedViewModel: S
             .fillMaxWidth()
             .padding(top = 80.dp),
         horizontalAlignment = Alignment.CenterHorizontally) {
-            SendVerificationEmail(text = "Wyślij ponownie")
+            SendVerificationEmail(text = stringResource(id = R.string.send_again))
         }
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(top = 80.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-            EmailVerifiedButton(text = "Zweryfikowałem maila", navController)
+            EmailVerifiedButton(text = stringResource(id = R.string.verificate_mail_button), navController)
         }
     }
 }
@@ -138,6 +138,7 @@ fun SendVerificationEmail(text: String) {
 
 @Composable
 fun EmailVerifiedButton(text: String, navController: NavController) {
+    val context = LocalContext.current
     Button(
         onClick = {
             FirebaseAuth.getInstance().currentUser?.reload()
@@ -145,7 +146,7 @@ fun EmailVerifiedButton(text: String, navController: NavController) {
                 navController.navigate("LoadingDataView")
             }
             else {
-                Toast.makeText(context, "You need to verify your email", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.you_need_to_verify), Toast.LENGTH_LONG).show()
             }
                   },
         shape = RoundedCornerShape(10.dp),

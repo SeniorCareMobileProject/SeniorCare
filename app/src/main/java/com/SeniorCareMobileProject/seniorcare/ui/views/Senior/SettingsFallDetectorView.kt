@@ -19,6 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
@@ -67,7 +69,7 @@ fun SettingsFallDetectorView(navController: NavController, sharedViewModel: Shar
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
-                    text = "Detektor upadku",
+                    text = stringResource(id = R.string.fall_detector),
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Medium,
                     style = TextStyle(
@@ -86,7 +88,7 @@ fun SettingsFallDetectorView(navController: NavController, sharedViewModel: Shar
 
                 Spacer(modifier = Modifier.height(80.dp))
 
-                SeniorFallDetectorSwitchButton(text = "Włącz/wyłącz",
+                SeniorFallDetectorSwitchButton(text = stringResource(id = R.string.turn_on_off),
                     color = "main",
                     mCheckedState = mCheckedState,
                     sharedViewModel = sharedViewModel

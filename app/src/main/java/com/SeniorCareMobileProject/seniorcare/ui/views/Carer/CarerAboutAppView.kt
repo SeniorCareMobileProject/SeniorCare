@@ -53,10 +53,10 @@ fun CarerAboutAppView(
                     .padding(20.dp)
             )
             {
-                Text(context.getString(R.string.hyphen, R.string.space, R.string.Lukasz_Koziej))
-                Text(context.getString(R.string.hyphen, R.string.space, R.string.Adrian_Olkowicz))
-                Text(context.getString(R.string.hyphen, R.string.space, R.string.Michal_Dudziak))
-                Text(context.getString(R.string.hyphen, R.string.space, R.string.Andrei_Strachynski))
+                Text("- " + context.getString(R.string.Lukasz_Koziej))
+                Text("- " + context.getString(R.string.Adrian_Olkowicz))
+                Text("- " + context.getString(R.string.Michal_Dudziak))
+                Text("- " + context.getString(R.string.Andrei_Strachynski))
             }
             Text(
                 context.getString(R.string.about_app_2),

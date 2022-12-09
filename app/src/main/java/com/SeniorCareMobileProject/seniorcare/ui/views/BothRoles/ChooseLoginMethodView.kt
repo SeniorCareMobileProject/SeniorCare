@@ -46,7 +46,7 @@ fun ChooseLoginMethodView(navController: NavController, sharedViewModel: SharedV
                 .padding(horizontal = 24.dp)
         ) {
             Text(stringResource(id = R.string.welcome_to), style = h4)
-            Text("Mobilnym Opiekunie", style = h1, color = MaterialTheme.colors.primary)
+            Text(stringResource(id = R.string.welcome_app_name), style = h1, color = MaterialTheme.colors.primary)
 
         }
         Column(
@@ -57,7 +57,7 @@ fun ChooseLoginMethodView(navController: NavController, sharedViewModel: SharedV
             verticalArrangement = Arrangement.spacedBy(12.dp)
         )
         {
-            Text(text = "Zarejestruj nowe konto:", modifier = Modifier.padding(bottom = 6.dp))
+            Text(stringResource(id = R.string.register_new_account), modifier = Modifier.padding(bottom = 6.dp))
             IconTextButton(
                 navController,
                 stringResource(R.string.continue_with_Google),
@@ -66,7 +66,7 @@ fun ChooseLoginMethodView(navController: NavController, sharedViewModel: SharedV
             )
             IconTextButton(
                 navController,
-                "Kontynuuj z Email",
+                stringResource(R.string.continue_with_email),
                 "alternate_email",
                 "SignUpEmailScreen"
             )
@@ -77,9 +77,9 @@ fun ChooseLoginMethodView(navController: NavController, sharedViewModel: SharedV
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "Już masz konto?", modifier = Modifier.padding(horizontal = 8.dp))
+                Text(stringResource(id = R.string.already_have_account), modifier = Modifier.padding(horizontal = 8.dp))
                 Text(
-                    text = "Zaloguj się",
+                    stringResource(id = R.string.log_in),
                     fontSize = 16.sp,
                     color = MaterialTheme.colors.primary,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
