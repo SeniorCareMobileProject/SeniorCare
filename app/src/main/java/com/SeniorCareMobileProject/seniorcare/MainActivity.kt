@@ -24,6 +24,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
+import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
@@ -49,6 +50,9 @@ private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 class MainActivity : ComponentActivity() {
 
     private val requestCall = 1
+    private var seniorIndex = 0
+    private var seniorId = "0"
+    private var function: String = "Carer"
 
     private val sharedViewModel: SharedViewModel by viewModels()
 
@@ -68,6 +72,7 @@ class MainActivity : ComponentActivity() {
 
         sharedViewModel.getUserFunctionFromLocalRepo()
         if (sharedViewModel.userFunctionFromLocalRepo == "Senior") {
+            function = "Senior"
             sharedViewModel.getSosNumbersFromLocalRepo()
             sharedViewModel.getFallDetectionStateFromLocalRepo()
             HighAccuracyLocation().askForHighAccuracy(this)
@@ -80,6 +85,8 @@ class MainActivity : ComponentActivity() {
                 val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
                 startService(fallDetectorServiceIntent)
             }
+        } else {
+
         }
 
 
@@ -92,6 +99,25 @@ class MainActivity : ComponentActivity() {
             }
         }
         )
+        sharedViewModel.hasListOfConnectedUsers.observe(this, Observer{
+            Log.d("SENIOR DATA", "INIT")
+            if (sharedViewModel.userFunctionFromLocalRepo == "Carer") {
+                if (it == true) {
+                    Log.d("SENIOR DATA", "SAVE TRUE")
+                    seniorId =
+                        sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
+                    Repository().saveTrackingSettingsCarer(true, seniorId)
+                }
+                if (seniorIndex != sharedViewModel.currentSeniorIndex) {
+                    Log.d("SENIOR DATA", "SAVE FALSE")
+                    Repository().saveTrackingSettingsCarer(false, seniorId)
+                    seniorId =
+                        sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
+                    seniorIndex = sharedViewModel.currentSeniorIndex
+                }
+            }
+        })
+
 
 
         val firebaseAuth = FirebaseAuth.getInstance()
@@ -594,5 +620,14 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    override fun onDestroy() {
+        if (sharedViewModel.userFunctionFromLocalRepo == "Carer") {
+            Log.d("SENIOR DATA", "SAVE TRUE")
+            seniorId =
+                sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
+            Repository().saveTrackingSettingsCarer(false, seniorId)
+        }
+        super.onDestroy()
+    }
 
 }

@@ -150,6 +150,7 @@ class Repository {
                 val data = snapshot.getValue<HashMap<String, String>>()
                 if (data != null){
                     sharedViewModel.listOfAllConnectedUsersID.addAll(data.keys)
+                    sharedViewModel.hasListOfConnectedUsers.value = true
                     getCurrentSeniorData(sharedViewModel)
                     getListOfConnectedUsersNames(sharedViewModel)
                 }
@@ -170,6 +171,7 @@ class Repository {
                 val data = snapshot.getValue<HashMap<String, String>>()
                 if (data != null){
                     sharedViewModel.listOfAllConnectedUsersID.addAll(data.keys)
+                    sharedViewModel.hasListOfConnectedUsers.value = true
                     getListOfConnectedUsersNames(sharedViewModel)
                 }
             }
@@ -897,7 +899,7 @@ class Repository {
         }
     }
 
-    fun saveTrackingSettingsSenior(dataToSend: SeniorTrackingSettingsDao) {
+    fun saveTrackingSettingsSenior(seniorInSafeZone: Boolean?, isSeniorAware: Boolean?) {
         val path = FirebaseAuth.getInstance().currentUser!!.uid
 
         val reference = database.getReference("users")
@@ -907,7 +909,10 @@ class Repository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
-                    reference.setValue(dataToSend).await()
+                    if (seniorInSafeZone != null)
+                        reference.child("seniorInSafeZone").setValue(seniorInSafeZone).await()
+                    if (isSeniorAware != null)
+                        reference.child("isSeniorAware").setValue(isSeniorAware).await()
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -944,12 +949,13 @@ class Repository {
         }
     }
 
-    fun saveTrackingSettingsCarer(dataToSend: SeniorTrackingSettingsDao, currentSeniorId: String) {
+    fun saveTrackingSettingsCarer(dataToSend: Boolean, currentSeniorId: String) {
         val path = currentSeniorId
 
         val reference = database.getReference("users")
             .child(path)
             .child("trackingSettings")
+            .child("carerOpenApp")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {

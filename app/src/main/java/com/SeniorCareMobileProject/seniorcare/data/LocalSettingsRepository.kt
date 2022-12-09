@@ -50,6 +50,24 @@ class LocalSettingsRepository private constructor(application: Context) {
         editor.putBoolean("Fall_detection", boolean).apply()
     }
 
+    fun saveSeniorIsAware(boolean: Boolean){
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putBoolean("senior_aware", boolean).apply()
+    }
+
+    fun getSeniorIsAware(): Boolean {
+        return sharedPreferences.getBoolean("senior_safezone", false)
+    }
+
+    fun saveSeniorIsInSafeZone(boolean: Boolean){
+        val editor: SharedPreferences.Editor = sharedPreferences.edit()
+        editor.putBoolean("senior_aware", boolean).apply()
+    }
+
+    fun getSeniorIsInSafeZone(): Boolean {
+        return sharedPreferences.getBoolean("senior_safezone", false)
+    }
+
     fun clearRepository() {
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.clear().apply()

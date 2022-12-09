@@ -102,11 +102,13 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val userData: LiveData<User> = _userData
     val isNewUser: MutableLiveData<Boolean> = MutableLiveData(false)
     val functionLiveData: MutableLiveData<String> = MutableLiveData(userData.value?.function)
+    val hasListOfConnectedUsers = MutableLiveData<Boolean>()
     val listOfAllConnectedUsersID = mutableListOf<String>()
     val currentSeniorData: MutableLiveData<User> = MutableLiveData()
 
     val listOfConnectedUsers = mutableListOf<String>()
     var currentSeniorIndex = 0
+    var currentSeniorIndexObservable = MutableLiveData(0)
     var haveConnectedUsers = true
 
     // for pairing users

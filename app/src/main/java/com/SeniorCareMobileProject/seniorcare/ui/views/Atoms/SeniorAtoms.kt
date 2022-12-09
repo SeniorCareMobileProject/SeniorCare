@@ -176,6 +176,119 @@ fun SeniorButton(
     }
 }
 
+
+
+@Composable
+fun SeniorButtonWithAction(
+    navController: NavController,
+    text: String,
+    iconName: String,
+    rout: String,
+    color: String = "",
+    sharedViewModel: SharedViewModel,
+    action: () -> Unit?
+    /*
+    * @param[iconName] "" - no icon
+    * @param[color]:
+    *   "main" - purple
+    *   "red" - red
+    *   "came_home' - dark purple
+    *   "" - white
+    */
+) {
+    val backgroundColor: Color = when (color) {
+        "main" -> {
+            Color(0xFFcaaaf9)
+        }
+        "red" -> {
+            Color.Red
+        }
+        "came_home" -> {
+            Color(0xFFA670F0)
+        }
+        else -> {
+            Color.White
+        }
+    }
+
+    var iconId = -1
+    val context = LocalContext.current
+    if (iconName != "") {
+        iconId = remember(iconName) {
+            context.resources.getIdentifier(
+                iconName,
+                "drawable",
+                context.packageName
+            )
+        }
+    }
+
+
+    Surface(
+        shape = RoundedCornerShape(20.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .defaultMinSize(minHeight = 86.dp)
+            .clip(RoundedCornerShape(20.dp))
+//            .height(86.dp)
+            .clickable {
+                if ((rout != "") && (rout != "sign out")){
+                    action.invoke()
+                    navController.navigate(rout)
+                }
+                else if (rout == "sign out") {
+                    FirebaseAuth.getInstance().signOut()
+                    sharedViewModel.clearLocalRepository()
+                    val activity = context as Activity
+                    activity.finish()
+                    val intent = Intent(context, MainActivity::class.java)
+                    activity.startActivity(intent)
+                }
+                else inProgressToastView(context)
+            },
+        border = BorderStroke(1.dp, Color.Black),
+        color = backgroundColor
+    ) {
+        Row(
+            modifier = Modifier
+                .padding(horizontal = 29.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Column(
+                modifier = Modifier.weight(90f),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Text(
+                    text = text,
+                    color = Color(0xff070707),
+                    textAlign = TextAlign.Start,
+                    lineHeight = 36.sp,
+                    style = TextStyle(
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.Medium
+                    )
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(10f),
+                horizontalAlignment = Alignment.End
+            ) {
+                if (iconId != -1) {
+                    Icon(
+                        painter = painterResource(id = iconId),
+                        contentDescription = iconName,
+                        tint = Color.Black
+                    )
+                }
+            }
+
+        }
+    }
+}
+
 @Composable
 fun SeniorButtonNoIcon(
     navController: NavController,

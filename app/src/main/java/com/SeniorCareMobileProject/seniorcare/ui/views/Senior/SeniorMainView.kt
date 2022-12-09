@@ -16,9 +16,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorButton
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorButtonWithAction
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SosCascadeStartButton
 
 @Composable
@@ -59,13 +61,14 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 }
 
                 Column(modifier = Modifier.weight(1f)) {
-                    SeniorButton(
+                    SeniorButtonWithAction(
                         navController = navController,
                         text = comeHomeText,
                         iconName = "my_location",
                         rout = "SeniorGoingOutInfoScreen",
                         color = comeHomeColor,
-                        sharedViewModel = sharedViewModel
+                        sharedViewModel = sharedViewModel,
+                        {Repository().saveTrackingSettingsSenior(null, true)}
                     )
                 }
                 Column(modifier = Modifier.weight(1f)) {

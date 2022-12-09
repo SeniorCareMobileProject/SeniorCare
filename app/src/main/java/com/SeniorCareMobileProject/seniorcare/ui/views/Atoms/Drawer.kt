@@ -164,6 +164,7 @@ fun SeniorsList(
             }
             DrawerItem(selected = isSelected, onItemClick = {
                 sharedViewModel.currentSeniorIndex = index
+                sharedViewModel.currentSeniorIndexObservable.value = index
                 sharedViewModel.clearVariablesToChangeSenior()
                 navController.navigate("LoadingDataView")
                 // Close drawer
