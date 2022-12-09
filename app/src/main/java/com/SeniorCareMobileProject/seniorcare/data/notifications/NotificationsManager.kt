@@ -135,8 +135,8 @@ class NotificationsManager {
 
         val mBuilder = NotificationCompat.Builder(context!!, "CHANNEL_ID")
             .setSmallIcon(R.drawable.battery_4_bar)
-            .setContentTitle("Bateria telefonu seniora w niskim stanie!")
-            .setContentText("Senior $seniorName ma niski poziom baterii w swoim urządzeniu.")
+            .setContentTitle(context.getString(R.string.battery_notification_title))
+            .setContentText(context.getString(R.string.battery_notification_text,seniorName).toString())
             .setPriority(NotificationCompat.PRIORITY_MAX)
 
         val contentIntent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {

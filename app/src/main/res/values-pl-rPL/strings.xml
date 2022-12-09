@@ -84,4 +84,16 @@
     <string name="cancel">Anuluj</string>
     <string name="add">Dodaj</string>
     <string name="save">Zapisz</string>
+    <string name="name">Nazwa</string>
+    <string name="time_hour">Godzina</string>
+    <string name="sos_contact_name">Nazwa kontaktu</string>
+    <string name="sos_phone_number">Numer telefonu</string>
+    <string name="drawer_logged_in">Zalogowany:</string>
+    <string name="drawer_seniors">Podopieczni:</string>
+    <string name="drawer_add_senior">Dodaj podopiecznego</string>
+    <string name="about">O aplikacji</string>
+    <string name="log_out">Wyloguj się</string>
+    <string name="battery_notification_title">Bateria telefonu seniora w niskim stanie!</string>
+    <string name="battery_notification_text">Senior %1$s ma niski poziom baterii w swoim urządzeniu.</string>
+    <string name="notifications_text">Przypomnienie o leku: %1$s</string>
 </resources>

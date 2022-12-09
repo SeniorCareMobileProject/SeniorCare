@@ -92,4 +92,16 @@
     <string name="cancel">Cancel</string>
     <string name="add">Add</string>
     <string name="save">Save</string>
+    <string name="name">Name</string>
+    <string name="time_hour">Time</string>
+    <string name="sos_contact_name">Contact name</string>
+    <string name="sos_phone_number">Phone number</string>
+    <string name="drawer_logged_in">Logged in:</string>
+    <string name="drawer_seniors">Seniors:</string>
+    <string name="drawer_add_senior">Add senior</string>
+    <string name="about">About</string>
+    <string name="log_out">Log out</string>
+    <string name="battery_notification_title">Senior\'s phone battery is low!</string>
+    <string name="battery_notification_text">Phone battery of senior %1$s is low.</string>
+    <string name="notifications_text">Medication reminder: %1$s</string>
 </resources>
