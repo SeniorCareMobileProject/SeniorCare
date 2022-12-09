@@ -97,10 +97,10 @@
     <string name="battery_notification_title">Bateria telefonu seniora w niskim stanie!</string>
     <string name="battery_notification_text">Senior %1$s ma niski poziom baterii w swoim urządzeniu.</string>
     <string name="notifications_text">Przypomnienie o leku: %1$s</string>
-    <string name="Lukasz_Koziej">Łukasz_Koziej</string>
+    <string name="Lukasz_Koziej">Łukasz Koziej</string>
     <string name="Adrian_Olkowicz">Adrian Olkowicz</string>
-    <string name="Andrei_Strachynski">Michał Dudziak</string>
-    <string name="Michal_Dudziak">Andrei Strachynski</string>
+    <string name="Andrei_Strachynski">Andrei Strachynski</string>
+    <string name="Michal_Dudziak">Michał Dudziak</string>
     <string name="application_information">Informacje o aplikacji</string>
     <string name="battery_status_widget">Stan baterii:</string>
     <string name="recently_taken_medication_widget">Ostatnio przyjęty lek:</string>
@@ -116,4 +116,5 @@
     <string name="carers_list">Lista opiekunów</string>
     <string name="enter_pairing_code">Wprowadź poniższą liczbę na ekranie parowania podopiecznego.</string>
     <string name="success">Udało się!</string>
+    <string name="share_medical_info">Udostępnij dane medyczne</string>
 </resources>

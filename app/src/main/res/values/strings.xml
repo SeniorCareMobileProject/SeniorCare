@@ -125,4 +125,5 @@
     <string name="carers_list">Carers list</string>
     <string name="enter_pairing_code">Enter the number below on the senior pairing screen.</string>
     <string name="success">Success</string>
+    <string name="share_medical_info">Share medical information</string>
 </resources>
