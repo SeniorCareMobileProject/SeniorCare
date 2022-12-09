@@ -18,6 +18,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -72,7 +74,7 @@ class MainActivity : ComponentActivity() {
         requestForegroundPermissions()
 
         sharedViewModel.getUserFunctionFromLocalRepo()
-        sharedViewModel.hasUserFunction.observe(this, Observer {
+        sharedViewModel.hasUserFunction.observeOnce(this, Observer<Boolean?>{
             sharedViewModel.getUserFunctionFromLocalRepo()
             if (sharedViewModel.userFunctionFromLocalRepo == "Senior") {
                 function = "Senior"
@@ -95,6 +97,7 @@ class MainActivity : ComponentActivity() {
                     startService(this)
                 }
             }
+
         })
 
 
@@ -520,4 +523,14 @@ class MainActivity : ComponentActivity() {
         super.onDestroy()
     }
 
+}
+
+
+fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+    observeForever(object : Observer<T> {
+        override fun onChanged(t: T?) {
+            observer.onChanged(t)
+            removeObserver(this)
+        }
+    })
 }

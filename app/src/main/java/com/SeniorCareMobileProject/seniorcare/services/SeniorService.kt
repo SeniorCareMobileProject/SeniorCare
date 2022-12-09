@@ -182,6 +182,7 @@ class SeniorService: Service() {
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
+            .setSilent(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
     }
@@ -197,7 +198,7 @@ class SeniorService: Service() {
         private const val NOTIFICATION_CHANNEL_ID = "Location Channel"
         private const val CHANNEL_NAME = "Location Service"
         private const val DESCRIPTION = "Location Notification Channel"
-        private const val NOTIFY_ID = 200
+        private const val NOTIFY_ID = 294
     }
 }
 
