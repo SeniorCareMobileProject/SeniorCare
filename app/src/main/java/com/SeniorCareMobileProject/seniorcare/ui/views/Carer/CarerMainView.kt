@@ -27,7 +27,6 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.Drawer
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.StatusWidget
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBar
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.datetime.plus
 import kotlinx.datetime.toKotlinLocalDate
 import kotlinx.datetime.toKotlinLocalTime
 
@@ -160,7 +159,7 @@ fun CarerMainView(
 
                         StatusWidget(
                             navController = navController,
-                            title = "Stan baterii:",
+                            title = context.getString(R.string.battery_status_widget),
                             text = "${sharedViewModel.batteryPct.value}%",
                             iconName = "battery_4_bar"
                         )
@@ -169,7 +168,7 @@ fun CarerMainView(
 
                         StatusWidget(
                             navController = navController,
-                            title = "Ostatnio przyjęty lek:",
+                            title = context.getString(R.string.recently_taken_medication_widget),
                             text = "${sharedViewModel.latestNotification.value!!.name} - ${sharedViewModel.latestNotification.value!!.timeList[0]}",
                             iconName = "medication"
                         )
@@ -188,22 +187,14 @@ fun CarerMainView(
                                 navController = navController,
                                 title = context.getString(R.string.upcoming_event),
                                 text =
-                                firstEvent.eventName
-                                        + "\n"
-                                        + getDescriptionOrEmpty(firstEvent.eventDescription)
-                                        + context.getString(R.string.date)
-                                        + " "
-                                        + firstEvent.date
-                                        + " "
-                                        + context.getString(R.string.hyphen)
-                                        + " "
-                                        + context.getString(R.string.time)
-                                        + " "
-                                        + firstEvent.startTime
-                                        + " "
-                                        + context.getString(R.string.hyphen)
-                                        + " "
-                                        + firstEvent.endTime,
+                                context.getString(
+                                    R.string.upcoming_event_text,
+                                    firstEvent.eventName,
+                                    getDescriptionOrEmpty(firstEvent.eventDescription),
+                                    firstEvent.date,
+                                    firstEvent.startTime,
+                                    firstEvent.endTime
+                                ),
                                 iconName = "calendar_month"
                             )
                         }
@@ -212,7 +203,10 @@ fun CarerMainView(
                         Spacer(modifier = Modifier.weight(spacedByWeight))
 
                         Text(
-                            "Ostatnia aktualizacja danych: ${sharedViewModel.lastUpdateTime}",
+                            context.getString(
+                                R.string.last_data_update_widget,
+                                sharedViewModel.lastUpdateTime
+                            ),
                             fontWeight = FontWeight.Thin,
                             fontSize = 12.sp
                         )

@@ -30,6 +30,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MainActivity
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
@@ -153,7 +154,7 @@ fun PairingScreenCodeView(navController: NavController, sharedViewModel: SharedV
                 .padding(horizontal = 43.dp)
         ) {
             Text(
-                text = "Wprowadź poniższą liczbę na ekranie parowania podopiecznego.",
+                text = context.getString(R.string.enter_pairing_code),
                 fontWeight = FontWeight.Medium
             )
         }
