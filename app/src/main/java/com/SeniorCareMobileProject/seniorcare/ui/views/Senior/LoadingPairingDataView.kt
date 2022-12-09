@@ -11,9 +11,11 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.PairingData
 import com.SeniorCareMobileProject.seniorcare.data.dao.User
@@ -50,7 +52,7 @@ fun LoadingPairingDataView(navController: NavController, sharedViewModel: Shared
                     navController.navigate("PairingScreenCodeInputScreen"){
                         popUpTo("LoadingPairingDataView") {inclusive = true}
                     }
-                    Toast.makeText(context, "Incorrect pairing code", Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, context.getString(R.string.incorrect_pairing_code), Toast.LENGTH_LONG).show()
                 }
             }
         }

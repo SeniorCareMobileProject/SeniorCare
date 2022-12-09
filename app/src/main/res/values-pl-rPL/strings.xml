@@ -147,4 +147,20 @@
     <string name="email">Email</string>
     <string name="carer">Opiekun</string>
     <string name="senior">Podopieczny</string>
+    <string name="incorrect_pairing_code">Niepoprawny kod parowania</string>
+    <string name="type_pairing_code">Wprowadź liczbę widoczną na ekranie telefonu opiekuna</string>
+    <string name="type_pairing_code_2">Wpisz kod parowania opiekuna</string>
+    <string name="pairing_code">Kod parowania</string>
+    <string name="confirm_pairing">Czy chcesz sparować konto z użytkownikiem:</string>
+    <string name="paired_with_user">Sparowano z użytkownikiem:</string>
+    <string name="i_came_home">Wróciłem do domu</string>
+    <string name="going_out_text">Poinformowaliśmy twojego opiekuna o wyjściu z domu. Proszę wciśnij poniższy przycisk w momencie, gdy wrócisz do swojego domu.</string>
+    <string name="welcome">Witaj</string>
+    <string name="fall_detector">Detektor upadku</string>
+    <string name="add_carer">Dodaj opiekuna</string>
+    <string name="turn_on_off">Włącz / Wyłącz</string>
+    <string name="another_call_in">W ciągu 10 sekund wykona się kolejne połączenie</string>
+    <string name="stop_calling">Zakończ połączenia</string>
+    <string name="sos">SOS</string>
+    <string name="i_am_going_out">Wychodzę z domu</string>
 </resources>

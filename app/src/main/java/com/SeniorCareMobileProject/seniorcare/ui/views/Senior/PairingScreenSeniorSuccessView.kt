@@ -17,12 +17,14 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -144,7 +146,7 @@ fun PairingScreenSeniorSuccessView(navController: NavController, sharedViewModel
                 .padding(horizontal = 82.dp)
         ) {
             Text(
-                text = "Udało się!",
+                text = stringResource(id = R.string.success),
                 color = MaterialTheme.colors.primary,
                 fontSize = 44.sp,
                 fontWeight = FontWeight.Medium
@@ -159,7 +161,7 @@ fun PairingScreenSeniorSuccessView(navController: NavController, sharedViewModel
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Sparowano z użytkownikiem:",
+                text = stringResource(id = R.string.paired_with_user),
                 fontWeight = FontWeight.Normal
             )
             Text(

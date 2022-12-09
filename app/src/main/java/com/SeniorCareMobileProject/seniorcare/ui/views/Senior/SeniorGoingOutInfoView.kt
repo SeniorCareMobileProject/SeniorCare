@@ -13,12 +13,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.TemplateView3
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
@@ -58,7 +60,7 @@ fun SeniorGoingOutInfoView(navController: NavController, sharedViewModel: Shared
                             .padding(vertical = 44.dp),
                     ) {
                         Text(
-                            text = "Poinformowaliśmy twojego opiekuna o wyjściu z domu. Proszę wciśnij poniższy przycisk w momencie, gdy wrócisz do swojego domu.",
+                            text = stringResource(id = R.string.going_out_text),
                             fontSize = 28.sp, fontWeight = FontWeight.Medium
                         )
                     }
@@ -68,7 +70,7 @@ fun SeniorGoingOutInfoView(navController: NavController, sharedViewModel: Shared
 
                 SeniorButtonNoIcon(
                     navController = navController,
-                    text = "Wróciłem do domu",
+                    text = stringResource(id = R.string.i_came_home),
                     rout = "SeniorMainScreen",
                     color = "came_home"
                 )
