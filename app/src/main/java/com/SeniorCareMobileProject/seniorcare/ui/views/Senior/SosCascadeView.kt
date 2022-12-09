@@ -24,16 +24,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 @Composable
 fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewModel) {
     Scaffold(topBar = {
-        SeniorTopBar(
-            navController = navController,
-            sharedViewModel = sharedViewModel,
-            isCustomOnClick = true,
-            customOnClick = {
-                sharedViewModel.sosCascadeIndex.value = -3
-                navController.navigateUp()
-                sharedViewModel.sosCascadeTimer.cancel()
-            }
-        )
+
     }) {
         Column(
             modifier = Modifier

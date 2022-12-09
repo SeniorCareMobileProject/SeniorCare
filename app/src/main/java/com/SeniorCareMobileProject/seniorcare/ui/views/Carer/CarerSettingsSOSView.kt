@@ -35,7 +35,7 @@ fun CarerSettingsSOSView(navController: NavController, sharedViewModel: SharedVi
                 context.getString(R.string.add_number_btn_text),
                 setShowDialog = { showDialog.value = it }
             )
-            SettingsItemWithIcon(
+            SOSSettingsItemWithIcon(
                 navController,
                 sharedViewModel,
                 context.getString(R.string.carers_list),

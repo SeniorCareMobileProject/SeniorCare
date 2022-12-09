@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -139,7 +140,7 @@ fun CalendarEventItemView(
                                 ) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
-                                        text = "Zmień",
+                                        text = context!!.getString(R.string.change),
                                         color = MaterialTheme.colors.primary,
                                         textAlign = TextAlign.Center
                                     )
@@ -164,7 +165,7 @@ fun CalendarEventItemView(
                                 ) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
-                                        text = "Usuń",
+                                        text = context!!.getString(R.string.delete),
                                         color = Color.Red,
                                         textAlign = TextAlign.Center
                                     )
@@ -257,7 +258,7 @@ fun AddEventToCalendarDialogView(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(18.dp)
             ) {
-                Text(text = "Dodaj nowe wydarzenie do kalendarza")
+                Text(text = context!!.getString(R.string.add_new_calendar_event))
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -265,7 +266,7 @@ fun AddEventToCalendarDialogView(
                     TextField(
                         value = eventName.value,
                         onValueChange = { newText -> eventName.value = newText },
-                        placeholder = { Text("Nazwa wydarzenia") },
+                        placeholder = { Text(context!!.getString(R.string.calendar_event_name)) },
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color.White,
                             focusedIndicatorColor = Color.Transparent,
@@ -302,7 +303,7 @@ fun AddEventToCalendarDialogView(
                     TextField(
                         value = eventDescription.value!!,
                         onValueChange = { newText -> eventDescription.value = newText },
-                        placeholder = { Text("Opis wydarzenia") },
+                        placeholder = { Text(context!!.getString(R.string.event_description)) },
                         colors = TextFieldDefaults.textFieldColors(
                             backgroundColor = Color.White,
                             focusedIndicatorColor = Color.Transparent,
@@ -331,14 +332,14 @@ fun AddEventToCalendarDialogView(
 
                 Spacer(modifier = Modifier.height(1.dp))
 
-                Text(text = "Wybierz czas")
+                Text(text = context!!.getString(R.string.choose_time_span))
                 Column() {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "Początek")
+                            Text(text = context!!.getString(R.string.beginning))
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 modifier = Modifier
@@ -351,7 +352,7 @@ fun AddEventToCalendarDialogView(
                             )
                         }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                            Text(text = "Koniec")
+                            Text(text = context!!.getString(R.string.end))
                             Spacer(modifier = Modifier.height(6.dp))
                             Text(
                                 modifier = Modifier
@@ -385,7 +386,7 @@ fun AddEventToCalendarDialogView(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    SmallButton("Anuluj", onClick = {
+                    SmallButton(context.getString(R.string.cancel), onClick = {
                         sharedViewModel.modifiedEvent = emptyEvent.copy()
                         sharedViewModel.createNewEvent.value = false
                         sharedViewModel.updateEvent.value = false
@@ -395,7 +396,7 @@ fun AddEventToCalendarDialogView(
                     })
 
                     if (new) {
-                        SmallButton("Dodaj", onClick = {
+                        SmallButton(context!!.getString(R.string.add), onClick = {
                             addEventFieldsCheck(
                                 titleError,
                                 descriptionError,
@@ -419,7 +420,7 @@ fun AddEventToCalendarDialogView(
                             }
                         })
                     } else {
-                        SmallButton("Zapisz", onClick = {
+                        SmallButton(context!!.getString(R.string.save), onClick = {
                             sharedViewModel.modifiedEvent = sharedViewModel.newEvent.copy()
 
                             sharedViewModel.newEvent.startTime = mTimeStart.value

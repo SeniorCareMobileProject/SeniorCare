@@ -25,6 +25,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MyApplication
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -59,7 +61,7 @@ fun NewContactPopupView(setShowDialog: (Boolean) -> Unit, sharedViewModel: Share
                         backgroundColor = Color.White,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
-                    placeholder = { Text(text = "Nazwa kontaktu") }
+                    placeholder = { Text(text = MyApplication.context!!.getString(R.string.sos_contact_name)) }
                 )
                 TextField(
                     value = contactNumber.value,
@@ -74,16 +76,16 @@ fun NewContactPopupView(setShowDialog: (Boolean) -> Unit, sharedViewModel: Share
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number
                     ),
-                    placeholder = { Text(text = "Numer telefonu") }
+                    placeholder = { Text(text = MyApplication.context!!.getString(R.string.sos_phone_number)) }
                 )
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    PopupButton("Anuluj",setShowDialog)
+                    PopupButton(MyApplication.context!!.getString(R.string.cancel),setShowDialog)
                     PopupButtonAddNumber(
-                        text = "Dodaj",
+                        text = MyApplication.context!!.getString(R.string.add),
                         sharedViewModel = sharedViewModel,
                         name = contactName.value.text,
                         number = contactNumber.value.text,
