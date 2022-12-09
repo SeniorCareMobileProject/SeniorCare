@@ -358,13 +358,13 @@ class SharedViewModel() : ViewModel(), KoinComponent {
         localSettingsRepository.clearRepository()
     }
 
-    fun createShareMedInfoIntent(): Intent? {
+    fun createShareMedInfoIntent(message: String): Intent? {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, medInfo.value.toString())
             type = "text/plain"
         }
-        return Intent.createChooser(sendIntent, "Udostępnij dane medyczne")
+        return Intent.createChooser(sendIntent, message)
     }
 
     // CALENDAR EVENTS - FIREBASE

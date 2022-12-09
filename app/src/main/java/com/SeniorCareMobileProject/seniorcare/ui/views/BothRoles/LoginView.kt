@@ -83,7 +83,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 .padding(horizontal = 24.dp)
                 .fillMaxHeight()
         ) {
-            Text(text = "Logowanie", color = MaterialTheme.colors.primary, style = h1)
+            Text(stringResource(R.string.logging), color = MaterialTheme.colors.primary, style = h1)
         }
 
         Column(
@@ -98,16 +98,16 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                 verticalArrangement = Arrangement.spacedBy(29.dp)
             ) {
                 InputFieldLabelIcon(
-                    text = "Twój adres email",
+                    stringResource(R.string.your_email_address),
                     onValueChange = {},
-                    fieldLabel = "Email",
+                    fieldLabel = stringResource(R.string.email),
                     iconName = "alternate_email",
                     viewModelVariable = sharedViewModel.email
                 )
                 InputFieldLabelIcon(
-                    text = "Twoje hasło",
+                    stringResource(R.string.your_password),
                     onValueChange = {},
-                    fieldLabel = "Hasło",
+                    fieldLabel = stringResource(R.string.password),
                     iconName = "lock",
                     viewModelVariable = sharedViewModel.password,
                     isPassword = true
@@ -120,7 +120,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                     .padding(top = 8.dp)
             ) {
                 Text(
-                    text = "Zapomniałeś hasło?",
+                    stringResource(R.string.forgot_password),
                     fontSize = 16.sp,
                     color = MaterialTheme.colors.primary,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
@@ -138,7 +138,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                     .padding(horizontal = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(30.dp)
             ) {
-                LoginButton(navController, "Zaloguj się", sharedViewModel)
+                LoginButton(navController, stringResource(id = R.string.log_in), sharedViewModel)
                 Divider(color = Color.Black, thickness = 1.dp)
                 GoogleLoginInButton(
                     navController,
@@ -156,9 +156,9 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Nie masz konta?", modifier = Modifier.padding(horizontal = 8.dp))
+                    Text(stringResource(id = R.string.dont_have_account), modifier = Modifier.padding(horizontal = 8.dp))
                     Text(
-                        text = "Zarejestruj się",
+                        stringResource(id = R.string.sign_in),
                         fontSize = 16.sp,
                         color = MaterialTheme.colors.primary,
                         style = TextStyle(textDecoration = TextDecoration.Underline),
@@ -180,7 +180,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
             }
         }
         LoadingState.Status.FAILED -> {
-            Toast.makeText(context, "Error with signing in", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, stringResource(R.string.error_with_signing_in), Toast.LENGTH_LONG).show()
         }
         else -> {}
     }

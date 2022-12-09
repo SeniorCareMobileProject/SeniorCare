@@ -15,12 +15,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.TemplateView3
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
@@ -50,7 +52,7 @@ fun SeniorCarersListView(navController: NavController, sharedViewModel: SharedVi
 
         ) {
             Text(
-                text = "Lista opiekunów",
+                text = stringResource(id = R.string.carers_list),
                 fontWeight = FontWeight.Medium,
                 fontSize = 36.sp,
             )

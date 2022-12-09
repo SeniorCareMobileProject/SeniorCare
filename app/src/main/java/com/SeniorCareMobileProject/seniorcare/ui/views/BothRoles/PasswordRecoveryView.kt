@@ -18,6 +18,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
@@ -62,8 +64,8 @@ fun PasswordRecoveryView(navController: NavController, sharedViewModel: SharedVi
                 .padding(top = 50.dp)
                 .padding(horizontal = 24.dp)
         ) {
-            Text(text = "Zapomniałeś hasła?", color = MaterialTheme.colors.primary, style = h1)
-            Text(text = "Zresetuj hasło przy pomocy maila, na którego zarejestrowałeś konto.")
+            Text(text = stringResource(R.string.forgot_password), color = MaterialTheme.colors.primary, style = h1)
+            Text(text = stringResource(R.string.reset_password_witn_mail))
         }
 
         Column(
@@ -73,7 +75,7 @@ fun PasswordRecoveryView(navController: NavController, sharedViewModel: SharedVi
             verticalArrangement = Arrangement.spacedBy(29.dp)
         ) {
             InputFieldLabelIcon(
-                text = "Twój adres email",
+                text = stringResource(R.string.your_email_address),
                 onValueChange = {},
                 fieldLabel = "Email",
                 iconName = "alternate_email",
@@ -85,7 +87,7 @@ fun PasswordRecoveryView(navController: NavController, sharedViewModel: SharedVi
             .padding(top = 30.dp)
             .padding(horizontal = 12.dp)
         ) {
-            ForgotPasswordButton(navController, "Zatwierdź", "PasswordRecoveryEmailScreen", sharedViewModel, context)
+            ForgotPasswordButton(navController, stringResource(R.string.confirm), "PasswordRecoveryEmailScreen", sharedViewModel, context)
         }
     }
 }
@@ -99,7 +101,7 @@ fun ForgotPasswordButton(navController: NavController, text: String, rout: Strin
                 navController.navigate(rout)
             }
             else {
-                Toast.makeText(context, "Please type valid email address", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.type_valid_email), Toast.LENGTH_LONG).show()
             }
                   },
         shape = RoundedCornerShape(20.dp),

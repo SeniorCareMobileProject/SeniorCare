@@ -12,10 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -45,8 +47,8 @@ fun SignUpVerificationCodeView(navController: NavController, sharedViewModel: Sh
                 .padding(top = 50.dp)
                 .padding(horizontal = 24.dp)
         ) {
-            Text(text = "Rejestracja", color = MaterialTheme.colors.primary, style = h1)
-            Text(text = "Wybierz rolę, która będzie należać do tego konta.")
+            Text(text = stringResource(id = R.string.register), color = MaterialTheme.colors.primary, style = h1)
+            Text(text = stringResource(id = R.string.choose_function))
         }
 
         Column(modifier = Modifier
@@ -55,7 +57,7 @@ fun SignUpVerificationCodeView(navController: NavController, sharedViewModel: Sh
             InputFieldLabelIcon(
                 text = "Ex: 123456",
                 onValueChange = {},
-                fieldLabel = "Kod weryfikacyjny",
+                fieldLabel = stringResource(id = R.string.verification_code),
                 iconName = "",
                 viewModelVariable = mutableStateOf("")
             )
@@ -64,7 +66,7 @@ fun SignUpVerificationCodeView(navController: NavController, sharedViewModel: Sh
         Column(modifier = Modifier
             .padding(top = 40.dp)
             .padding(horizontal = 12.dp)) {
-            TextFilledButton(navController, "Zarejestruj", "")
+            TextFilledButton(navController, stringResource(id = R.string.sign_in), "")
         }
     }
 }

@@ -17,6 +17,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -146,7 +148,7 @@ fun PairingScreenCodeInputView(navController: NavController, sharedViewModel: Sh
                 .padding(horizontal = 43.dp)
         ) {
             Text(
-                text = "Wprowadź liczbę widoczną na ekranie telefonu opiekuna",
+                text = stringResource(id = R.string.type_pairing_code),
                 fontWeight = FontWeight.Medium
             )
         }
@@ -158,9 +160,9 @@ fun PairingScreenCodeInputView(navController: NavController, sharedViewModel: Sh
                 .padding(horizontal = 12.dp)
         ) {
             InputFieldLabelIcon(
-                text = "Wpisz kod parowania opiekuna",
+                text = stringResource(id = R.string.type_pairing_code_2),
                 onValueChange = {},
-                "Kod parowania",
+                stringResource(id = R.string.pairing_code),
                 "",
                 viewModelVariable = sharedViewModel.codeInput
             )

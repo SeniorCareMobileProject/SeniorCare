@@ -10,6 +10,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -17,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
 import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -45,7 +47,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = "Witaj ${sharedViewModel.userData.value?.firstName}",
+                    text = stringResource(id = R.string.welcome) + "${sharedViewModel.userData.value?.firstName}",
                     fontWeight = FontWeight.Medium,
                     fontSize = 36.sp,
                     color = MaterialTheme.colors.primary,
@@ -56,10 +58,10 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 val comeHomeText: String
                 if (/* wyszedł z domu */ false) {
                     comeHomeColor = "came_home"
-                    comeHomeText = "Wróciłem do domu"
+                    comeHomeText = stringResource(id = R.string.i_came_home)
                 } else {
                     comeHomeColor = "main"
-                    comeHomeText = "Wychodzę z domu"
+                    comeHomeText = stringResource(id = R.string.i_am_going_out)
                 }
                 var context = LocalContext.current
                 Column(modifier = Modifier.weight(1f)) {
@@ -79,7 +81,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 Column(modifier = Modifier.weight(1f)) {
                     SeniorButton(
                         navController = navController,
-                        text = "Informacje medyczne",
+                        text = stringResource(id = R.string.medical_info),
                         iconName = "info",
                         rout = "SeniorMedicalInfoScreen",
                         color = "main",
@@ -89,7 +91,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 Column(modifier = Modifier.weight(1f)) {
                     SeniorButton(
                         navController = navController,
-                        text = "Kalendarz",
+                        text = stringResource(id = R.string.calendar),
                         iconName = "calendar_month",
                         rout = "SeniorCalendarScreen",
                         color = "main",
@@ -99,7 +101,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 Column(modifier = Modifier.weight(1f)) {
                     SeniorButton(
                         navController = navController,
-                        text = "Detektor upadku",
+                        text = stringResource(id = R.string.fall_detector),
                         iconName = "elderly",
                         rout = "SettingsFallDetectorScreen",
                         color = "main",
@@ -124,7 +126,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 Column(modifier = Modifier.weight(1f)) {
                     SosCascadeStartButton(
                         navController = navController,
-                        text = "SOS",
+                        text = stringResource(id = R.string.sos),
                         iconName = "clear",
                         sharedViewModel = sharedViewModel,
                         color = "red",
@@ -134,7 +136,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
                 Column(modifier = Modifier.weight(1f)) {
                     SeniorButton(
                         navController = navController,
-                        text = "Ustawienia",
+                        text = stringResource(id = R.string.settings),
                         iconName = "settings",
                         rout = "SeniorSettingsScreen",
                         sharedViewModel = sharedViewModel

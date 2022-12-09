@@ -54,7 +54,7 @@ fun Header() {
             horizontalAlignment = Alignment.CenterHorizontally,
 
             ) {
-            Text(text = "Dane medyczne", fontSize = 20.sp, fontWeight = FontWeight.Medium)
+            Text(text = stringResource(id = R.string.medical_info), fontSize = 20.sp, fontWeight = FontWeight.Medium)
         }
 
 

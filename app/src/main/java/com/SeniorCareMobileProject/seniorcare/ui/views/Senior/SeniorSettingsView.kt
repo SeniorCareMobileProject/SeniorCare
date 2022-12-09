@@ -7,12 +7,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorButton
@@ -35,7 +37,7 @@ fun SeniorSettingsView(navController: NavController, sharedViewModel: SharedView
 
         ) {
             Text(
-                text = "Ustawienia",
+                text = stringResource(id = R.string.settings),
                 fontWeight = FontWeight.Medium,
                 fontSize = 36.sp,
             )
@@ -47,28 +49,28 @@ fun SeniorSettingsView(navController: NavController, sharedViewModel: SharedView
 
                 SeniorButton(
                     navController = navController,
-                    text = "Dodaj opiekuna",
+                    text = stringResource(id = R.string.add_carer),
                     iconName = "add_circle",
                     rout = "PairingScreenCodeInputScreen",
                     sharedViewModel = sharedViewModel
                 )
                 SeniorButton(
                     navController = navController,
-                    text = "Detektor upadku",
+                    text = stringResource(id = R.string.fall_detector),
                     iconName = "elderly",
                     rout = "SettingsFallDetectorScreen",
                     sharedViewModel = sharedViewModel
                 )
                 SeniorButton(
                     navController = navController,
-                    text = "Lista opiekunów",
+                    text = stringResource(id = R.string.carers_list),
                     iconName = "format_list_bulleted",
                     rout = "SeniorCarersListScreen",
                     sharedViewModel = sharedViewModel
                 )
                 SeniorButton(
                     navController = navController,
-                    text = "Wyloguj się",
+                    text = stringResource(id = R.string.log_out),
                     iconName = "logout",
                     rout = "sign out",
                     sharedViewModel = sharedViewModel
