@@ -88,7 +88,7 @@ class SeniorService: Service() {
             changeLocationConfiguration(5, 3, 10)
             return
         }
-        if (!seniorTrackingSettingsDao.seniorIsAware && !seniorTrackingSettingsDao.seniorInSafeZone){
+        if (!seniorTrackingSettingsDao.isSeniorAware && !seniorTrackingSettingsDao.seniorInSafeZone){
             changeLocationConfiguration(5, 3, 10)
             return
         }
