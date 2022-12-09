@@ -75,7 +75,7 @@ fun LoginView(navController: NavController, sharedViewModel: SharedViewModel) {
             modifier = Modifier
                 .width(48.dp)
                 .height(48.dp)
-                .clickable { navController.navigate(NavigationScreens.ChooseLoginMethodScreen.name) }
+                .clickable { navController.navigateUp() }
         )
 
         Column(

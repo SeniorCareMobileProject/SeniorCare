@@ -272,6 +272,9 @@ class Repository {
                     if (user.battery != null) {
                         sharedViewModel.batteryPct.value = user.battery
                     }
+                    if (user.latestNotification != null){
+                        sharedViewModel.latestNotification.value = user.latestNotification
+                    }
                     //getSeniorLocation(sharedViewModel)
                     sharedViewModel._currentSeniorDataStatus.postValue(Resource.Success(sharedViewModel.currentSeniorData.value!!))
                 }
@@ -292,7 +295,7 @@ class Repository {
     fun createPairingCodeAndWriteToFirebase(sharedViewModel: SharedViewModel){
         val pairingCodesReference = database.reference.child("pairing").child("codes")
         pairingCodesReference.get().addOnSuccessListener {
-            if (it != null){
+            if (it.value != null){
                 val allCodesList = it.getValue<HashMap<String, String>>()
                 val allCodesString = allCodesList!!.keys
                 val allCodes = allCodesString.map { string -> string.toInt()}
@@ -327,6 +330,9 @@ class Repository {
                 pairingCodesReference
                     .child(uniqueCode.toString())
                     .setValue(FirebaseAuth.getInstance().currentUser?.uid)
+
+                sharedViewModel.pairingCode.value = uniqueCode.toString()
+
                 // WRITE USER DATA FOR PAIRING TO FIREBASE
                 val userData = sharedViewModel.userData
                 val pairingData = PairingData(
@@ -808,6 +814,23 @@ class Repository {
         awaitClose{
             //remove listener here
             reference.removeEventListener(listener)
+        }
+    }
+
+    fun saveLatestNotification(notificationItem: NotificationItem) {
+        val reference = database.reference.child("users")
+            .child(FirebaseAuth.getInstance().currentUser!!.uid)
+            .child("latestNotification")
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    reference.setValue(notificationItem).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveLatestNotification", e.message.toString())
+                }
+            }
         }
     }
 

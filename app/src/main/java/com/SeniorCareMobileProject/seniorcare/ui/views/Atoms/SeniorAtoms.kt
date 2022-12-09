@@ -91,19 +91,20 @@ fun SeniorButton(
             .clip(RoundedCornerShape(20.dp))
 //            .height(86.dp)
             .clickable {
-                if ((rout != "") && (rout != "sign out")){
+                if ((rout != "") && (rout != "sign out")) {
                     navController.navigate(rout)
-                }
-                else if (rout == "sign out") {
-                    FirebaseAuth.getInstance().signOut()
+                } else if (rout == "sign out") {
+                    FirebaseAuth
+                        .getInstance()
+                        .signOut()
                     sharedViewModel.clearLocalRepository()
                     val activity = context as Activity
                     activity.finish()
                     val intent = Intent(context, MainActivity::class.java)
                     activity.startActivity(intent)
                 }
-                else inProgressToastView(context)
-                       },
+                //else inProgressToastView(context)
+            },
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor
     ) {

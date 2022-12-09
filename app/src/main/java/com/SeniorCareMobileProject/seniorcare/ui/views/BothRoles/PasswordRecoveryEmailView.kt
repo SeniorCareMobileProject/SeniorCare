@@ -53,7 +53,7 @@ fun PasswordRecoveryEmailView(navController: NavController, sharedViewModel: Sha
             modifier = Modifier
                 .width(48.dp)
                 .height(48.dp)
-                .clickable { navController.navigate(NavigationScreens.SignUpEmailScreen.name) }
+                .clickable { navController.navigateUp() }
         )
 
         Column(

@@ -69,7 +69,12 @@ fun ItemsList(items: List<List<String>>) {
 }
 
 @Composable
-fun SeniorTopBar(navController: NavController) {
+fun SeniorTopBar(
+    navController: NavController,
+    sharedViewModel: SharedViewModel,
+    isCustomOnClick: Boolean = false,
+    customOnClick: () -> Unit = {}
+) {
     TopAppBar(
         modifier = Modifier
             .fillMaxWidth()
@@ -82,7 +87,13 @@ fun SeniorTopBar(navController: NavController) {
             modifier = Modifier
                 .width(48.dp)
                 .height(48.dp)
-                .clickable { navController.navigate(NavigationScreens.SeniorMainScreen.name) },
+                .clickable {
+                    if (isCustomOnClick) {
+                        customOnClick()
+                    } else {
+                        navController.navigateUp()
+                    }
+                },
             tint = Color.Black,
         )
         Row(
@@ -91,7 +102,7 @@ fun SeniorTopBar(navController: NavController) {
             horizontalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "Piotr Kowalski",
+                text = "${sharedViewModel._userData.value?.firstName!!} ${sharedViewModel._userData.value?.lastName!!}",
                 fontSize = 20.sp,
                 fontWeight = FontWeight.Medium,
                 color = Color.Black
@@ -118,7 +129,12 @@ fun SeniorMedicalInfoView(navController: NavController, sharedViewModel: SharedV
         listOf(stringResource(R.string.others), sharedViewModel.medInfo.value!!.others),
     )
 
-    Scaffold(topBar = { SeniorTopBar(navController = navController) }) {
+    Scaffold(topBar = {
+        SeniorTopBar(
+            navController = navController,
+            sharedViewModel = sharedViewModel
+        )
+    }) {
         Column(
             modifier = Modifier
                 .fillMaxWidth()

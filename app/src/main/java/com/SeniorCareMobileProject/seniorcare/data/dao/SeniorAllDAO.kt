@@ -17,4 +17,5 @@ data class SeniorAllDAO (
     val notifications: ArrayList<NotificationItem>? = null,
     val trackingSettings: SeniorTrackingSettingsDao? = null,
     val battery: Float? = null,
+    val latestNotification: NotificationItem? = null,
         )

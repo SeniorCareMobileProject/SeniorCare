@@ -35,65 +35,62 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SeniorFallDetectorS
 
 @Composable
 fun SettingsFallDetectorView(navController: NavController, sharedViewModel: SharedViewModel) {
-    val context = LocalContext.current
-    val iconId = remember("elderly") {
-        context.resources.getIdentifier(
-            "elderly",
-            "drawable",
-            context.packageName
+    Scaffold(topBar = {
+        SeniorTopBar(
+            navController = navController,
+            sharedViewModel = sharedViewModel
         )
-    }
-    val scrollState = remember { ScrollState(0) }
-    val mCheckedState = remember { mutableStateOf(sharedViewModel.isFallDetectorTurnOn.value!!) }
+    }) {
+        val context = LocalContext.current
+        val iconId = remember("elderly") {
+            context.resources.getIdentifier(
+                "elderly",
+                "drawable",
+                context.packageName
+            )
+        }
+        val scrollState = remember { ScrollState(0) }
+        val mCheckedState = remember { mutableStateOf(sharedViewModel.isFallDetectorTurnOn.value!!) }
 
-
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .fillMaxHeight()
-            .background(Color.White)
-            .verticalScroll(scrollState)
-    ) {
-        Icon(
-            imageVector = Icons.Default.ArrowBack,
-            contentDescription = null,
-            modifier = Modifier
-                .width(48.dp)
-                .height(48.dp)
-                .clickable { navController.navigate(NavigationScreens.SeniorSettingsScreen.name) }
-        )
-
-        Spacer(modifier = Modifier.height(42.dp))
 
         Column(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .background(Color.White)
+                .verticalScroll(scrollState)
         ) {
-            Text(
-                text = "Detektor upadku",
-                fontSize = 36.sp,
-                fontWeight = FontWeight.Medium,
-                style = TextStyle(
-                    color = MaterialTheme.colors.primary
+            Spacer(modifier = Modifier.height(42.dp))
+
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "Detektor upadku",
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Medium,
+                    style = TextStyle(
+                        color = MaterialTheme.colors.primary
+                    )
                 )
-            )
 
-            Spacer(modifier = Modifier.height(68.dp))
+                Spacer(modifier = Modifier.height(68.dp))
 
-            Icon(
-                modifier = Modifier.size(270.dp),
-                painter = painterResource(id = iconId),
-                contentDescription = "elderly",
-                tint = MaterialTheme.colors.primary
-            )
+                Icon(
+                    modifier = Modifier.size(270.dp),
+                    painter = painterResource(id = iconId),
+                    contentDescription = "elderly",
+                    tint = MaterialTheme.colors.primary
+                )
 
-            Spacer(modifier = Modifier.height(80.dp))
+                Spacer(modifier = Modifier.height(80.dp))
 
-            SeniorFallDetectorSwitchButton(text = "Włącz/wyłącz",
-                color = "main",
-                mCheckedState = mCheckedState,
-                sharedViewModel = sharedViewModel
-            )
+                SeniorFallDetectorSwitchButton(text = "Włącz/wyłącz",
+                    color = "main",
+                    mCheckedState = mCheckedState,
+                    sharedViewModel = sharedViewModel
+                )
 
 //            Column(
 //                Modifier.fillMaxSize(),
@@ -113,6 +110,7 @@ fun SettingsFallDetectorView(navController: NavController, sharedViewModel: Shar
 //                }
 //            }
 
+            }
         }
     }
 }

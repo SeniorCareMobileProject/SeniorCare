@@ -167,7 +167,12 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     var batteryPct: MutableLiveData<Float> = MutableLiveData(100.0F)
 
-
+    val latestNotification: MutableLiveData<NotificationItem> = MutableLiveData(
+        NotificationItem(
+            name = "",
+            timeList = mutableListOf("")
+        )
+    )
 
     private val repository = Repository()
 

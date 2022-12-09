@@ -10,6 +10,10 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import com.SeniorCareMobileProject.seniorcare.MyApplication
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.data.NotificationItem
+import com.SeniorCareMobileProject.seniorcare.data.Repository
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 
 class NotificationsBroadcastReceiver: BroadcastReceiver(){
@@ -25,6 +29,13 @@ class NotificationsBroadcastReceiver: BroadcastReceiver(){
         Log.e(TAG,"$title "+ "  + $timeId + $notificationId")
 
         showNotification(MyApplication.context, notificationId, timeId, title)
+        val notificationItem = NotificationItem(
+            name = title.toString(),
+            timeList = mutableListOf(
+                LocalDateTime.now().toLocalTime().format(
+                DateTimeFormatter.ofPattern("HH:mm")))
+        )
+        Repository().saveLatestNotification(notificationItem)
     }
 
     private fun showNotification(context: Context?, notificationId: Int, timeId: Int, title: String?) {
