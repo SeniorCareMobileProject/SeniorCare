@@ -7,6 +7,10 @@
     <string name="safe_zone_left">You have left the safe zone</string>
     <string name="sms_senior_left">Senior left the safe zone. Check application to track location</string>
     <string name="sms_senior_safe">Senior is in safe zone</string>
+    <string name="notification_senior_left">Senior left safe zone</string>
+    <string name="notification_senior_left_unaware_desc"> left safe zone without notifying</string>
+    <string name="notification_senior_left_aware_desc"> left safe zone consciously</string>
+    <string name="notification_senior_in"> is now in safe zone</string>
     <string name="safe_zone_in">You are in safe zone</string>
     <string name="title_activity_maps_test" translatable="false">MapsTest</string>
     <string name="launch_activity" translatable="false">Launch activity</string>

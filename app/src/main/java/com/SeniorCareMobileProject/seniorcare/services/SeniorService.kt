@@ -40,8 +40,6 @@ class SeniorService: Service() {
         FirebaseAuth.getInstance()
         repository = Repository()
 
-
-
     }
 
 

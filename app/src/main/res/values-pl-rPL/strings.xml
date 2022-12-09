@@ -62,4 +62,8 @@
     <string name="upcoming_event">Najbliższe wydarzenie:</string>
     <string name="date">Data:</string>
     <string name="time">godzina:</string>
+    <string name="notification_senior_left">Senior opuścił bezpieczną strefę</string>
+    <string name="notification_senior_left_unaware_desc">" opuścił strefę bez zawiadamiania"</string>
+    <string name="notification_senior_left_aware_desc">" opuścił strefę świadomie"</string>
+    <string name="notification_senior_in">" jest teraz w bezpiecznej strefie"</string>
 </resources>

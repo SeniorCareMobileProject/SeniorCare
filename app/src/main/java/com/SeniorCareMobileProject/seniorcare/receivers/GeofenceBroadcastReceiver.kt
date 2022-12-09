@@ -62,9 +62,10 @@ class GeofenceBroadcastReceiver : BroadcastReceiver() {
             localSettingsRepository.saveSeniorIsAware(false)
             localSettingsRepository.saveSeniorIsInSafeZone(true)
             isSeniorAware = false
-        } else
+        } else {
             localSettingsRepository.saveSeniorIsInSafeZone(false)
             if (!isSeniorAware) SendSmsUtil().sendOneMessage(context, content)
+        }
 
         localSettingsRepository.saveSeniorIsInSafeZone(seniorInSafeZone)
         Repository().saveTrackingSettingsSenior(seniorInSafeZone, isSeniorAware)

@@ -23,6 +23,9 @@ class CarerService: Service() {
     private lateinit var notificationManager: NotificationManager
     private lateinit var repository: Repository
 
+    private var _seniorInSafeZone: Boolean? = null
+    private var _seniorIsAware: Boolean? = null
+
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
 
@@ -38,15 +41,6 @@ class CarerService: Service() {
                checkSeniorsTrackingState(it)
            }
         }
-
-    }
-
-    private fun checkSeniorsTrackingState(seniorTrackingSettings: HashMap<String, SeniorTrackingSettingsDao>) {
-        seniorTrackingSettings.forEach{
-            if(!it.value.seniorInSafeZone){
-                notifySeniorLeftSafeZone(it.key, it.value.seniorIsAware)
-            }
-        }
         scope.launch{
             repository.getBatteryInfoFromAllSeniors().collectLatest { it ->
                 for(item in it){
@@ -55,14 +49,24 @@ class CarerService: Service() {
                         NotificationsManager().showBatteryNotification(applicationContext, item.key)
                     }
                 }
-
             }
         }
     }
 
-    private fun notifySeniorLeftSafeZone(seniorName: String, seniorIsAware: Boolean) {
+    private fun checkSeniorsTrackingState(seniorTrackingSettings: HashMap<String, SeniorTrackingSettingsDao>) {
+        seniorTrackingSettings.forEach{
+            if(it.value.seniorInSafeZone != _seniorInSafeZone || it.value.seniorIsAware != _seniorIsAware){
+                _seniorInSafeZone = it.value.seniorInSafeZone
+                _seniorIsAware = it.value.seniorIsAware
+                notifyAboutSeniorState(it.key, it.value)
+            }
+        }
+
+    }
+
+    private fun notifyAboutSeniorState(seniorName: String, seniorSettings: SeniorTrackingSettingsDao) {
         notificationManager.notify(seniorName.encodeToByteArray().sum(),
-            generateSeniorStateNotification(seniorName, seniorIsAware).build())
+            generateSeniorStateNotification(seniorName, seniorSettings).build())
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -115,8 +119,8 @@ class CarerService: Service() {
 
     }
 
-    private fun generateSeniorStateNotification(seniorName: String, seniorIsAware: Boolean): NotificationCompat.Builder {
-        val mainNotificationText = getString(R.string.app_name)
+    private fun generateSeniorStateNotification(seniorName: String, seniorState: SeniorTrackingSettingsDao): NotificationCompat.Builder {
+        val (contentTitle, contentText) = notificationTextHelper(seniorState)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val notificationChannel = NotificationChannel(
@@ -125,20 +129,28 @@ class CarerService: Service() {
             notificationManager.createNotificationChannel(notificationChannel)
         }
 
-        val bigTextStyle = NotificationCompat.BigTextStyle()
-            .bigText(getString(R.string.safe_zone))
-            .setBigContentTitle(getString(R.string.app_name))
 
         val notificationCompatBuilder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
 
-        return notificationCompatBuilder.setStyle(bigTextStyle)
-            .setContentTitle(seniorName)
-            .setContentText(mainNotificationText)
+        return notificationCompatBuilder
+            .setContentTitle("$seniorName $contentTitle")
+            .setContentText(contentText)
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+
+    }
+
+    private fun notificationTextHelper(seniorSettings: SeniorTrackingSettingsDao): Pair<String, String>{
+        if (!seniorSettings.seniorIsAware && !seniorSettings.seniorInSafeZone) {
+            return Pair(applicationContext.getString(R.string.notification_senior_left), getString(R.string.notification_senior_left_unaware_desc))
+        }
+        if (seniorSettings.seniorIsAware && !seniorSettings.seniorInSafeZone) {
+            return Pair(applicationContext.getString(R.string.safe_zone_in), getString(R.string.notification_senior_left_aware_desc))
+        }
+        return Pair(applicationContext.getString(R.string.notification_senior_in), "")
 
     }
 
