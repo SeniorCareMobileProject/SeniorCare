@@ -126,6 +126,7 @@ class Repository {
                 if (user != null) {
                     sharedViewModel._userData.value = user
                     user.function?.let { sharedViewModel.saveUserFunctionToLocalRepo(it) }
+
                     sharedViewModel._userDataStatus.postValue(Resource.Success(user))
                 }
                 else {

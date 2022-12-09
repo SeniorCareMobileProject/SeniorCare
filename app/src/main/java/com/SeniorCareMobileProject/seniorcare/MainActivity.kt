@@ -72,30 +72,31 @@ class MainActivity : ComponentActivity() {
         requestForegroundPermissions()
 
         sharedViewModel.getUserFunctionFromLocalRepo()
-        if (sharedViewModel.userFunctionFromLocalRepo == "Senior") {
-            function = "Senior"
-            sharedViewModel.getSosNumbersFromLocalRepo()
-            sharedViewModel.getFallDetectionStateFromLocalRepo()
-            HighAccuracyLocation().askForHighAccuracy(this)
-            Intent(applicationContext, SeniorService::class.java).apply {
-                action = SeniorService.ACTION_START
-                startService(this)
-            }
-            if (sharedViewModel.isFallDetectorTurnOn.value == true) {
-                val fallDetectorService = FallDetectorService()
-                val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
-                startService(fallDetectorServiceIntent)
-            }
-        } else {
-
-        }
-
-        if(sharedViewModel.userFunctionFromLocalRepo == "Carer") {
-            Intent(applicationContext, CarerService::class.java).apply {
-                action = SeniorService.ACTION_START
+        sharedViewModel.hasUserFunction.observe(this, Observer {
+            sharedViewModel.getUserFunctionFromLocalRepo()
+            if (sharedViewModel.userFunctionFromLocalRepo == "Senior") {
+                function = "Senior"
+                sharedViewModel.getSosNumbersFromLocalRepo()
+                sharedViewModel.getFallDetectionStateFromLocalRepo()
+                HighAccuracyLocation().askForHighAccuracy(this)
+                Intent(applicationContext, SeniorService::class.java).apply {
+                    action = SeniorService.ACTION_START
                     startService(this)
+                }
+                if (sharedViewModel.isFallDetectorTurnOn.value == true) {
+                    val fallDetectorService = FallDetectorService()
+                    val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
+                    startService(fallDetectorServiceIntent)
+                }
             }
-        }
+            if (sharedViewModel.userFunctionFromLocalRepo == "Carer") {
+                Intent(applicationContext, CarerService::class.java).apply {
+                    action = SeniorService.ACTION_START
+                    startService(this)
+                }
+            }
+        })
+
 
 
         sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
@@ -107,7 +108,7 @@ class MainActivity : ComponentActivity() {
             }
         }
         )
-        sharedViewModel.hasListOfConnectedUsers.observe(this, Observer{
+        sharedViewModel.hasListOfConnectedUsers.observe(this, Observer {
             Log.d("SENIOR DATA", "INIT")
             if (sharedViewModel.userFunctionFromLocalRepo == "Carer") {
                 if (it == true) {

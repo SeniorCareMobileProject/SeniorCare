@@ -65,7 +65,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val mapFullscreen = mutableStateOf(false)
     val resetCamera = mutableStateOf(false)
     val isHighAccuracyEnabled = MutableLiveData(true)
-    val locationBeforeFreeingCam = mutableStateOf(LatLng(52.408839, 16.906782))
 
     //geofence
     val geofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
@@ -110,6 +109,8 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     var currentSeniorIndex = 0
     var currentSeniorIndexObservable = MutableLiveData(0)
     var haveConnectedUsers = true
+
+    var hasUserFunction = MutableLiveData<Boolean>(false)
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
@@ -330,6 +331,7 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     fun saveUserFunctionToLocalRepo(userFunction: String) {
         localSettingsRepository.saveUserFunction(userFunction)
+        hasUserFunction.value = true
     }
 
     fun getSosNumbersFromLocalRepo() {
