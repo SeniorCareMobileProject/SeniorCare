@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.common.decreaseRadius
 import com.SeniorCareMobileProject.seniorcare.ui.common.increaseRadius
@@ -168,8 +169,8 @@ fun RadiusChanger(navController: NavController, sharedViewModel: SharedViewModel
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceAround
         ) {
-            SmallButton(navController, sharedViewModel, "Anuluj")
-            SmallButton(navController, sharedViewModel, "Zapisz")
+            SmallButton(navController, sharedViewModel, context.getString(R.string.cancel))
+            SmallButton(navController, sharedViewModel, context.getString(R.string.save))
         }
     }
 }
@@ -260,7 +261,7 @@ fun RoundSmallButtonSafeZone(
             .height(46.dp)
             .clip(RoundedCornerShape(50.dp))
             .background(Color(0xFFCAAAF9))
-            .clickable { addGeofence(navController, sharedViewModel, "Anuluj") }
+            .clickable { addGeofence(navController, sharedViewModel, context.getString(R.string.cancel)) }
     ) {
         Row(
             modifier = Modifier

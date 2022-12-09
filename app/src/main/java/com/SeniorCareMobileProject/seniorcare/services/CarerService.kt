@@ -3,6 +3,8 @@ package com.SeniorCareMobileProject.seniorcare.services
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -118,6 +120,7 @@ class CarerService: Service() {
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.drawable.ic_launcher_background)
+            .setLargeIcon(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher), 128, 128, false))
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
@@ -142,6 +145,7 @@ class CarerService: Service() {
             .setContentTitle(contentTitle)
             .setContentText("$seniorName $contentText")
             .setSmallIcon(R.drawable.ic_launcher_background)
+            .setLargeIcon(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher), 128, 128, false))
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)

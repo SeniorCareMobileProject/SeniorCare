@@ -78,7 +78,7 @@ fun Header(
                 .weight(90f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Dane medyczne")
+            Text(text = context.getString(R.string.medical_info))
 
         }
 

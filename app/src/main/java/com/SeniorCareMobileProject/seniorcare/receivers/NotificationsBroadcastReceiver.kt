@@ -46,7 +46,7 @@ class NotificationsBroadcastReceiver: BroadcastReceiver(){
         val mBuilder = NotificationCompat.Builder(context!!, "$notificationId")
             .setSmallIcon(R.drawable.ic_circle_notifications)
             .setContentTitle(title)
-            .setContentText("Przypomnienie o leku: $title")
+            .setContentText(context.getString(R.string.notifications_text,title)) //"Przypomnienie o leku: $title"
             .setPriority(NotificationCompat.PRIORITY_MAX)
 
         val notificationManager = NotificationManagerCompat.from(context)
