@@ -65,6 +65,6 @@
     <string name="notification_senior_left">Senior opuścił bezpieczną strefę</string>
     <string name="notification_senior_left_unaware_desc">opuścił strefę bez zawiadamiania</string>
     <string name="notification_senior_left_aware_desc">opuścił strefę świadomie</string>
-    <string name="notification_senior_in">jest teraz w bezpiecznej strefie</string>
+    <string name="notification_senior_in">Senior jest teraz w bezpiecznej strefie</string>
     <string name="notification_senior_in_desc">jest teraz w bezpiecznej strefie</string>
 </resources>

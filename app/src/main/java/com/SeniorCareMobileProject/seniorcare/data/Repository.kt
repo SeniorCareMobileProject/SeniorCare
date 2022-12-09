@@ -1058,7 +1058,7 @@ class Repository {
                     Log.w("Database", "getTrackingSettingsAllSeniorsForCarer:onCancelled", databaseError.toException())
                 }
             }
-            reference.addListenerForSingleValueEvent(listener)
+            reference.addValueEventListener(listener)
         }
         awaitClose{
             //remove listener here

@@ -156,7 +156,7 @@ class CarerService: Service() {
         if (seniorSettings.seniorIsAware && !seniorSettings.seniorInSafeZone) {
             return Pair(applicationContext.getString(R.string.safe_zone_in), getString(R.string.notification_senior_left_aware_desc))
         }
-        return Pair(applicationContext.getString(R.string.notification_senior_in), "")
+        return Pair(applicationContext.getString(R.string.notification_senior_in), getString(R.string.notification_senior_in_desc))
 
     }
 
