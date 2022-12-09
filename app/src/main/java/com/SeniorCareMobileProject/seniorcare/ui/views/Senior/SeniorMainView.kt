@@ -47,7 +47,7 @@ fun SeniorMainView(navController: NavController, sharedViewModel: SharedViewMode
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(id = R.string.welcome) + "${sharedViewModel.userData.value?.firstName}",
+                    text = stringResource(id = R.string.welcome) + " ${sharedViewModel.userData.value?.firstName}",
                     fontWeight = FontWeight.Medium,
                     fontSize = 36.sp,
                     color = MaterialTheme.colors.primary,
