@@ -47,7 +47,6 @@ class SeniorService: Service() {
 
     fun sendLocation(currentLocation: Location?) {
         firebaseUpdate(currentLocation)
-        startForeground(NOTIFY_ID, generateNotification(currentLocation).build())
     }
 
     private fun firebaseUpdate(currentLocation: Location?) {
@@ -146,6 +145,7 @@ class SeniorService: Service() {
             Log.d("Problem", unlikely.toString())
         }
         sendLocation(currLocation)
+        startForeground(NOTIFY_ID, generateNotification().build())
     }
 
     private fun stop(){
@@ -153,13 +153,8 @@ class SeniorService: Service() {
         stopSelf()
     }
 
-    private fun generateNotification(location: Location?) : NotificationCompat.Builder {
-        var mainNotificationText =  if (location != null) {
-            "Location: ${location.latitude} ${location.longitude}"
-        } else {
-            "No location"
-        }
-        mainNotificationText = getString(R.string.localization_notification_text)
+    private fun generateNotification() : NotificationCompat.Builder {
+        var mainNotificationText = getString(R.string.localization_notification_text)
         val titleText = getString(R.string.app_name)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
