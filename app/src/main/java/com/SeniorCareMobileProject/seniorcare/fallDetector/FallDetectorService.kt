@@ -108,7 +108,7 @@ class FallDetectorService: Service(), SensorEventListener {
         return notificationCompatBuilder.setStyle(bigTextStyle)
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setSmallIcon(R.drawable.elderly)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
