@@ -161,16 +161,8 @@ fun CarerCalendarView(
         // Calendar small and full view switcher transparent button
         Box(
             modifier = Modifier
-//                .width(300.dp)
                 .fillMaxWidth()
                 .height(65.dp)
-//                .clickable {
-//                    fullKalendarView.value = !fullKalendarView.value
-//                    pickedDay.value = LocalDataJava
-//                        .now()
-//                        .toKotlinLocalDate()
-//                }
-//                .background(Color.Red.copy(alpha = 0.5f))
             ,
             contentAlignment = Alignment.TopStart
         )
@@ -178,7 +170,6 @@ fun CarerCalendarView(
             Column(modifier = Modifier.fillMaxWidth()) {
                 Row(
                     modifier = Modifier
-//                        .background(Color.Red.copy(alpha = 0.5f))
                 ) {
                     Column(
                         modifier = Modifier
@@ -276,16 +267,3 @@ fun CarerCalendarView(
     }
 }
 
-
-//@Preview(showBackground = true)
-//@Composable
-//fun CarerDayPlanningViewPreview() {
-//    SeniorCareTheme() {
-//        val navController = rememberNavController()
-//        val sharedViewModel = SharedViewModel()
-//        val scope = rememberCoroutineScope()
-//        val scaffoldState = rememberScaffoldState(rememberDrawerState(DrawerValue.Closed))
-//
-//        CarerCalendarView(navController, sharedViewModel, scope, scaffoldState)
-//    }
-//}
