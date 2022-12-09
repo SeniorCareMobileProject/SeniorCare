@@ -3,6 +3,8 @@ package com.SeniorCareMobileProject.seniorcare.services
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -57,13 +59,13 @@ class CarerService: Service() {
         seniorTrackingSettings.forEach{
             if (!seniorStateList.contains(it.key)){
                 Log.d("LOCATION", "CREATE NEW STATE")
-                seniorStateList[it.key] = Pair(it.value.seniorInSafeZone, it.value.seniorIsAware)
+                seniorStateList[it.key] = Pair(it.value.seniorInSafeZone, it.value.isSeniorAware)
                 notifyAboutSeniorState(it.key, it.value)
                 return
             }
-            if(it.value.seniorInSafeZone != seniorStateList[it.key]?.first || it.value.seniorIsAware != seniorStateList[it.key]?.second){
+            if(it.value.seniorInSafeZone != seniorStateList[it.key]?.first || it.value.isSeniorAware != seniorStateList[it.key]?.second){
                 Log.d("LOCATION", "NOTIFYING ABOUT NEW STATE")
-                seniorStateList[it.key] = Pair(it.value.seniorInSafeZone, it.value.seniorIsAware)
+                seniorStateList[it.key] = Pair(it.value.seniorInSafeZone, it.value.isSeniorAware)
                 notifyAboutSeniorState(it.key, it.value)
             }
         }
@@ -118,6 +120,7 @@ class CarerService: Service() {
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
             .setSmallIcon(R.drawable.ic_launcher_background)
+            .setLargeIcon(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher), 128, 128, false))
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
@@ -142,6 +145,7 @@ class CarerService: Service() {
             .setContentTitle(contentTitle)
             .setContentText("$seniorName $contentText")
             .setSmallIcon(R.drawable.ic_launcher_background)
+            .setLargeIcon(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher), 128, 128, false))
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
@@ -150,10 +154,10 @@ class CarerService: Service() {
     }
 
     private fun notificationTextHelper(seniorSettings: SeniorTrackingSettingsDao): Pair<String, String>{
-        if (!seniorSettings.seniorIsAware && !seniorSettings.seniorInSafeZone) {
+        if (!seniorSettings.isSeniorAware && !seniorSettings.seniorInSafeZone) {
             return Pair(applicationContext.getString(R.string.notification_senior_left), getString(R.string.notification_senior_left_unaware_desc))
         }
-        if (seniorSettings.seniorIsAware && !seniorSettings.seniorInSafeZone) {
+        if (seniorSettings.isSeniorAware && !seniorSettings.seniorInSafeZone) {
             return Pair(applicationContext.getString(R.string.safe_zone_in), getString(R.string.notification_senior_left_aware_desc))
         }
         return Pair(applicationContext.getString(R.string.notification_senior_in), getString(R.string.notification_senior_in_desc))

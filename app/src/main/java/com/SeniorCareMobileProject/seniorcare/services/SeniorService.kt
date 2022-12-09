@@ -4,6 +4,8 @@ package com.SeniorCareMobileProject.seniorcare.services
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
@@ -88,7 +90,7 @@ class SeniorService: Service() {
             changeLocationConfiguration(5, 3, 10)
             return
         }
-        if (!seniorTrackingSettingsDao.seniorIsAware && !seniorTrackingSettingsDao.seniorInSafeZone){
+        if (!seniorTrackingSettingsDao.isSeniorAware && !seniorTrackingSettingsDao.seniorInSafeZone){
             changeLocationConfiguration(5, 3, 10)
             return
         }
@@ -176,7 +178,7 @@ class SeniorService: Service() {
         return notificationCompatBuilder.setStyle(bigTextStyle)
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setLargeIcon(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher), 128, 128, false))
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)

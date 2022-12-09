@@ -45,7 +45,7 @@
     <string name="senior_empty_calendar">Brak zaplanowanych wydarzeń na najbliższe siedem dni</string>
     <string name="this_field_cannot_be_empty">To pole nie może być puste</string>
     <string name="field_length_limit_exceeded">Przekroczono limit długości pola</string>
-    <string name="start_time_cannot_be_greater_then_end_time">Czas rozpoczęcia nie może być pożniejszy                                                            od czasu zakończenia</string>
+    <string name="start_time_cannot_be_greater_then_end_time">Czas rozpoczęcia nie może być poźniejszy                                                            od czasu zakończenia</string>
     <string name="logout_confirmation">Czy na pewno chczesz się wylogować?</string>
     <string name="disconnect_confirmation">Czy na pewno chcesz się rozłączyć z użytkownikiem: %1$s %2$s?</string>
     <string name="fall_detection_alert_message">UWAGA! Potencjalny upadek podopiecznego!</string>
@@ -60,6 +60,7 @@
     <string name="if_everything_is_ok">Jeżeli wszystko jest w porządku i jest to fałszywy alarm wciśnij poniższy przycisk w ciągu:</string>
     <string name="localization_safe_zone">Lokalizacja - Bezpieczny obszar</string>
     <string name="upcoming_event">Najbliższe wydarzenie:</string>
+    <string name="upcoming_event_text">%1$s\n%2$sData: %3$s - godzina: %4$s - %5$s</string>
     <string name="date">Data:</string>
     <string name="time">godzina:</string>
     <string name="notification_senior_left">Senior opuścił bezpieczną strefę</string>
@@ -96,4 +97,23 @@
     <string name="battery_notification_title">Bateria telefonu seniora w niskim stanie!</string>
     <string name="battery_notification_text">Senior %1$s ma niski poziom baterii w swoim urządzeniu.</string>
     <string name="notifications_text">Przypomnienie o leku: %1$s</string>
+    <string name="Lukasz_Koziej">Łukasz_Koziej</string>
+    <string name="Adrian_Olkowicz">Adrian Olkowicz</string>
+    <string name="Andrei_Strachynski">Michał Dudziak</string>
+    <string name="Michal_Dudziak">Andrei Strachynski</string>
+    <string name="application_information">Informacje o aplikacji</string>
+    <string name="battery_status_widget">Stan baterii:</string>
+    <string name="recently_taken_medication_widget">Ostatnio przyjęty lek:</string>
+    <string name="last_data_update_widget">Ostatnia aktualizacja danych: %1$s</string>
+    <string name="caution">UWAGA!</string>
+    <string name="not_connected_to_any_user_text">Aktualnie nie jesteś połączony z żadnym użytkownikiem, co jest wymagane do poprawnego działania aplikacji. Sparuj swojego konto z podopiecznym, aby móc dalej korzystać z aplikacji.</string>
+    <string name="go_to_the_pairing_screen">Przejdź do ekranu parowania</string>
+    <string name="sos_btn_text">Przycisk SOS</string>
+    <string name="location_btn_text">Lokalizacja</string>
+    <string name="disconnect_btn_text">Rozłącz się z seniorem</string>
+    <string name="save_changes">Zapisz zmiany</string>
+    <string name="add_number_btn_text">Dodaj numer</string>
+    <string name="carers_list">Lista opiekunów</string>
+    <string name="enter_pairing_code">Wprowadź poniższą liczbę na ekranie parowania podopiecznego.</string>
+    <string name="success">Udało się!</string>
 </resources>
