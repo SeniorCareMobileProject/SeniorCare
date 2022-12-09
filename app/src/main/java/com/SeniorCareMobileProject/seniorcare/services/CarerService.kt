@@ -23,8 +23,7 @@ class CarerService: Service() {
     private lateinit var notificationManager: NotificationManager
     private lateinit var repository: Repository
 
-    private var _seniorInSafeZone: Boolean? = null
-    private var _seniorIsAware: Boolean? = null
+    private var seniorStateList = mutableMapOf<String, Pair<Boolean, Boolean>>()
 
     private val job = SupervisorJob()
     private val scope = CoroutineScope(Dispatchers.IO + job)
@@ -54,10 +53,17 @@ class CarerService: Service() {
     }
 
     private fun checkSeniorsTrackingState(seniorTrackingSettings: HashMap<String, SeniorTrackingSettingsDao>) {
+        Log.d("LOCATION", "CHECK STATE")
         seniorTrackingSettings.forEach{
-            if(it.value.seniorInSafeZone != _seniorInSafeZone || it.value.seniorIsAware != _seniorIsAware){
-                _seniorInSafeZone = it.value.seniorInSafeZone
-                _seniorIsAware = it.value.seniorIsAware
+            if (!seniorStateList.contains(it.key)){
+                Log.d("LOCATION", "CREATE NEW STATE")
+                seniorStateList[it.key] = Pair(it.value.seniorInSafeZone, it.value.seniorIsAware)
+                notifyAboutSeniorState(it.key, it.value)
+                return
+            }
+            if(it.value.seniorInSafeZone != seniorStateList[it.key]?.first || it.value.seniorIsAware != seniorStateList[it.key]?.second){
+                Log.d("LOCATION", "NOTIFYING ABOUT NEW STATE")
+                seniorStateList[it.key] = Pair(it.value.seniorInSafeZone, it.value.seniorIsAware)
                 notifyAboutSeniorState(it.key, it.value)
             }
         }
@@ -133,8 +139,8 @@ class CarerService: Service() {
         val notificationCompatBuilder = NotificationCompat.Builder(applicationContext, NOTIFICATION_CHANNEL_ID)
 
         return notificationCompatBuilder
-            .setContentTitle("$seniorName $contentTitle")
-            .setContentText(contentText)
+            .setContentTitle(contentTitle)
+            .setContentText("$seniorName $contentText")
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)

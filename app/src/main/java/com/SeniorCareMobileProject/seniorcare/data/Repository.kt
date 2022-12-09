@@ -943,6 +943,19 @@ class Repository {
                 }
             }
         }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    if (isSeniorAware != null)
+                        reference.child("isSeniorAware").setValue(isSeniorAware).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveTrackingSettingsSenior", e.message.toString())
+                }
+            }
+        }
     }
 
     fun getTrackingSettingsSenior(): Flow<SeniorTrackingSettingsDao> = callbackFlow {
