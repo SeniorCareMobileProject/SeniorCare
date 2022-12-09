@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.h1
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
@@ -68,7 +70,7 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
             ) {
-                Text(text = "Rejestracja", color = MaterialTheme.colors.primary, style = h1)
+                Text(text = stringResource(id = R.string.register), color = MaterialTheme.colors.primary, style = h1)
             }
 
             Column(
@@ -79,31 +81,31 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 InputFieldLabelIcon(
-                    text = "Twój adres email",
+                    text = stringResource(id = R.string.your_email_address),
                     onValueChange = {},
                     fieldLabel = "Email",
                     iconName = "alternate_email",
                     viewModelVariable = sharedViewModel.email
                 )
                 InputFieldLabelIcon(
-                    text = "Twoje hasło",
+                    text = stringResource(id = R.string.your_password),
                     onValueChange = {},
-                    fieldLabel = "Hasło",
+                    fieldLabel = stringResource(id = R.string.password),
                     iconName = "lock",
                     viewModelVariable = sharedViewModel.password,
                     isPassword = true
                 )
                 InputFieldLabelIcon(
-                    text = "Wprowadź swoje na imię",
+                    text = stringResource(id = R.string.type_your_first_name),
                     onValueChange = {},
-                    fieldLabel = "Imię",
+                    fieldLabel = stringResource(id = R.string.first_name),
                     iconName = "",
                     viewModelVariable = sharedViewModel.firstName
                 )
                 InputFieldLabelIcon(
-                    text = "Wprowadź swoje nazwisko",
+                    text = stringResource(id = R.string.type_your_last_name),
                     onValueChange = {},
-                    fieldLabel = "Nazwisko",
+                    fieldLabel = stringResource(id = R.string.last_name),
                     iconName = "",
                     viewModelVariable = sharedViewModel.lastName
                 )
@@ -116,7 +118,7 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
                     .padding(top = 16.dp)
                     .padding(horizontal = 12.dp)
             ) {
-                RegisterButton(navController, "Zarejestruj", sharedViewModel, context)
+                RegisterButton(navController, stringResource(id = R.string.sign_in), sharedViewModel, context)
 
                 Row(
                     Modifier
@@ -125,9 +127,9 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center
                 ) {
-                    Text(text = "Już masz konto?", modifier = Modifier.padding(horizontal = 8.dp))
+                    Text(text = stringResource(id = R.string.already_have_account), modifier = Modifier.padding(horizontal = 8.dp))
                     Text(
-                        text = "Zaloguj się",
+                        text = stringResource(id = R.string.log_in),
                         fontSize = 16.sp,
                         color = MaterialTheme.colors.primary,
                         style = TextStyle(textDecoration = TextDecoration.Underline),
@@ -159,7 +161,7 @@ fun RegisterButton(
             }
 
             if (sharedViewModel.function.value == "") {
-                Toast.makeText(context, "You must choose a function", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.you_must_choose_function), Toast.LENGTH_LONG).show()
             } else {
                 sharedViewModel.registerUser(
                     sharedViewModel,

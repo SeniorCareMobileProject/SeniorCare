@@ -17,11 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -76,16 +78,16 @@ fun PasswordRecoveryEmailView(navController: NavController, sharedViewModel: Sha
                 )
             }
             Text(
-                text = "Wysłaliśmy maila na twoje konto email z linkiem do zresetowania hasła.\n" +
-                        "\n" +
-                        "Kliknij otrzymany w mailu link i postępuj zgodnie z instrukcjami, aby zresetować hasło do swojego konta",
+                text = stringResource(R.string.password_recovery_message),
                 modifier = Modifier.padding(horizontal = 42.dp), fontWeight = FontWeight.Medium
             )
         }
 
-        Column(modifier = Modifier.fillMaxWidth().padding(top = 32.dp),
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 32.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-            SmallButtonWithRout(navController = navController, text = "Logowanie", rout = "LoginScreen")
+            SmallButtonWithRout(navController = navController, text = stringResource(R.string.logging), rout = "LoginScreen")
         }
     }
 }

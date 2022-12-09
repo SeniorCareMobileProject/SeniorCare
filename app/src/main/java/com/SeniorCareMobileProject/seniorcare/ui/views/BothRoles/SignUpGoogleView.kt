@@ -87,8 +87,8 @@ fun SignUpGoogleView(navController: NavController, sharedViewModel: SharedViewMo
                 .padding(top = 50.dp)
                 .padding(horizontal = 24.dp)
         ) {
-            Text(text = "Rejestracja", color = MaterialTheme.colors.primary, style = h1)
-            Text(text = "Wybierz rolę, która będzie należać do tego konta.")
+            Text(text = stringResource(id = R.string.register), color = MaterialTheme.colors.primary, style = h1)
+            Text(text = stringResource(id = R.string.choose_function))
         }
 
         ChooseRoleSection(sharedViewModel)
@@ -115,9 +115,9 @@ fun SignUpGoogleView(navController: NavController, sharedViewModel: SharedViewMo
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.Center
             ) {
-                Text(text = "Już masz konto?", modifier = Modifier.padding(horizontal = 8.dp))
+                Text(text = stringResource(id = R.string.already_have_account), modifier = Modifier.padding(horizontal = 8.dp))
                 Text(
-                    text = "Zaloguj się",
+                    text = stringResource(id = R.string.log_in),
                     fontSize = 16.sp,
                     color = MaterialTheme.colors.primary,
                     style = TextStyle(textDecoration = TextDecoration.Underline),
@@ -141,7 +141,7 @@ fun SignUpGoogleView(navController: NavController, sharedViewModel: SharedViewMo
             }
         }
         LoadingState.Status.FAILED -> {
-            Toast.makeText(context, "Error with signing in", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, context.getString(R.string.error_with_signing_in), Toast.LENGTH_LONG).show()
         }
         else -> {}
     }
@@ -174,7 +174,7 @@ fun GoogleSignInButton(navController: NavController, text: String, iconName: Str
             }
 
             if (sharedViewModel.function.value == "") {
-                Toast.makeText(context, "You must choose a function", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.you_must_choose_function), Toast.LENGTH_LONG).show()
             }
             else{
                 val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
