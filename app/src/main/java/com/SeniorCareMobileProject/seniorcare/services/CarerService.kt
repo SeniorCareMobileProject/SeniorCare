@@ -46,7 +46,6 @@ class CarerService: Service() {
             repository.getBatteryInfoFromAllSeniors().collectLatest { it ->
                 for(item in it){
                     if(item.value <=20){
-                        Log.d("dsds","Weszlo1")
                         NotificationsManager().showBatteryNotification(applicationContext, item.key)
                     }
                 }

@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SOSSettingsItemWithIcon
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SettingsEditNumberElement
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SettingsItemWithIcon
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.TopBarSettings
@@ -24,7 +25,7 @@ fun CarerSettingsSOSUpdateView(navController: NavController, sharedViewModel: Sh
     Scaffold(
         topBar = { TopBarSettings(navController, sharedViewModel) }) {
         Column(modifier = Modifier.fillMaxSize()) {
-            SettingsItemWithIcon(
+            SOSSettingsItemWithIcon(
                 navController,
                 sharedViewModel,
                 context.getString(R.string.save_changes),

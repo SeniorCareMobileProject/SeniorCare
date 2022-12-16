@@ -906,12 +906,14 @@ fun SOSSettingsItemWithIcon(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
+            .clickable { navController.navigate(rout);sharedViewModel.saveSosNumbersToFirebase() }
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 16.dp)
                 .padding(top = 16.dp)
+
         ) {
             Text(
                 text = text,
@@ -924,7 +926,7 @@ fun SOSSettingsItemWithIcon(
             )
             Column(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalAlignment = Alignment.End
+                horizontalAlignment = Alignment.Start
             ) {
                 Icon(
                     painter = painterResource(id = iconId),
@@ -932,7 +934,7 @@ fun SOSSettingsItemWithIcon(
                     tint = Color.Black,
                     modifier = Modifier
                         .padding(horizontal = 8.dp)
-                        .clickable { navController.navigate(rout);sharedViewModel.saveSosNumbersToFirebase() }
+
                 )
             }
         }

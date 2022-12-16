@@ -129,11 +129,10 @@ class NotificationsManager {
     fun showBatteryNotification(context: Context?, seniorName: String) {
 
         val notificationId = seniorName.encodeToByteArray().sum()+1
-
         createBatteryNotificationChannel(context,notificationId.toString())
-        Log.d("Notification", "showing")
+        Log.d("Notification", "showing $notificationId")
 
-        val mBuilder = NotificationCompat.Builder(context!!, "CHANNEL_ID")
+        val mBuilder = NotificationCompat.Builder(context!!, "$notificationId")
             .setSmallIcon(R.drawable.battery_4_bar)
             .setContentTitle(context.getString(R.string.battery_notification_title))
             .setContentText(context.getString(R.string.battery_notification_text,seniorName).toString())
@@ -158,7 +157,7 @@ class NotificationsManager {
         mBuilder.setContentIntent(contentIntent)
 
         mBuilder.setDefaults(Notification.DEFAULT_SOUND)
-        mBuilder.setAutoCancel(true)
+        //mBuilder.setAutoCancel(true)
         val mNotificationManager =
             context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         mNotificationManager.notify(notificationId, mBuilder.build())
