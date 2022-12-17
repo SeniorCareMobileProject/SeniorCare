@@ -163,4 +163,7 @@
     <string name="stop_calling">Zakończ połączenia</string>
     <string name="sos">SOS</string>
     <string name="i_am_going_out">Wychodzę z domu</string>
+    <string name="loading_register">Rejestruję użytkownika...</string>
+    <string name="loading_login">Logowanie...</string>
+    <string name="loading_data">Wczytywanie danych...</string>
 </resources>

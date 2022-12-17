@@ -172,4 +172,7 @@
     <string name="another_call_in">" Another call will be made within 10 seconds"</string>
     <string name="sos">SOS</string>
     <string name="i_am_going_out">I\'m going out</string>
+    <string name="loading_register">Signing in...</string>
+    <string name="loading_login">Logging in...</string>
+    <string name="loading_data">Loading data...</string>
 </resources>

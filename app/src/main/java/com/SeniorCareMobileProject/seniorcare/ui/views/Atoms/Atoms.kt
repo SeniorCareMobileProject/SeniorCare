@@ -2,11 +2,9 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -1535,6 +1533,31 @@ fun PopupButtonAddNumber(
                 fontSize = 12.sp
             )
         )
+    }
+}
+
+@Composable
+fun SplashScreenWithLoading(text: String){
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier.size(150.dp),
+            shape = CircleShape,
+            elevation = 2.dp
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcherplay),
+                contentDescription = "App Icon",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        PaddingValues(20.dp)
+        Text(text, fontWeight = FontWeight.Light, fontSize = 20.sp)
+        PaddingValues(20.dp)
+        CircularProgressIndicator()
     }
 }
 
