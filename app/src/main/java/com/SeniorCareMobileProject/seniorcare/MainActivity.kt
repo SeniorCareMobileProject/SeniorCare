@@ -93,7 +93,7 @@ class MainActivity : ComponentActivity() {
             }
             if (sharedViewModel.userFunctionFromLocalRepo == "Carer") {
                 Intent(applicationContext, CarerService::class.java).apply {
-                    action = SeniorService.ACTION_START
+                    action = CarerService.ACTION_START
                     startService(this)
                 }
             }
@@ -489,28 +489,6 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, "Odmowa dostępu", Toast.LENGTH_SHORT).show()
             }
         }
-
-//        when (requestCode) {
-//            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE -> when {
-////                grantResults.isEmpty() ->
-////                    Log.d(TAG, "User interaction was cancelled.")
-////                grantResults[0] == PackageManager.PERMISSION_GRANTED ->
-////                    currentOnlyLocationService?.subscribeToLocationUpdates()
-//                else -> {
-//
-//                    val intent = Intent()
-//                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-//                    val uri = Uri.fromParts(
-//                        "package",
-//                        BuildConfig.VERSION_NAME,
-//                        null
-//                    )
-//                    intent.data = uri
-//                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-//                    startActivity(intent)
-//                }
-//            }
-//        }
     }
 
     override fun onDestroy() {

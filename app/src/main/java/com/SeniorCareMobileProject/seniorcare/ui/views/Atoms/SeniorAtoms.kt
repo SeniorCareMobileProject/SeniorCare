@@ -34,6 +34,7 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
+import com.SeniorCareMobileProject.seniorcare.services.SeniorService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.google.firebase.auth.FirebaseAuth
@@ -238,6 +239,7 @@ fun SeniorButtonWithAction(
                     navController.navigate(rout)
                 }
                 else if (rout == "sign out") {
+
                     FirebaseAuth.getInstance().signOut()
                     sharedViewModel.clearLocalRepository()
                     val activity = context as Activity
@@ -401,6 +403,9 @@ fun SeniorFallDetectorSwitchButton(
                 Switch(
                     checked = mCheckedState.value,
                     onCheckedChange = {
+
+
+
                         mCheckedState.value = it
                         sharedViewModel.isFallDetectorTurnOn.value = it
                         sharedViewModel.saveFallDetectionStateToLocalRepo()
