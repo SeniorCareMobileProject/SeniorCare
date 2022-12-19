@@ -139,9 +139,7 @@ fun CarerMainView(
                         .border(
                             width = 1.dp,
                             color = Color(0xFFE6E6E6),
-                            shape = RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp),
                         )
-                        .clip(RoundedCornerShape(topStart = 20.dp, topEnd = 20.dp))
                         .background(Color.Transparent)
                         .padding(bottom = innerPadding.calculateBottomPadding()),
                     verticalArrangement = Arrangement.Center
