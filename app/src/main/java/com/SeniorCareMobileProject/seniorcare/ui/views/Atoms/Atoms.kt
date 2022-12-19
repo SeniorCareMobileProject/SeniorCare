@@ -1420,17 +1420,20 @@ fun FloatingButton() {
 }
 
 @Composable
-fun FloatingButtonNotifications(setShowDialog: (Boolean) -> Unit) {
-    val context = LocalContext.current
-
+fun FloatingButtonNotifications(sharedViewModel: SharedViewModel, showDialog: MutableState<Boolean>) {
     FloatingActionButton(
-        modifier = Modifier.size(48.dp),
-        onClick = { setShowDialog(true) },
-        backgroundColor = Color.Blue,
+        onClick = {
+            showDialog.value = true
+//            sharedViewModel.createNewEvent.value = true
+        },
+        backgroundColor = MaterialTheme.colors.primary
     ) {
         Icon(
-            Icons.Filled.Add, "",
-            modifier = Modifier.size(48.dp),
+            imageVector = Icons.Default.Add,
+            contentDescription = null,
+            modifier = Modifier
+                .width(48.dp)
+                .height(48.dp),
             tint = Color.White
         )
     }

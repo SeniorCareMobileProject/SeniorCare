@@ -162,8 +162,7 @@ fun CarerCalendarView(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(65.dp)
-            ,
+                .height(65.dp),
             contentAlignment = Alignment.TopStart
         )
         {
