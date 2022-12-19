@@ -122,10 +122,6 @@ fun RadiusChanger(navController: NavController, sharedViewModel: SharedViewModel
         )
     }
 
-    if (sharedViewModel.geofenceRadius.value > 1) {
-        sharedViewModel.newGeofenceRadius.value = sharedViewModel.geofenceRadius.value
-    }
-
     Column(
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally

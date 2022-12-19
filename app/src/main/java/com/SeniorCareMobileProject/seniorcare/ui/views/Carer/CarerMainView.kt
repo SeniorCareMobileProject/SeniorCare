@@ -94,7 +94,7 @@ fun CarerMainView(
         bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
         scaffoldState = scaffoldState,
-        drawerGesturesEnabled = false,
+        drawerGesturesEnabled = true,
         drawerContent = {
             Drawer(
                 scope = scope,

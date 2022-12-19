@@ -87,7 +87,7 @@ fun DeleteButton() {
 //@Preview
 @Composable
 fun SmallButton(text: String, isPressed: MutableState<Boolean>) {
-    val color = if (isPressed.value) Color(0xff3D1574) else Color(0xff7929e8)
+    val color = if (isPressed.value) Color(0xff7929e8) else Color(0xff8C8C8C)
 
     Button(
         onClick = { isPressed.value = !isPressed.value },
