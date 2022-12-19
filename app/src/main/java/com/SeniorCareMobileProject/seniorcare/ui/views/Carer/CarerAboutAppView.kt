@@ -47,15 +47,16 @@ fun CarerAboutAppView(
                 context.getString(R.string.about_app),
                 textAlign = TextAlign.Justify
             )
-            Column(modifier = Modifier
-                .align(CenterHorizontally)
-                .padding(20.dp)
+            Column(
+                modifier = Modifier
+                    .align(CenterHorizontally)
+                    .padding(20.dp)
             )
             {
-                Text("- Łukasz Koziej")
-                Text("- Adrian Olkowicz")
-                Text("- Michał Dudziak")
-                Text("- Andrei Strachynski")
+                Text("- " + context.getString(R.string.Lukasz_Koziej))
+                Text("- " + context.getString(R.string.Adrian_Olkowicz))
+                Text("- " + context.getString(R.string.Michal_Dudziak))
+                Text("- " + context.getString(R.string.Andrei_Strachynski))
             }
             Text(
                 context.getString(R.string.about_app_2),
@@ -69,6 +70,8 @@ fun CarerAboutAppView(
 fun TopBarAboutApp(
     navController: NavController
 ) {
+    val context = LocalContext.current
+
     TopAppBar(backgroundColor = Color(0xFFCAAAF9)) {
         Row(
             modifier = Modifier
@@ -87,7 +90,7 @@ fun TopBarAboutApp(
                 )
             }
             Text(
-                text = "Informacje o aplikacji",
+                text = context.getString(R.string.application_information),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )

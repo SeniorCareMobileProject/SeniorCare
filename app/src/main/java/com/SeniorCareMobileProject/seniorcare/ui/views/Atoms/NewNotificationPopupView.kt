@@ -28,6 +28,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.data.NotificationItem
@@ -78,7 +80,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         backgroundColor = Color.White,
                         unfocusedIndicatorColor = Color.Transparent
                     ),
-                    placeholder = { Text(text = "Nazwa") }
+                    placeholder = { Text(text = context!!.getString(R.string.name)) }
                 )
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
@@ -89,7 +91,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         Button(onClick = {mTimePickerDialog.show()},shape = RoundedCornerShape(5.dp), colors =ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFFFFFF))) {
                         Text(text = mTime.value)
                         }**/
-                        Text(text = "Godzina",modifier = Modifier.align(Alignment.CenterHorizontally))
+                        Text(text = context!!.getString(R.string.time_hour),modifier = Modifier.align(Alignment.CenterHorizontally))
                         val mContext1 = LocalContext.current
 
                         // Declaring and initializing a calendar
@@ -398,7 +400,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
                     ) {
                         Text(
-                            text = "Dodaj",
+                            text = context!!.getString(R.string.add),
                             color = Color.White,
                             textAlign = TextAlign.Center,
                             style = TextStyle(
@@ -406,7 +408,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                             )
                         )
                     }
-                    PopupButton("Anuluj",setShowDialog)
+                    PopupButton(context!!.getString(R.string.cancel),setShowDialog)
 
 
                 }

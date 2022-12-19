@@ -11,12 +11,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onPlaced
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
@@ -24,16 +26,7 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 @Composable
 fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewModel) {
     Scaffold(topBar = {
-        SeniorTopBar(
-            navController = navController,
-            sharedViewModel = sharedViewModel,
-            isCustomOnClick = true,
-            customOnClick = {
-                sharedViewModel.sosCascadeIndex.value = -3
-                navController.navigateUp()
-                sharedViewModel.sosCascadeTimer.cancel()
-            }
-        )
+
     }) {
         Column(
             modifier = Modifier
@@ -58,7 +51,7 @@ fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewMode
 
                     Text(
                         modifier = Modifier.padding(horizontal = 12.dp),
-                        text = "W ciągu 10 sekund wykona się kolejne połączenie",
+                        text = stringResource(id = R.string.another_call_in),
                         fontWeight = FontWeight.Medium,
                         fontSize = 36.sp,
                     )
@@ -67,7 +60,7 @@ fun SosCascadeView(navController: NavController, sharedViewModel: SharedViewMode
 
                     SosCascadeStop(
                         navController = navController,
-                        text = "Zakończ połączenia",
+                        text = stringResource(id = R.string.stop_calling),
                         iconName = "clear",
                         sharedViewModel = sharedViewModel,
                         color = ""

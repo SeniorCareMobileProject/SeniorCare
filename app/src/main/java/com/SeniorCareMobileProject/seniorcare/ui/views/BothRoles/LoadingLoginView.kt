@@ -10,12 +10,15 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.util.Resource
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
+import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SplashScreenWithLoading
 import com.google.firebase.auth.AuthResult
 
 @Composable
@@ -30,7 +33,7 @@ fun LoadingLoginView(navController: NavController, sharedViewModel: SharedViewMo
 
         when (loginState.value){
             is Resource.Loading<*> -> {
-                CircularProgressIndicator()
+                SplashScreenWithLoading(stringResource(id = R.string.loading_login))
             }
             is Resource.Success<*> -> {
                 LaunchedEffect(loginState){

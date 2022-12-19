@@ -68,7 +68,7 @@ fun Header(
                 modifier = Modifier
                     .padding(horizontal = 8.dp)
                     .clickable {
-                        val shareIntent = sharedViewModel.createShareMedInfoIntent()
+                        val shareIntent = sharedViewModel.createShareMedInfoIntent(context.getString(R.string.share_medical_info))
                         context.startActivity(shareIntent)
                     }
             )
@@ -78,7 +78,7 @@ fun Header(
                 .weight(90f),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(text = "Dane medyczne")
+            Text(text = context.getString(R.string.medical_info))
 
         }
 

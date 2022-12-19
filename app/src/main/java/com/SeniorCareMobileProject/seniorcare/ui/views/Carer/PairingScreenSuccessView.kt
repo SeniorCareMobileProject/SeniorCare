@@ -23,10 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
-import com.SeniorCareMobileProject.seniorcare.ui.navigation.NavigationScreens
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
-import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.InputFieldLabelIcon
 import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.SmallButtonWithRout
 
 
@@ -144,38 +143,17 @@ fun PairingScreenSuccessView(navController: NavController, sharedViewModel: Shar
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "Udało się!",
+                text = context.getString(R.string.success),
                 color = MaterialTheme.colors.primary,
                 fontSize = 44.sp,
                 fontWeight = FontWeight.Medium
             )
         }
-
-//        Column(
-//            modifier = Modifier
-//                .fillMaxWidth()
-//                .padding(top = 38.dp)
-//                .padding(horizontal = 43.dp),
-//            horizontalAlignment = Alignment.CenterHorizontally
-//        ) {
-//            Text(
-//                text = "Sparowano z użytkownikiem:",
-//                fontWeight = FontWeight.Normal
-//            )
-//            Text(
-//                text = "${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}",
-//                fontWeight = FontWeight.Bold
-//            )
-//            Text(
-//                text = "${sharedViewModel.currentSeniorData.value?.email}",
-//                fontWeight = FontWeight.Normal
-//            )
-//        }
         Column(modifier = Modifier
             .fillMaxWidth()
             .padding(top = 100.dp),
             horizontalAlignment = Alignment.CenterHorizontally) {
-            SmallButtonWithRout(navController, "Ok", "CarerMainScreen")
+            SmallButtonWithRout(navController, context.getString(R.string.ok), "CarerMainScreen")
         }
     }
 }

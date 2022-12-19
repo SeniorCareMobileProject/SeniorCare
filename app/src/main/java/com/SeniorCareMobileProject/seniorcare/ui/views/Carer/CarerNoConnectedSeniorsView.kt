@@ -18,10 +18,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 
 @Composable
 fun CarerNoConnectedSeniorsView(navController: NavController, sharedViewModel: SharedViewModel) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -30,14 +32,14 @@ fun CarerNoConnectedSeniorsView(navController: NavController, sharedViewModel: S
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "UWAGA!",
+            text = context.getString(R.string.caution),
             color = Color.Black,
             fontSize = 30.sp,
             fontWeight = FontWeight.Bold,
             modifier = Modifier.padding(10.dp),
         )
         Text(
-            text = "Aktualnie nie jesteś połączony z żadnym użytkownikiem, co jest wymagane do poprawnego działania aplikacji. Sparuj swojego konto z podopiecznym, aby móc dalej korzystać z aplikacji.",
+            text = context.getString(R.string.not_connected_to_any_user_text),
             color = Color.Black,
             fontSize = 25.sp,
             fontWeight = FontWeight.Bold,
@@ -53,7 +55,7 @@ fun CarerNoConnectedSeniorsView(navController: NavController, sharedViewModel: S
                 }
             })
         {
-            Text("Przejdź do ekranu parowania")
+            Text(context.getString(R.string.go_to_the_pairing_screen))
         }
     }
 }

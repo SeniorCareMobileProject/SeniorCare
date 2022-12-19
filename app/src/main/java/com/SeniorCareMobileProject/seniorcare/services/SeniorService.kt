@@ -4,6 +4,8 @@ package com.SeniorCareMobileProject.seniorcare.services
 import android.app.*
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Build
 import android.os.IBinder
@@ -12,8 +14,8 @@ import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.Repository
-import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.LocationDAO
+import com.SeniorCareMobileProject.seniorcare.data.dao.SeniorTrackingSettingsDao
 import com.SeniorCareMobileProject.seniorcare.data.geofence.GeofenceManager
 import com.SeniorCareMobileProject.seniorcare.data.notifications.NotificationsManager
 import com.google.android.gms.location.*
@@ -34,32 +36,17 @@ class SeniorService: Service() {
 
     override fun onCreate() {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
-        locationRequest = LocationRequest.create().apply {
-            interval = TimeUnit.SECONDS.toMillis(300)
-            fastestInterval = TimeUnit.SECONDS.toMillis(300)
-            maxWaitTime = TimeUnit.SECONDS.toMillis(500)
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
 
+        changeLocationConfiguration(1, 2, 5)
 
         FirebaseAuth.getInstance()
         repository = Repository()
 
-
-        locationCallback = object : LocationCallback() {
-            override fun onLocationResult(locationResult: LocationResult) {
-                super.onLocationResult(locationResult)
-                val location = locationResult.lastLocation
-                sendLocation(location)
-            }
-        }
     }
 
 
     fun sendLocation(currentLocation: Location?) {
         firebaseUpdate(currentLocation)
-        startForeground(NOTIFY_ID, generateNotification(currentLocation).build())
     }
 
     private fun firebaseUpdate(currentLocation: Location?) {
@@ -86,6 +73,47 @@ class SeniorService: Service() {
                 NotificationsManager().scheduleNotifications(applicationContext,it)
             }
         }
+
+        scope.launch {
+            repository.getTrackingSettingsSenior().collectLatest {
+                onLocationSettingsChange(it)
+
+            }
+        }
+    }
+
+    private fun onLocationSettingsChange(seniorTrackingSettingsDao: SeniorTrackingSettingsDao) {
+        Log.d("LOCATION", "REQUESTED LOCATION UPDATE CHANGE")
+        fusedLocationProviderClient.removeLocationUpdates(locationCallback)
+        if(seniorTrackingSettingsDao.carerOpenApp){
+            changeLocationConfiguration(5, 3, 10)
+            return
+        }
+        if (!seniorTrackingSettingsDao.isSeniorAware && !seniorTrackingSettingsDao.seniorInSafeZone){
+            changeLocationConfiguration(5, 3, 10)
+            return
+        }
+        changeLocationConfiguration(300, 300, 500)
+
+    }
+
+    private fun changeLocationConfiguration(mInterval: Long, mFastestInterval: Long, mMaxWaitTime: Long){
+        fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this)
+        locationRequest = LocationRequest.create().apply {
+            interval = TimeUnit.SECONDS.toMillis(mInterval)
+            fastestInterval = TimeUnit.SECONDS.toMillis(mFastestInterval)
+            maxWaitTime = TimeUnit.SECONDS.toMillis(mMaxWaitTime)
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult) {
+                super.onLocationResult(locationResult)
+                val location = locationResult.lastLocation
+                sendLocation(location)
+            }
+        }
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest, locationCallback, Looper.getMainLooper())
     }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
@@ -111,12 +139,13 @@ class SeniorService: Service() {
                     Log.d("Current Location Updade", "${location.latitude}, ${location.longitude}")
                 }
             }
-            fusedLocationProviderClient.requestLocationUpdates(
-                locationRequest, locationCallback, Looper.getMainLooper())
+//            fusedLocationProviderClient.requestLocationUpdates(
+//                locationRequest, locationCallback, Looper.getMainLooper())
         } catch (unlikely: SecurityException) {
             Log.d("Problem", unlikely.toString())
         }
         sendLocation(currLocation)
+        startForeground(NOTIFY_ID, generateNotification().build())
     }
 
     private fun stop(){
@@ -124,13 +153,8 @@ class SeniorService: Service() {
         stopSelf()
     }
 
-    private fun generateNotification(location: Location?) : NotificationCompat.Builder {
-        var mainNotificationText =  if (location != null) {
-            "Location: ${location.latitude} ${location.longitude}"
-        } else {
-            "No location"
-        }
-        mainNotificationText = getString(R.string.localization_notification_text)
+    private fun generateNotification() : NotificationCompat.Builder {
+        var mainNotificationText = getString(R.string.localization_notification_text)
         val titleText = getString(R.string.app_name)
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -149,10 +173,11 @@ class SeniorService: Service() {
         return notificationCompatBuilder.setStyle(bigTextStyle)
             .setContentTitle(titleText)
             .setContentText(mainNotificationText)
-            .setSmallIcon(R.drawable.ic_launcher_background)
+            .setLargeIcon(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher), 128, 128, false))
             .setDefaults(NotificationCompat.DEFAULT_ALL)
             .setOnlyAlertOnce(true)
             .setOngoing(true)
+            .setSilent(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
     }
@@ -168,7 +193,7 @@ class SeniorService: Service() {
         private const val NOTIFICATION_CHANNEL_ID = "Location Channel"
         private const val CHANNEL_NAME = "Location Service"
         private const val DESCRIPTION = "Location Notification Channel"
-        private const val NOTIFY_ID = 200
+        private const val NOTIFY_ID = 294
     }
 }
 

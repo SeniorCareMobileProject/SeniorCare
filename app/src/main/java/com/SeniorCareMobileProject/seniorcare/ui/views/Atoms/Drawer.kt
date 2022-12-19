@@ -28,6 +28,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MainActivity
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -100,7 +101,7 @@ fun Header(sharedViewModel: SharedViewModel) {
             )
         }
 
-        Text(text = "Zalogowany:", color = Color(0xFF48474A))
+        Text(text = context.getString(R.string.drawer_logged_in), color = Color(0xFF48474A))
 
         Row(
             modifier = Modifier
@@ -149,7 +150,7 @@ fun SeniorsList(
     ) {
         Text(
             modifier = Modifier.padding(start = 20.dp, bottom = 20.dp),
-            text = "Podopieczni:", color = Color(0xFF48474A)
+            text = context!!.getString(R.string.drawer_seniors), color = Color(0xFF48474A)
         )
 
 //        // List of navigation items
@@ -164,6 +165,7 @@ fun SeniorsList(
             }
             DrawerItem(selected = isSelected, onItemClick = {
                 sharedViewModel.currentSeniorIndex = index
+                sharedViewModel.currentSeniorIndexObservable.value = index
                 sharedViewModel.clearVariablesToChangeSenior()
                 navController.navigate("LoadingDataView")
                 // Close drawer
@@ -263,7 +265,7 @@ fun BottomButtons(
         BottomButton(
             navController = navController,
             iconName = "add_circle",
-            text = "Dodaj podopiecznego",
+            text = context!!.getString(R.string.drawer_add_senior),
             rout = "PairingScreenCodeScreen",
             sharedViewModel = sharedViewModel
         )
@@ -277,7 +279,7 @@ fun BottomButtons(
         BottomButton(
             navController = navController,
             iconName = "info",
-            text = "O aplikacji",
+            text = context!!.getString(R.string.about),
             rout = "CarerAboutAppView",
             sharedViewModel = sharedViewModel
         )
@@ -285,7 +287,7 @@ fun BottomButtons(
         BottomButton(
             navController = navController,
             iconName = "clear",
-            text = "Wyloguj się",
+            text = context!!.getString(R.string.log_out),
             rout = "sign out",
             sharedViewModel = sharedViewModel
         )

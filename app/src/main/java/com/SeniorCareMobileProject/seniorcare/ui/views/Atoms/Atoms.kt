@@ -2,11 +2,9 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.content.Context
 import android.widget.Toast
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -21,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.data.emptyEvent
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -200,15 +200,15 @@ fun ChooseRoleSection(sharedViewModel: SharedViewModel) {
     ) {
         Text(
             modifier = Modifier.padding(bottom = 8.dp),
-            text = "Rola",
+            text = context!!.getString(R.string.role),
             fontWeight = FontWeight.Medium
         )
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            SmallButton(text = "Opiekun", firstPressed)
-            SmallButton(text = "Podopieczny", secondPressed)
+            SmallButton(text = stringResource(R.string.carer), firstPressed)
+            SmallButton(text = stringResource(R.string.senior), secondPressed)
         }
     }
 }
@@ -711,7 +711,7 @@ fun TopBarSettings(
             }
 
             Text(
-                text = "Ustawienia - ${sharedViewModel.currentSeniorData.value?.firstName} ${sharedViewModel.currentSeniorData.value?.lastName}",
+                text = context!!.getString(R.string.top_bar_settings_senior_name,sharedViewModel.currentSeniorData.value?.firstName,sharedViewModel.currentSeniorData.value?.lastName),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -740,7 +740,7 @@ fun SettingsItem(
             { showDisconnectConfirmDialog.value = false }, sharedViewModel, showDisconnectConfirmDialog, {
 
                 sharedViewModel.disconnectWithSenior()
-                Toast.makeText(context, "Rozłączono z użytkownikiem", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, context.getString(R.string.disconnected_with_user), Toast.LENGTH_LONG).show()
 
                 if (sharedViewModel.haveConnectedUsers) {
                     navController.navigate("LoadingDataView"){
@@ -883,6 +883,69 @@ fun SettingsItemWithIcon(
     }
 }
 
+@Composable
+fun SOSSettingsItemWithIcon(
+    navController: NavController,
+    sharedViewModel: SharedViewModel,
+    text: String,
+    rout: String,
+    iconName: String,
+) {
+    val context = LocalContext.current
+    val iconId = remember(iconName) {
+        context.resources.getIdentifier(
+            iconName,
+            "drawable",
+            context.packageName
+        )
+    }
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(60.dp)
+            .clickable { navController.navigate(rout);sharedViewModel.saveSosNumbersToFirebase() }
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp)
+                .padding(top = 16.dp)
+
+        ) {
+            Text(
+                text = text,
+                color = Color.Black,
+                textAlign = TextAlign.Start,
+                lineHeight = 24.sp,
+                style = TextStyle(
+                    fontSize = 16.sp
+                )
+            )
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
+                Icon(
+                    painter = painterResource(id = iconId),
+                    contentDescription = iconName,
+                    tint = Color.Black,
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+
+                )
+            }
+        }
+
+//        Column(
+//            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Bottom
+//        ) {
+//            Divider(color = Color(0xffe6e6e6))
+//        }
+    }
+}
+
 
 @Composable
 fun SettingsNumberElement(
@@ -999,7 +1062,7 @@ fun SettingsEditNumberElement(
                     backgroundColor = Color(0xFFF5F5F5),
                     unfocusedIndicatorColor = Color.Transparent
                 ),
-                label = { Text(text = "Opiekun:") }
+                label = { Text(text = context!!.getString(R.string.carer_settings_item)) }
             )
             Column(
                 modifier = Modifier
@@ -1022,7 +1085,7 @@ fun SettingsEditNumberElement(
                     keyboardOptions = KeyboardOptions(
                         keyboardType = KeyboardType.Number
                     ),
-                    label = { Text(text = "Numer telefonu:") }
+                    label = { Text(text = context!!.getString(R.string.phone_number_settings_item)) }
                 )
             }
             Column(
@@ -1473,8 +1536,33 @@ fun PopupButtonAddNumber(
     }
 }
 
+@Composable
+fun SplashScreenWithLoading(text: String){
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Card(
+            modifier = Modifier.size(150.dp),
+            shape = CircleShape,
+            elevation = 2.dp
+        ) {
+            Image(
+                painter = painterResource(id = R.drawable.ic_launcherplay),
+                contentDescription = "App Icon",
+                modifier = Modifier.fillMaxSize()
+            )
+        }
+        PaddingValues(20.dp)
+        Text(text, fontWeight = FontWeight.Light, fontSize = 20.sp)
+        PaddingValues(20.dp)
+        CircularProgressIndicator()
+    }
+}
+
 fun inProgressToastView(context: Context) {
-    Toast.makeText(context, "W budowie", Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, context!!.getString(R.string.work_in_progress), Toast.LENGTH_SHORT).show()
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)

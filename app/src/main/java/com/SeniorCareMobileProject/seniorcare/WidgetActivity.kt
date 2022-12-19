@@ -31,6 +31,8 @@ class WidgetActivity : ComponentActivity() {
     private val requestCall = 2
 
     override fun onCreate(savedInstanceState: Bundle?) {
+
+        Log.e("WidgetActivity","Weszlo")
         super.onCreate(savedInstanceState)
 
         val localSettingsRepository = LocalSettingsRepository.getInstance(application)

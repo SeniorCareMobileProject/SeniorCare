@@ -18,12 +18,15 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.Observer
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.data.LocalSettingsRepository
+import com.SeniorCareMobileProject.seniorcare.data.Repository
 import com.SeniorCareMobileProject.seniorcare.data.dao.GeofenceDAO
 import com.SeniorCareMobileProject.seniorcare.data.dao.MedInfoDAO
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
@@ -50,6 +53,9 @@ private const val REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE = 34
 class MainActivity : ComponentActivity() {
 
     private val requestCall = 1
+    private var seniorIndex = 0
+    private var seniorId = "0"
+    private var function: String = "Carer"
 
     private val sharedViewModel: SharedViewModel by viewModels()
 
@@ -68,27 +74,32 @@ class MainActivity : ComponentActivity() {
         requestForegroundPermissions()
 
         sharedViewModel.getUserFunctionFromLocalRepo()
-        if (sharedViewModel.userFunctionFromLocalRepo == "Senior") {
-            sharedViewModel.getSosNumbersFromLocalRepo()
-            sharedViewModel.getFallDetectionStateFromLocalRepo()
-            HighAccuracyLocation().askForHighAccuracy(this)
-            Intent(applicationContext, SeniorService::class.java).apply {
-                action = SeniorService.ACTION_START
-                startService(this)
-            }
-            if (sharedViewModel.isFallDetectorTurnOn.value == true) {
-                val fallDetectorService = FallDetectorService()
-                val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
-                startService(fallDetectorServiceIntent)
-            }
-        }
-
-        if(sharedViewModel.userFunctionFromLocalRepo == "Carer") {
-            Intent(applicationContext, CarerService::class.java).apply {
-                action = SeniorService.ACTION_START
+        sharedViewModel.hasUserFunction.observeOnce(this, Observer<Boolean?>{
+            sharedViewModel.getUserFunctionFromLocalRepo()
+            if (sharedViewModel.userFunctionFromLocalRepo == "Senior") {
+                function = "Senior"
+                sharedViewModel.getSosNumbersFromLocalRepo()
+                sharedViewModel.getFallDetectionStateFromLocalRepo()
+                HighAccuracyLocation().askForHighAccuracy(this)
+                Intent(applicationContext, SeniorService::class.java).apply {
+                    action = SeniorService.ACTION_START
                     startService(this)
+                }
+                if (sharedViewModel.isFallDetectorTurnOn.value == true) {
+                    val fallDetectorService = FallDetectorService()
+                    val fallDetectorServiceIntent = Intent(this, fallDetectorService.javaClass)
+                    startService(fallDetectorServiceIntent)
+                }
             }
-        }
+            if (sharedViewModel.userFunctionFromLocalRepo == "Carer") {
+                Intent(applicationContext, CarerService::class.java).apply {
+                    action = CarerService.ACTION_START
+                    startService(this)
+                }
+            }
+
+        })
+
 
 
         sharedViewModel.sosCascadeIndex.observe(this, Observer { value ->
@@ -100,6 +111,25 @@ class MainActivity : ComponentActivity() {
             }
         }
         )
+        sharedViewModel.hasListOfConnectedUsers.observe(this, Observer {
+            Log.d("SENIOR DATA", "INIT")
+            if (sharedViewModel.userFunctionFromLocalRepo == "Carer") {
+                if (it == true) {
+                    Log.d("SENIOR DATA", "SAVE TRUE")
+                    seniorId =
+                        sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
+                    Repository().saveTrackingSettingsCarer(true, seniorId)
+                }
+                if (seniorIndex != sharedViewModel.currentSeniorIndex) {
+                    Log.d("SENIOR DATA", "SAVE FALSE")
+                    Repository().saveTrackingSettingsCarer(false, seniorId)
+                    seniorId =
+                        sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
+                    seniorIndex = sharedViewModel.currentSeniorIndex
+                }
+            }
+        })
+
 
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
@@ -459,29 +489,26 @@ class MainActivity : ComponentActivity() {
                 Toast.makeText(this, "Odmowa dostępu", Toast.LENGTH_SHORT).show()
             }
         }
-
-        when (requestCode) {
-            REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE -> when {
-//                grantResults.isEmpty() ->
-//                    Log.d(TAG, "User interaction was cancelled.")
-//                grantResults[0] == PackageManager.PERMISSION_GRANTED ->
-//                    currentOnlyLocationService?.subscribeToLocationUpdates()
-                else -> {
-
-                    val intent = Intent()
-                    intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                    val uri = Uri.fromParts(
-                        "package",
-                        BuildConfig.VERSION_NAME,
-                        null
-                    )
-                    intent.data = uri
-                    intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
-                    startActivity(intent)
-                }
-            }
-        }
     }
 
+    override fun onDestroy() {
+        if (sharedViewModel.userFunctionFromLocalRepo == "Carer") {
+            Log.d("SENIOR DATA", "SAVE TRUE")
+            seniorId =
+                sharedViewModel.listOfAllConnectedUsersID[sharedViewModel.currentSeniorIndex]
+            Repository().saveTrackingSettingsCarer(false, seniorId)
+        }
+        super.onDestroy()
+    }
 
+}
+
+
+fun <T> LiveData<T>.observeOnce(lifecycleOwner: LifecycleOwner, observer: Observer<T>) {
+    observeForever(object : Observer<T> {
+        override fun onChanged(t: T?) {
+            observer.onChanged(t)
+            removeObserver(this)
+        }
+    })
 }

@@ -126,6 +126,7 @@ class Repository {
                 if (user != null) {
                     sharedViewModel._userData.value = user
                     user.function?.let { sharedViewModel.saveUserFunctionToLocalRepo(it) }
+
                     sharedViewModel._userDataStatus.postValue(Resource.Success(user))
                 }
                 else {
@@ -150,6 +151,7 @@ class Repository {
                 val data = snapshot.getValue<HashMap<String, String>>()
                 if (data != null){
                     sharedViewModel.listOfAllConnectedUsersID.addAll(data.keys)
+                    sharedViewModel.hasListOfConnectedUsers.value = true
                     getCurrentSeniorData(sharedViewModel)
                     getListOfConnectedUsersNames(sharedViewModel)
                 }
@@ -170,6 +172,7 @@ class Repository {
                 val data = snapshot.getValue<HashMap<String, String>>()
                 if (data != null){
                     sharedViewModel.listOfAllConnectedUsersID.addAll(data.keys)
+                    sharedViewModel.hasListOfConnectedUsers.value = true
                     getListOfConnectedUsersNames(sharedViewModel)
                 }
             }
@@ -920,7 +923,7 @@ class Repository {
         }
     }
 
-    fun saveTrackingSettingsSenior(dataToSend: SeniorTrackingSettingsDao) {
+    fun saveTrackingSettingsSenior(seniorInSafeZone: Boolean?, isSeniorAware: Boolean?) {
         val path = FirebaseAuth.getInstance().currentUser!!.uid
 
         val reference = database.getReference("users")
@@ -930,7 +933,9 @@ class Repository {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 withContext(Dispatchers.Main) {
-                    reference.setValue(dataToSend).await()
+                    if (isSeniorAware != null) {
+                        reference.child("isSeniorAware").setValue(isSeniorAware).await()
+                    }
                 }
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
@@ -938,6 +943,21 @@ class Repository {
                 }
             }
         }
+
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                withContext(Dispatchers.Main) {
+                    if (seniorInSafeZone != null)
+                        reference.child("seniorInSafeZone").setValue(seniorInSafeZone).await()
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Log.e("saveTrackingSettingsSenior", e.message.toString())
+                }
+            }
+        }
+
+
     }
 
     fun getTrackingSettingsSenior(): Flow<SeniorTrackingSettingsDao> = callbackFlow {
@@ -967,12 +987,13 @@ class Repository {
         }
     }
 
-    fun saveTrackingSettingsCarer(dataToSend: SeniorTrackingSettingsDao, currentSeniorId: String) {
+    fun saveTrackingSettingsCarer(dataToSend: Boolean, currentSeniorId: String) {
         val path = currentSeniorId
 
         val reference = database.getReference("users")
             .child(path)
             .child("trackingSettings")
+            .child("carerOpenApp")
 
         CoroutineScope(Dispatchers.IO).launch {
             try {
@@ -1029,7 +1050,7 @@ class Repository {
                     val data = snapshot.getValue<SeniorAllDAO>()
                     if (data != null){
                         trackingSettingAll[data.firstName.toString() + " " + data.lastName.toString()] =
-                            data.trackingSettings!!
+                          data.trackingSettings!!
                     }
                     if (trackingSettingAll.size == listOfId.size){
                         trySend(trackingSettingAll)
@@ -1039,7 +1060,7 @@ class Repository {
                     Log.w("Database", "getTrackingSettingsAllSeniorsForCarer:onCancelled", databaseError.toException())
                 }
             }
-            reference.addListenerForSingleValueEvent(listener)
+            reference.addValueEventListener(listener)
         }
         awaitClose{
             //remove listener here

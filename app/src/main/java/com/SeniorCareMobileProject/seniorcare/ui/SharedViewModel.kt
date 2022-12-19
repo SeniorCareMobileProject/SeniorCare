@@ -65,7 +65,6 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val mapFullscreen = mutableStateOf(false)
     val resetCamera = mutableStateOf(false)
     val isHighAccuracyEnabled = MutableLiveData(true)
-    val locationBeforeFreeingCam = mutableStateOf(LatLng(52.408839, 16.906782))
 
     //geofence
     val geofenceLocation = mutableStateOf(LatLng(1.0, 1.0))
@@ -102,12 +101,16 @@ class SharedViewModel() : ViewModel(), KoinComponent {
     val userData: LiveData<User> = _userData
     val isNewUser: MutableLiveData<Boolean> = MutableLiveData(false)
     val functionLiveData: MutableLiveData<String> = MutableLiveData(userData.value?.function)
+    val hasListOfConnectedUsers = MutableLiveData<Boolean>()
     val listOfAllConnectedUsersID = mutableListOf<String>()
     val currentSeniorData: MutableLiveData<User> = MutableLiveData()
 
     val listOfConnectedUsers = mutableListOf<String>()
     var currentSeniorIndex = 0
+    var currentSeniorIndexObservable = MutableLiveData(0)
     var haveConnectedUsers = true
+
+    var hasUserFunction = MutableLiveData<Boolean>(false)
 
     // for pairing users
     val pairingCode: MutableLiveData<String?> = MutableLiveData("")
@@ -328,6 +331,7 @@ class SharedViewModel() : ViewModel(), KoinComponent {
 
     fun saveUserFunctionToLocalRepo(userFunction: String) {
         localSettingsRepository.saveUserFunction(userFunction)
+        hasUserFunction.value = true
     }
 
     fun getSosNumbersFromLocalRepo() {
@@ -356,13 +360,13 @@ class SharedViewModel() : ViewModel(), KoinComponent {
         localSettingsRepository.clearRepository()
     }
 
-    fun createShareMedInfoIntent(): Intent? {
+    fun createShareMedInfoIntent(message: String): Intent? {
         val sendIntent: Intent = Intent().apply {
             action = Intent.ACTION_SEND
             putExtra(Intent.EXTRA_TEXT, medInfo.value.toString())
             type = "text/plain"
         }
-        return Intent.createChooser(sendIntent, "Udostępnij dane medyczne")
+        return Intent.createChooser(sendIntent, message)
     }
 
     // CALENDAR EVENTS - FIREBASE
