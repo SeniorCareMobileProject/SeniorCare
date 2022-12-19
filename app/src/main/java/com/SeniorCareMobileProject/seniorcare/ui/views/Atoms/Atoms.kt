@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.app.FragmentManager
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -922,7 +923,18 @@ fun SOSSettingsItemWithIcon(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .clickable { navController.navigate(rout);sharedViewModel.saveSosNumbersToFirebase() }
+            .clickable {
+                navController.navigate(rout)
+                sharedViewModel.saveSosNumbersToFirebase()
+                if (rout == "CarerSettingsSOSScreen") {
+                    navController.navigate(rout) {
+                        popUpTo("CarerSettingsListScreen")
+                    }
+                }
+                else {
+                    navController.navigate(rout)
+                }
+            }
     ) {
         Row(
             modifier = Modifier
