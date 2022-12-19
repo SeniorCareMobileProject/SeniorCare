@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.content.Context
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -162,7 +163,7 @@ fun RadiusChanger(navController: NavController, sharedViewModel: SharedViewModel
                     .clickable { increaseRadius(sharedViewModel) }
             )
         }
-        
+
         Spacer(modifier = Modifier.height(30.dp))
 
         Row(
@@ -176,9 +177,11 @@ fun RadiusChanger(navController: NavController, sharedViewModel: SharedViewModel
 }
 
 @Composable
-fun SmallButton(navController: NavController, sharedViewModel: SharedViewModel, text: String,) {
+fun SmallButton(navController: NavController, sharedViewModel: SharedViewModel, text: String) {
+    val context = LocalContext.current
+
     Button(
-        onClick = { addGeofence(navController, sharedViewModel, text) },
+        onClick = { addGeofence(navController, sharedViewModel, text, context) },
         shape = RoundedCornerShape(5.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
     ) {
@@ -193,15 +196,20 @@ fun SmallButton(navController: NavController, sharedViewModel: SharedViewModel, 
     }
 }
 
-fun addGeofence(navController: NavController, sharedViewModel: SharedViewModel, text: String) {
-    if (text == "Anuluj") {
+fun addGeofence(
+    navController: NavController,
+    sharedViewModel: SharedViewModel,
+    text: String,
+    context: Context
+) {
+    if (text == context.getString(R.string.cancel)) {
         sharedViewModel.onGeofenceRequest.value = false
         sharedViewModel.newGeofenceLocation.value = sharedViewModel.geofenceLocation.value
         sharedViewModel.newGeofenceRadius.value = sharedViewModel.geofenceRadius.value
     } else
-        if (text == "Zapisz") {
+        if (text == context.getString(R.string.save)) {
             sharedViewModel.onGeofenceRequest.value = true
-    }
+        }
 
     navController.popBackStack()
 
@@ -261,7 +269,14 @@ fun RoundSmallButtonSafeZone(
             .height(46.dp)
             .clip(RoundedCornerShape(50.dp))
             .background(Color(0xFFCAAAF9))
-            .clickable { addGeofence(navController, sharedViewModel, context.getString(R.string.cancel)) }
+            .clickable {
+                addGeofence(
+                    navController,
+                    sharedViewModel,
+                    context.getString(R.string.cancel),
+                    context
+                )
+            }
     ) {
         Row(
             modifier = Modifier
