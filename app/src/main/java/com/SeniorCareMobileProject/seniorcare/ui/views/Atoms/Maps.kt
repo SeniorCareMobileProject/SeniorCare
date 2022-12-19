@@ -19,6 +19,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
@@ -140,16 +141,23 @@ fun RadiusChanger(navController: NavController, sharedViewModel: SharedViewModel
                     .clickable { decreaseRadius(sharedViewModel) }
             )
 
-            TextField(
-                modifier = Modifier.width(80.dp),
-                value = sharedViewModel.newGeofenceRadius.value.toString() + " m.",
-                onValueChange = { sharedViewModel.newGeofenceRadius.value = it.toInt() },
-                colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
-                textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 16.sp),
-                keyboardOptions = KeyboardOptions(
-                    keyboardType = KeyboardType.Number
-                )
+            Text(
+                modifier = Modifier.wrapContentWidth(),
+                text = sharedViewModel.newGeofenceRadius.value.toString() + " m.",
+                textAlign = TextAlign.Center,
+                fontSize = 16.sp
             )
+
+//            TextField(
+//                modifier = Modifier.width(80.dp),
+//                value = sharedViewModel.newGeofenceRadius.value.toString() + " m.",
+//                onValueChange = { sharedViewModel.newGeofenceRadius.value = it.toInt() },
+//                colors = TextFieldDefaults.textFieldColors(backgroundColor = Color.White),
+//                textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 16.sp),
+//                keyboardOptions = KeyboardOptions(
+//                    keyboardType = KeyboardType.Number
+//                )
+//            )
 
             Icon(
                 painter = painterResource(id = addIconId),
@@ -162,7 +170,7 @@ fun RadiusChanger(navController: NavController, sharedViewModel: SharedViewModel
                     .clickable { increaseRadius(sharedViewModel) }
             )
         }
-        
+
         Spacer(modifier = Modifier.height(30.dp))
 
         Row(
@@ -176,7 +184,7 @@ fun RadiusChanger(navController: NavController, sharedViewModel: SharedViewModel
 }
 
 @Composable
-fun SmallButton(navController: NavController, sharedViewModel: SharedViewModel, text: String,) {
+fun SmallButton(navController: NavController, sharedViewModel: SharedViewModel, text: String) {
     Button(
         onClick = { addGeofence(navController, sharedViewModel, text) },
         shape = RoundedCornerShape(5.dp),
@@ -201,7 +209,7 @@ fun addGeofence(navController: NavController, sharedViewModel: SharedViewModel, 
     } else
         if (text == "Zapisz") {
             sharedViewModel.onGeofenceRequest.value = true
-    }
+        }
 
     navController.popBackStack()
 
@@ -261,7 +269,13 @@ fun RoundSmallButtonSafeZone(
             .height(46.dp)
             .clip(RoundedCornerShape(50.dp))
             .background(Color(0xFFCAAAF9))
-            .clickable { addGeofence(navController, sharedViewModel, context.getString(R.string.cancel)) }
+            .clickable {
+                addGeofence(
+                    navController,
+                    sharedViewModel,
+                    context.getString(R.string.cancel)
+                )
+            }
     ) {
         Row(
             modifier = Modifier
