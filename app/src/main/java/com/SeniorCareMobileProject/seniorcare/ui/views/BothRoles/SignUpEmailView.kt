@@ -60,7 +60,6 @@ fun SignUpEmailView(navController: NavController, sharedViewModel: SharedViewMod
                 .height(48.dp)
                 .clickable { navController.navigateUp() }
         )
-
         Column(
             modifier = Modifier
                 .fillMaxHeight(),

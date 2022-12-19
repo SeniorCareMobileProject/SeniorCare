@@ -38,11 +38,14 @@ import java.util.*
 
 
 @Composable
-fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
-                             sharedViewModel: SharedViewModel,
-                             navController: NavController,
-                             rout: String) {
-    Dialog(onDismissRequest = { setShowDialog(false) },
+fun NewNotificationPopupView(
+    setShowDialog: (Boolean) -> Unit,
+    sharedViewModel: SharedViewModel,
+    navController: NavController,
+    rout: String
+) {
+    Dialog(
+        onDismissRequest = { setShowDialog(false) },
     ) {
         Surface(
             modifier = Modifier
@@ -61,7 +64,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
             var expanded by remember { mutableStateOf(false) }
             var enabled by remember { mutableStateOf(1) }
 
-            var frequency by remember {mutableStateOf("Brak")}
+            var frequency by remember { mutableStateOf("Brak") }
 
 
             Column(
@@ -82,16 +85,20 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                     ),
                     placeholder = { Text(text = context!!.getString(R.string.name)) }
                 )
-                Row(modifier = Modifier.fillMaxWidth(),
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
 
-                ){
+                ) {
                     Column {
                         /**
                         Button(onClick = {mTimePickerDialog.show()},shape = RoundedCornerShape(5.dp), colors =ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFFFFFF))) {
                         Text(text = mTime.value)
                         }**/
-                        Text(text = context!!.getString(R.string.time_hour),modifier = Modifier.align(Alignment.CenterHorizontally))
+                        Text(
+                            text = context!!.getString(R.string.time_hour),
+                            modifier = Modifier.align(Alignment.CenterHorizontally)
+                        )
                         val mContext1 = LocalContext.current
 
                         // Declaring and initializing a calendar
@@ -100,24 +107,20 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         val mMinute1 = mCalendar1[Calendar.MINUTE]
 
 
-
                         val mTimePickerDialog1 = TimePickerDialog(
                             mContext1,
-                            {_, mHour1 : Int, mMinute1: Int ->
-                                if(mMinute1<10){
-                                    if(mHour1<10){
+                            { _, mHour1: Int, mMinute1: Int ->
+                                if (mMinute1 < 10) {
+                                    if (mHour1 < 10) {
                                         mTime1.value = "0$mHour1:0$mMinute1"
-                                    }
-                                    else{
+                                    } else {
                                         mTime1.value = "$mHour1:0$mMinute1"
                                     }
 
-                                }
-                                else{
-                                    if(mHour1<10){
+                                } else {
+                                    if (mHour1 < 10) {
                                         mTime1.value = "0$mHour1:$mMinute1"
-                                    }
-                                    else{
+                                    } else {
                                         mTime1.value = "$mHour1:$mMinute1"
                                     }
                                 }
@@ -125,7 +128,10 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         )
 
                         Text(
-                            modifier = Modifier.width(60.dp).height(25.dp).align(Alignment.CenterHorizontally)
+                            modifier = Modifier
+                                .width(60.dp)
+                                .height(25.dp)
+                                .align(Alignment.CenterHorizontally)
                                 .clickable {
                                     mTimePickerDialog1.show()
 
@@ -136,7 +142,7 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                             textAlign = TextAlign.Center
                         )
                         Spacer(Modifier.height(4.dp))
-                        if (enabled>=2){
+                        if (enabled >= 2) {
                             val mContext2 = LocalContext.current
 
                             // Declaring and initializing a calendar
@@ -147,21 +153,18 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
 
                             val mTimePickerDialog2 = TimePickerDialog(
                                 mContext2,
-                                {_, mHour2 : Int, mMinute2: Int ->
-                                    if(mMinute2<10){
-                                        if(mHour2<10){
+                                { _, mHour2: Int, mMinute2: Int ->
+                                    if (mMinute2 < 10) {
+                                        if (mHour2 < 10) {
                                             mTime2.value = "0$mHour2:0$mMinute2"
-                                        }
-                                        else{
+                                        } else {
                                             mTime2.value = "$mHour2:0$mMinute2"
                                         }
 
-                                    }
-                                    else{
-                                        if(mHour2<10){
+                                    } else {
+                                        if (mHour2 < 10) {
                                             mTime2.value = "0$mHour2:$mMinute2"
-                                        }
-                                        else{
+                                        } else {
                                             mTime2.value = "$mHour2:$mMinute2"
                                         }
                                     }
@@ -169,7 +172,10 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                             )
 
                             Text(
-                                modifier = Modifier.width(60.dp).height(25.dp).align(Alignment.CenterHorizontally)
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .height(25.dp)
+                                    .align(Alignment.CenterHorizontally)
                                     .clickable {
                                         mTimePickerDialog2.show()
                                     }
@@ -179,11 +185,10 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                 textAlign = TextAlign.Center
                             )
                             Spacer(Modifier.height(4.dp))
-                        }
-                        else{
+                        } else {
                             Spacer(Modifier.height(24.dp))
                         }
-                        if (enabled>=3) {
+                        if (enabled >= 3) {
                             val mContext3 = LocalContext.current
 
                             // Declaring and initializing a calendar
@@ -192,25 +197,20 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                             val mMinute3 = mCalendar3[Calendar.MINUTE]
 
 
-
-
                             val mTimePickerDialog3 = TimePickerDialog(
                                 mContext3,
-                                {_, mHour3 : Int, mMinute3: Int ->
-                                    if(mMinute3<10){
-                                        if(mHour3<10){
+                                { _, mHour3: Int, mMinute3: Int ->
+                                    if (mMinute3 < 10) {
+                                        if (mHour3 < 10) {
                                             mTime3.value = "0$mHour3:0$mMinute3"
-                                        }
-                                        else{
+                                        } else {
                                             mTime3.value = "$mHour3:0$mMinute3"
                                         }
 
-                                    }
-                                    else{
-                                        if(mHour3<10){
+                                    } else {
+                                        if (mHour3 < 10) {
                                             mTime3.value = "0$mHour3:$mMinute3"
-                                        }
-                                        else{
+                                        } else {
                                             mTime3.value = "$mHour3:$mMinute3"
                                         }
                                     }
@@ -218,7 +218,10 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                             )
 
                             Text(
-                                modifier = Modifier.width(60.dp).height(25.dp).align(Alignment.CenterHorizontally)
+                                modifier = Modifier
+                                    .width(60.dp)
+                                    .height(25.dp)
+                                    .align(Alignment.CenterHorizontally)
                                     .clickable {
                                         mTimePickerDialog3.show()
                                     }
@@ -228,21 +231,26 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                 textAlign = TextAlign.Center
                             )
                             Spacer(Modifier.height(4.dp))
-                    } else{
+                        } else {
                             Spacer(Modifier.height(24.dp))
                         }
-                        Row(){
+                        Row() {
                             Button(
                                 modifier = Modifier
                                     .height(30.dp)
                                     .width(40.dp),
                                 onClick = {
-                                    if (enabled <3){
+                                    if (enabled < 3) {
 
-                                    enabled += 1
-                                } },
+                                        enabled += 1
+                                    }
+                                },
                                 shape = RoundedCornerShape(5.dp),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color(
+                                        0xff2954ef
+                                    )
+                                )
                             ) {
                                 Text(
                                     text = "+",
@@ -258,12 +266,18 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                 modifier = Modifier
                                     .height(30.dp)
                                     .width(40.dp),
-                                onClick = { if (enabled>1){
-                                    //notificationTimePickerList.remove(notificationTimePickerList[notificationTimePickerList.size-1])
-                                    enabled -= 1
-                                } },
+                                onClick = {
+                                    if (enabled > 1) {
+                                        //notificationTimePickerList.remove(notificationTimePickerList[notificationTimePickerList.size-1])
+                                        enabled -= 1
+                                    }
+                                },
                                 shape = RoundedCornerShape(5.dp),
-                                colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
+                                colors = ButtonDefaults.buttonColors(
+                                    backgroundColor = Color(
+                                        0xff2954ef
+                                    )
+                                )
                             ) {
                                 Text(
                                     text = "-",
@@ -277,9 +291,8 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                         }
 
 
-
                     }
-                    Column(){
+                    Column() {
                         /**
                         Button(onClick = {mTimePickerDialog.show()},shape = RoundedCornerShape(5.dp), colors =ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFFFFFF))) {
                         Text(text = mTime.value)
@@ -291,7 +304,10 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                     expanded = true
 
                                 }
-                                .background(Color.White).align(Alignment.CenterHorizontally).width(90.dp).height(25.dp),
+                                .background(Color.White)
+                                .align(Alignment.CenterHorizontally)
+                                .width(90.dp)
+                                .height(25.dp),
                             text = frequency,
                             textAlign = TextAlign.Center,
                             color = Color.Black)
@@ -358,13 +374,13 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                     }
 
 
-
                 }
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.SpaceAround
                 ) {
+                    PopupButton(context!!.getString(R.string.cancel), setShowDialog)
                     Button(
                         onClick = {
                             if (!frequency.equals("Brak")) {
@@ -389,13 +405,13 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                                         timeList = timeList
                                     )
                                 )
-                                Log.e(TAG,sharedViewModel.notificationItems.toString())
+                                Log.e(TAG, sharedViewModel.notificationItems.toString())
                                 navController.navigate(rout)
-                                sharedViewModel.notificationitemsLiveData.value = sharedViewModel.notificationItems
+                                sharedViewModel.notificationitemsLiveData.value =
+                                    sharedViewModel.notificationItems
                                 sharedViewModel.saveNotificationsToFirebase()
                             }
                         },
-
                         shape = RoundedCornerShape(5.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff2954ef))
                     ) {
@@ -408,15 +424,8 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
                             )
                         )
                     }
-                    PopupButton(context!!.getString(R.string.cancel),setShowDialog)
-
-
                 }
-
-
-
             }
-
         }
     }
 }
@@ -427,8 +436,8 @@ fun NewNotificationPopupView(setShowDialog: (Boolean) -> Unit,
 fun NewNotificationPopupViewPreview() {
     SeniorCareTheme() {
         val navController = rememberNavController()
-        val showDialog =  remember { mutableStateOf(false) }
+        val showDialog = remember { mutableStateOf(false) }
 
-      //NewNotificationPopupView(setShowDialog = {showDialog.value = it})
+        //NewNotificationPopupView(setShowDialog = {showDialog.value = it})
     }
 }

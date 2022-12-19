@@ -21,15 +21,17 @@ import com.SeniorCareMobileProject.seniorcare.ui.views.Atoms.*
 import kotlinx.coroutines.CoroutineScope
 
 @Composable
-fun ItemsList(sharedViewModel: SharedViewModel,navController: NavController) {
-    for(i in 0 until sharedViewModel.notificationItems.size){
-        NotificationItem(title = sharedViewModel.notificationItems[i].name,
-        howOften = sharedViewModel.notificationItems[i].interval,
-        listOfTime = sharedViewModel.notificationItems[i].timeList,
-        sharedViewModel = sharedViewModel,
-        index = i,
-        navController = navController,
-        rout = Screen.Notifications.route)
+fun ItemsList(sharedViewModel: SharedViewModel, navController: NavController) {
+    for (i in 0 until sharedViewModel.notificationItems.size) {
+        NotificationItem(
+            title = sharedViewModel.notificationItems[i].name,
+            howOften = sharedViewModel.notificationItems[i].interval,
+            listOfTime = sharedViewModel.notificationItems[i].timeList,
+            sharedViewModel = sharedViewModel,
+            index = i,
+            navController = navController,
+            rout = Screen.Notifications.route
+        )
     }
 
 }
@@ -43,13 +45,20 @@ fun CarerNotificationsView(
 ) {
     val showDialog = remember { mutableStateOf(false) }
     if (showDialog.value) {
-        NewNotificationPopupView(setShowDialog = { showDialog.value = it },sharedViewModel,navController,Screen.Notifications.route)
+        NewNotificationPopupView(
+            setShowDialog = { showDialog.value = it },
+            sharedViewModel,
+            navController,
+            Screen.Notifications.route
+        )
     }
     Scaffold(
         scaffoldState = scaffoldState,
         drawerGesturesEnabled = false,
         topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
-        floatingActionButton = { FloatingButtonNotifications(setShowDialog = { showDialog.value = it }) },
+        floatingActionButton = {
+            FloatingButtonNotifications(sharedViewModel, showDialog)
+        },
         bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         drawerContent = {
             Drawer(
@@ -73,10 +82,8 @@ fun CarerNotificationsView(
                 modifier = Modifier.padding(top = 10.dp, bottom = 10.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                ItemsList(sharedViewModel,navController)
+                ItemsList(sharedViewModel, navController)
             }
-
-
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
+import android.app.FragmentManager
 import android.content.Context
 import android.widget.Toast
 import androidx.compose.foundation.*
@@ -94,18 +95,25 @@ fun SmallButton(text: String, isPressed: MutableState<Boolean>) {
         colors = ButtonDefaults.buttonColors(backgroundColor = color),
         modifier = Modifier
             .width(width = 187.dp)
-            .height(height = 30.dp)
-            .padding(horizontal = 19.dp)
+            .heightIn(min = 30.dp)
+            .wrapContentHeight()
+            .padding(horizontal = 19.dp),
     ) {
-        Text(
-            text = text,
-            color = Color.White,
-            textAlign = TextAlign.Center,
-            lineHeight = 16.sp,
-            style = TextStyle(
-                fontSize = 12.sp
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = text,
+                color = Color.White,
+                textAlign = TextAlign.Center,
+                lineHeight = 16.sp,
+                style = TextStyle(
+                    fontSize = 12.sp
+                )
             )
-        )
+        }
     }
 }
 
@@ -711,7 +719,11 @@ fun TopBarSettings(
             }
 
             Text(
-                text = context!!.getString(R.string.top_bar_settings_senior_name,sharedViewModel.currentSeniorData.value?.firstName,sharedViewModel.currentSeniorData.value?.lastName),
+                text = context!!.getString(
+                    R.string.top_bar_settings_senior_name,
+                    sharedViewModel.currentSeniorData.value?.firstName,
+                    sharedViewModel.currentSeniorData.value?.lastName
+                ),
                 fontSize = 16.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -737,18 +749,25 @@ fun SettingsItem(
                 sharedViewModel.currentSeniorData.value!!.firstName,
                 sharedViewModel.currentSeniorData.value!!.lastName
             ),
-            { showDisconnectConfirmDialog.value = false }, sharedViewModel, showDisconnectConfirmDialog, {
+            { showDisconnectConfirmDialog.value = false },
+            sharedViewModel,
+            showDisconnectConfirmDialog,
+            {
 
                 sharedViewModel.disconnectWithSenior()
-                Toast.makeText(context, context.getString(R.string.disconnected_with_user), Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    context,
+                    context.getString(R.string.disconnected_with_user),
+                    Toast.LENGTH_LONG
+                ).show()
 
                 if (sharedViewModel.haveConnectedUsers) {
-                    navController.navigate("LoadingDataView"){
-                        popUpTo("CarerSettingsListScreen") {inclusive = true}
+                    navController.navigate("LoadingDataView") {
+                        popUpTo("CarerSettingsListScreen") { inclusive = true }
                     }
                 } else {
-                    navController.navigate("CarerNoConnectedSeniorsView"){
-                        popUpTo("CarerSettingsListScreen") {inclusive = true}
+                    navController.navigate("CarerNoConnectedSeniorsView") {
+                        popUpTo("CarerSettingsListScreen") { inclusive = true }
                     }
                 }
             })
@@ -904,7 +923,18 @@ fun SOSSettingsItemWithIcon(
         modifier = Modifier
             .fillMaxWidth()
             .height(60.dp)
-            .clickable { navController.navigate(rout);sharedViewModel.saveSosNumbersToFirebase() }
+            .clickable {
+                navController.navigate(rout)
+                sharedViewModel.saveSosNumbersToFirebase()
+                if (rout == "CarerSettingsSOSScreen") {
+                    navController.navigate(rout) {
+                        popUpTo("CarerSettingsListScreen")
+                    }
+                }
+                else {
+                    navController.navigate(rout)
+                }
+            }
     ) {
         Row(
             modifier = Modifier
@@ -1402,17 +1432,20 @@ fun FloatingButton() {
 }
 
 @Composable
-fun FloatingButtonNotifications(setShowDialog: (Boolean) -> Unit) {
-    val context = LocalContext.current
-
+fun FloatingButtonNotifications(sharedViewModel: SharedViewModel, showDialog: MutableState<Boolean>) {
     FloatingActionButton(
-        modifier = Modifier.size(48.dp),
-        onClick = { setShowDialog(true) },
-        backgroundColor = Color.Blue,
+        onClick = {
+            showDialog.value = true
+//            sharedViewModel.createNewEvent.value = true
+        },
+        backgroundColor = MaterialTheme.colors.primary
     ) {
         Icon(
-            Icons.Filled.Add, "",
-            modifier = Modifier.size(48.dp),
+            imageVector = Icons.Default.Add,
+            contentDescription = null,
+            modifier = Modifier
+                .width(48.dp)
+                .height(48.dp),
             tint = Color.White
         )
     }
@@ -1537,7 +1570,7 @@ fun PopupButtonAddNumber(
 }
 
 @Composable
-fun SplashScreenWithLoading(text: String){
+fun SplashScreenWithLoading(text: String) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
@@ -1562,7 +1595,8 @@ fun SplashScreenWithLoading(text: String){
 }
 
 fun inProgressToastView(context: Context) {
-    Toast.makeText(context, context!!.getString(R.string.work_in_progress), Toast.LENGTH_SHORT).show()
+    Toast.makeText(context, context!!.getString(R.string.work_in_progress), Toast.LENGTH_SHORT)
+        .show()
 }
 
 @Preview(showBackground = true, widthDp = 360, heightDp = 800)
@@ -1625,9 +1659,9 @@ fun SignUpViewPreview() {
             )
             TopBarSettings(navController = navController, sharedViewModel = sharedViewModel)
             SettingsItem(navController, sharedViewModel, "Przycisk SOS", "")
-            SettingsItemWithIcon(navController, sharedViewModel,"Przycisk SOS", "", "edit")
-            SettingsNumberElement(0,sharedViewModel,navController,"CarerSettingsSOSScreen")
-            SettingsNumberElement(1,sharedViewModel,navController,"CarerSettingsSOSScreen")
+            SettingsItemWithIcon(navController, sharedViewModel, "Przycisk SOS", "", "edit")
+            SettingsNumberElement(0, sharedViewModel, navController, "CarerSettingsSOSScreen")
+            SettingsNumberElement(1, sharedViewModel, navController, "CarerSettingsSOSScreen")
 
 //            StatusWidget(
 //                navController, title = "Najbliższe wydarzenie:",
