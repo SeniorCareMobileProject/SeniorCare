@@ -3,6 +3,7 @@ package com.SeniorCareMobileProject.seniorcare.ui.views.Senior
 import android.app.Activity
 import android.app.Service
 import android.content.Intent
+import android.os.Build
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -61,8 +62,9 @@ fun SettingsFallDetectorView(navController: NavController, sharedViewModel: Shar
                 .fillMaxHeight()
                 .background(Color.White)
                 .verticalScroll(scrollState)
+                .padding(10.dp)
         ) {
-            Spacer(modifier = Modifier.height(42.dp))
+            Spacer(modifier = Modifier.height(30.dp))
 
             Column(
                 modifier = Modifier.fillMaxWidth(),
@@ -86,7 +88,19 @@ fun SettingsFallDetectorView(navController: NavController, sharedViewModel: Shar
                     tint = MaterialTheme.colors.primary
                 )
 
-                Spacer(modifier = Modifier.height(80.dp))
+
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q){
+                    Spacer(modifier = Modifier.height(25.dp))
+                    Text(
+                        text = stringResource(id = R.string.fall_detector_info_for_android_10),
+                        fontSize = 18.sp,
+                        fontWeight = FontWeight.Medium,
+                    )
+                    Spacer(modifier = Modifier.height(10.dp))
+                } else {
+                    Spacer(modifier = Modifier.height(80.dp))
+                }
 
                 SeniorFallDetectorSwitchButton(text = stringResource(id = R.string.turn_on_off),
                     color = "main",

@@ -178,4 +178,5 @@
     <string name="toast_sensor_null">Your device don\'t support fall detector due to sensor type</string>
     <string name="fall_detector_start">Fall detector starts working</string>
     <string name="fall_detector_stop">Fall detector stops working</string>
+    <string name="fall_detector_info_for_android_10">Due to background app limitations, the fall detector for devices with Android version 10 or higher only works properly with the app left running. For the fall detector to work properly, do not turn off the application.</string>
 </resources>

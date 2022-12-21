@@ -169,4 +169,5 @@
     <string name="toast_sensor_null">Twoje urządzenie nie obsługuje Detektora upadku z powodu niekompatybilnego rodzaju sensora.</string>
     <string name="fall_detector_start">Detektor upadku rozpoczął działanie</string>
     <string name="fall_detector_stop">Detektor upadku zatrzymany</string>
+    <string name="fall_detector_info_for_android_10">Ze względu na ograniczenia dla działania aplikacji w tle detektor upadku dla urządzeń z Androidem w wersji 10 bądź wyższej działa poprawnie tylko z pozostawioną włączoną aplikacją. Aby detektor upadku działał poprawnie nie wyłączaj aplikacji.</string>
 </resources>
