@@ -20,7 +20,7 @@ class AlarmPlayingUtil(private val context: Context) {
                 .setUsage(AudioAttributes.USAGE_ALARM)
                 .build()
         )
-        setAlarmToMaxVolume()
+        //setAlarmToMaxVolume()
         mediaPlayer.prepare()
         return mediaPlayer
     }
