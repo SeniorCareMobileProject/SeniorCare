@@ -20,7 +20,7 @@ import java.time.LocalDateTime
 class FallDetectorService: Service(), SensorEventListener {
     private lateinit var notificationManager: NotificationManager
     private lateinit var sensorManager: SensorManager
-    private lateinit var sensor: Sensor
+    private var sensor: Sensor? = null
     private val knnCalculator = KNNCalculator()
     private var lastDetectedFallTime = LocalDateTime.now()
 
@@ -33,20 +33,22 @@ class FallDetectorService: Service(), SensorEventListener {
         notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
         sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
-        sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
-        startForeground()
+        if (sensor != null) {
+            sensorManager.registerListener(this, sensor, SensorManager.SENSOR_DELAY_NORMAL)
+            startForeground()
+        }
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Toast.makeText(this, "Detektor upadku rozpoczął działanie", Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, applicationContext.getString(R.string.fall_detector_start), Toast.LENGTH_SHORT).show()
         return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
         sensorManager.unregisterListener(this)
-        Toast.makeText(applicationContext, "Detektor upadku zatrzymany", Toast.LENGTH_LONG).show()
+        Toast.makeText(applicationContext, applicationContext.getString(R.string.fall_detector_stop), Toast.LENGTH_LONG).show()
     }
 
     override fun onSensorChanged(event: SensorEvent?) {

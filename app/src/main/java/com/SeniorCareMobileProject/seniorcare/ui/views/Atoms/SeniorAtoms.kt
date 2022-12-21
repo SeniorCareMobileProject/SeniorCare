@@ -1,8 +1,12 @@
 package com.SeniorCareMobileProject.seniorcare.ui.views.Atoms
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
+import android.hardware.Sensor
+import android.hardware.SensorManager
 import android.os.CountDownTimer
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
@@ -29,10 +33,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.app.ActivityCompat.finishAffinity
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
+import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
 import com.SeniorCareMobileProject.seniorcare.services.SeniorService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
@@ -404,11 +410,16 @@ fun SeniorFallDetectorSwitchButton(
                     checked = mCheckedState.value,
                     onCheckedChange = {
 
-
-
                         mCheckedState.value = it
-                        sharedViewModel.isFallDetectorTurnOn.value = it
-                        sharedViewModel.saveFallDetectionStateToLocalRepo()
+
+                        if (checkIfDeviceHasProperSensor(applicationContext)){
+                            sharedViewModel.isFallDetectorTurnOn.value = it
+                            sharedViewModel.saveFallDetectionStateToLocalRepo()
+                        } else {
+                            Toast.makeText(context, applicationContext.getString(R.string.toast_sensor_null), Toast.LENGTH_LONG).show()
+                            mCheckedState.value = false
+                        }
+
                         if (sharedViewModel.isFallDetectorTurnOn.value == true) {
                             applicationContext.startService(
                                 Intent(
@@ -428,9 +439,14 @@ fun SeniorFallDetectorSwitchButton(
 //                colors = SwitchDefaults.colors(checkedThumbColor = Color(0xFF6522C1))
                 )
             }
-
         }
     }
+}
+
+private fun checkIfDeviceHasProperSensor(context: Context): Boolean {
+    val sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
+    val sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION)
+    return sensor != null
 }
 
 @Composable

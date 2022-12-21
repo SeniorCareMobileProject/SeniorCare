@@ -175,4 +175,7 @@
     <string name="loading_register">Signing in...</string>
     <string name="loading_login">Logging in...</string>
     <string name="loading_data">Loading data...</string>
+    <string name="toast_sensor_null">Your device don\'t support fall detector due to sensor type</string>
+    <string name="fall_detector_start">Fall detector starts working</string>
+    <string name="fall_detector_stop">Fall detector stops working</string>
 </resources>
