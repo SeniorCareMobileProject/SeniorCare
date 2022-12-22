@@ -96,7 +96,7 @@
     <string name="log_out">Wyloguj się</string>
     <string name="battery_notification_title">Bateria telefonu seniora w niskim stanie!</string>
     <string name="battery_notification_text">Senior %1$s ma niski poziom baterii w swoim urządzeniu.</string>
-    <string name="notifications_text">Przypomnienie o leku: %1$s</string>
+    <string name="notifications_text">Przypomnienie od opiekuna: %1$s</string>
     <string name="Lukasz_Koziej">Łukasz Koziej</string>
     <string name="Adrian_Olkowicz">Adrian Olkowicz</string>
     <string name="Andrei_Strachynski">Andrei Strachynski</string>

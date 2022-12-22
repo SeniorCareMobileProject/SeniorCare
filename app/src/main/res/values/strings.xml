@@ -104,7 +104,7 @@
     <string name="log_out">Log out</string>
     <string name="battery_notification_title">Senior\'s phone battery is low!</string>
     <string name="battery_notification_text">Phone battery of senior %1$s is low.</string>
-    <string name="notifications_text">Medication reminder: %1$s</string>
+    <string name="notifications_text">Reminder from your carer: %1$s</string>
     <string name="Lukasz_Koziej">Lukasz Koziej</string>
     <string name="Adrian_Olkowicz">Adrian Olkowicz</string>
     <string name="Michal_Dudziak">Michal Dudziak</string>

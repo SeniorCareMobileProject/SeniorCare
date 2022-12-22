@@ -133,7 +133,7 @@ class NotificationsManager {
         Log.d("Notification", "showing $notificationId")
 
         val mBuilder = NotificationCompat.Builder(context!!, "$notificationId")
-            .setSmallIcon(R.drawable.battery_4_bar)
+            .setSmallIcon(R.drawable.ic_notification_smallicon)
             .setContentTitle(context.getString(R.string.battery_notification_title))
             .setContentText(context.getString(R.string.battery_notification_text,seniorName).toString())
             .setPriority(NotificationCompat.PRIORITY_MAX)

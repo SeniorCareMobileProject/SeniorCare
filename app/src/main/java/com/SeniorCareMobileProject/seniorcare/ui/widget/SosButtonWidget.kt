@@ -46,13 +46,6 @@ internal fun updateAppWidget(context: Context,
         Toast.makeText(context, "Odmowa dostępu", Toast.LENGTH_SHORT).show()
     }
     else {
-        var number: String? = "123456789"
-
-        /**val intent = Intent(Intent.ACTION_CALL)
-        intent.data = Uri.parse("tel:$number")
-        val pendingIntent = PendingIntent.getActivity(context, 0, intent, 0)**/
-
-        Log.e("ButtonWidget", "Weszło")
 
         val intent = Intent(context, WidgetActivity::class.java)
         val pendingIntent = PendingIntent.getActivity(context, 20, intent, FLAG_IMMUTABLE)

@@ -41,12 +41,11 @@ class NotificationsBroadcastReceiver: BroadcastReceiver(){
     private fun showNotification(context: Context?, notificationId: Int, timeId: Int, title: String?) {
 
 
-        Log.d("Notification", "showing")
-
         val mBuilder = NotificationCompat.Builder(context!!, "$notificationId")
-            .setSmallIcon(R.drawable.ic_circle_notifications)
+            //.setSmallIcon(R.drawable.ic_circle_notifications)
+            .setSmallIcon(R.drawable.ic_notification_smallicon)
             .setContentTitle(title)
-            .setContentText(context.getString(R.string.notifications_text,title)) //"Przypomnienie o leku: $title"
+            .setContentText(context.getString(R.string.notifications_text,title))
             .setPriority(NotificationCompat.PRIORITY_MAX)
 
         val notificationManager = NotificationManagerCompat.from(context)
