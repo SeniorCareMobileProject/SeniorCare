@@ -138,7 +138,7 @@
     <string name="register_new_account">Zarejestruj nowe konto:</string>
     <string name="welcome_app_name">Mobilnym Opiekunie</string>
     <string name="password_recovery_message">Wysłaliśmy maila na twoje konto email z linkiem do zresetowania hasła.                         Kliknij otrzymany w mailu link i postępuj zgodnie z instrukcjami, aby zresetować hasło do swojego konta</string>
-    <string name="send_mail_with_verification">Wysłaliśmy maila na twoje konto email z linkiem weryfikacyjnym. Kliknij link, aby zweryfikować swój adres email.</string>
+    <string name="send_mail_with_verification">Wysłaliśmy maila na twoje konto email z linkiem weryfikacyjnym. Kliknij link, aby zweryfikować swój adres email. Mail powinien pojawić się w przeciągu kilku minut - w razie problemów sprawdź folder ze spamem lub kliknij poniższy przycisk, aby wysłać maila jeszcze raz.</string>
     <string name="you_must_choose_function">Musisz wybrać funkcję dla konta</string>
     <string name="you_need_to_verify">Musisz zweryfikować swój adres email</string>
     <string name="type_valid_email">Wpisz poprawny adres email</string>
@@ -170,4 +170,6 @@
     <string name="fall_detector_start">Detektor upadku rozpoczął działanie</string>
     <string name="fall_detector_stop">Detektor upadku zatrzymany</string>
     <string name="fall_detector_info_for_android_10">Ze względu na ograniczenia dla działania aplikacji w tle detektor upadku dla urządzeń z Androidem w wersji 10 bądź wyższej działa poprawnie tylko z pozostawioną włączoną aplikacją. Aby detektor upadku działał poprawnie nie wyłączaj aplikacji.</string>
+    <string name="toast_logged_out">Zostałeś poprawnie wylogowany - aplikacja zamyka się.</string>
+    <string name="sending_email_again">Wysyłamy ponownie email...</string>
 </resources>

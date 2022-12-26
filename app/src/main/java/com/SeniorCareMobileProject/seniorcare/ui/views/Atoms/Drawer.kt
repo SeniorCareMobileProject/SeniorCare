@@ -30,6 +30,8 @@ import androidx.navigation.compose.rememberNavController
 import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
+import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
+import com.SeniorCareMobileProject.seniorcare.services.CarerService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.CoroutineScope
@@ -199,11 +201,18 @@ fun BottomButton(
         SubmitOrDenyDialogView(context.getString(R.string.logout_confirmation),
             { showConfirmDialog.value = false }, sharedViewModel, showConfirmDialog, {
                 FirebaseAuth.getInstance().signOut()
+                Toast.makeText(context, context.getString(R.string.toast_logged_out), Toast.LENGTH_LONG).show()
                 sharedViewModel.clearLocalRepository()
                 val activity = context as Activity
+                activity.stopService(
+                    Intent(
+                        activity,
+                        CarerService::class.java
+                    )
+                )
                 activity.finish()
-                val intent = Intent(context, MainActivity::class.java)
-                activity.startActivity(intent)
+//                val intent = Intent(context, MainActivity::class.java)
+//                activity.startActivity(intent)
             })
     }
     Button(
@@ -216,8 +225,6 @@ fun BottomButton(
                 navController.navigate(rout)
             } else if (rout == "sign out") {
                 showConfirmDialog.value = true
-            } else if (rout == "about") {
-
             } else inProgressToastView(context)
         }
     ) {

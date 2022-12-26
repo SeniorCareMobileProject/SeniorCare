@@ -146,8 +146,8 @@ class CarerService: Service() {
             .setSmallIcon(R.drawable.ic_launcher_background)
             .setLargeIcon(Bitmap.createScaledBitmap(BitmapFactory.decodeResource(resources, R.mipmap.ic_launcher), 128, 128, false))
             .setDefaults(NotificationCompat.DEFAULT_ALL)
-            .setOnlyAlertOnce(true)
-            .setOngoing(true)
+//            .setOnlyAlertOnce(true)
+//            .setOngoing(true)
             .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
 
     }

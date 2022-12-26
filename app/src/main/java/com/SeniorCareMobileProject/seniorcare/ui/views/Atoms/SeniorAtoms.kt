@@ -26,6 +26,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -40,6 +41,7 @@ import com.SeniorCareMobileProject.seniorcare.MainActivity
 import com.SeniorCareMobileProject.seniorcare.MyApplication.Companion.context
 import com.SeniorCareMobileProject.seniorcare.R
 import com.SeniorCareMobileProject.seniorcare.fallDetector.FallDetectorService
+import com.SeniorCareMobileProject.seniorcare.services.CarerService
 import com.SeniorCareMobileProject.seniorcare.services.SeniorService
 import com.SeniorCareMobileProject.seniorcare.ui.SharedViewModel
 import com.SeniorCareMobileProject.seniorcare.ui.theme.SeniorCareTheme
@@ -89,6 +91,34 @@ fun SeniorButton(
         }
     }
 
+    val showConfirmDialog = remember { mutableStateOf(false) }
+    if (showConfirmDialog.value) {
+        SubmitOrDenyDialogView(context.getString(R.string.logout_confirmation),
+            { showConfirmDialog.value = false }, sharedViewModel, showConfirmDialog, {
+                FirebaseAuth
+                    .getInstance()
+                    .signOut()
+                Toast.makeText(context, context.getString(R.string.toast_logged_out), Toast.LENGTH_LONG).show()
+                sharedViewModel.clearLocalRepository()
+                val activity = context as Activity
+                activity.stopService(
+                    Intent(
+                        activity,
+                        FallDetectorService::class.java
+                    )
+                )
+                activity.stopService(
+                    Intent(
+                        activity,
+                        SeniorService::class.java
+                    )
+                )
+                activity.finish()
+//                val intent = Intent(context, MainActivity::class.java)
+//                activity.startActivity(intent)
+            })
+    }
+
 
     Surface(
         shape = RoundedCornerShape(20.dp),
@@ -101,14 +131,7 @@ fun SeniorButton(
                 if ((rout != "") && (rout != "sign out")) {
                     navController.navigate(rout)
                 } else if (rout == "sign out") {
-                    FirebaseAuth
-                        .getInstance()
-                        .signOut()
-                    sharedViewModel.clearLocalRepository()
-                    val activity = context as Activity
-                    activity.finish()
-                    val intent = Intent(context, MainActivity::class.java)
-                    activity.startActivity(intent)
+                    showConfirmDialog.value = true
                 }
                 //else inProgressToastView(context)
             },
@@ -240,20 +263,20 @@ fun SeniorButtonWithAction(
             .clip(RoundedCornerShape(20.dp))
 //            .height(86.dp)
             .clickable {
-                if ((rout != "") && (rout != "sign out")){
+                if ((rout != "") && (rout != "sign out")) {
                     action.invoke()
                     navController.navigate(rout)
-                }
-                else if (rout == "sign out") {
+                } else if (rout == "sign out") {
 
-                    FirebaseAuth.getInstance().signOut()
+                    FirebaseAuth
+                        .getInstance()
+                        .signOut()
                     sharedViewModel.clearLocalRepository()
                     val activity = context as Activity
                     activity.finish()
                     val intent = Intent(context, MainActivity::class.java)
                     activity.startActivity(intent)
-                }
-                else inProgressToastView(context)
+                } else inProgressToastView(context)
             },
         border = BorderStroke(1.dp, Color.Black),
         color = backgroundColor

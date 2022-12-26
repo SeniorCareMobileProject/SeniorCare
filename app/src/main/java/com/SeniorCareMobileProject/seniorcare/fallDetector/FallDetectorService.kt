@@ -41,14 +41,14 @@ class FallDetectorService: Service(), SensorEventListener {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
-        Toast.makeText(this, applicationContext.getString(R.string.fall_detector_start), Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, applicationContext.getString(R.string.fall_detector_start), Toast.LENGTH_SHORT).show()
         return START_STICKY
     }
 
     override fun onDestroy() {
         super.onDestroy()
         sensorManager.unregisterListener(this)
-        Toast.makeText(applicationContext, applicationContext.getString(R.string.fall_detector_stop), Toast.LENGTH_LONG).show()
+//        Toast.makeText(applicationContext, applicationContext.getString(R.string.fall_detector_stop), Toast.LENGTH_LONG).show()
     }
 
     override fun onSensorChanged(event: SensorEvent?) {

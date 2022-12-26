@@ -115,8 +115,12 @@ fun SignUpEmailVerificationView(navController: NavController, sharedViewModel: S
 
 @Composable
 fun SendVerificationEmail(text: String) {
+    val context = LocalContext.current
     Button(
-        onClick = { FirebaseAuth.getInstance().currentUser?.sendEmailVerification() },
+        onClick = {
+            Toast.makeText(context, context.getString(R.string.sending_email_again), Toast.LENGTH_LONG).show()
+            FirebaseAuth.getInstance().currentUser?.sendEmailVerification()
+                  },
         shape = RoundedCornerShape(10.dp),
         colors = ButtonDefaults.buttonColors(backgroundColor = Color(0xff7929e8)),
         modifier = Modifier
@@ -142,7 +146,8 @@ fun EmailVerifiedButton(text: String, navController: NavController) {
     Button(
         onClick = {
             FirebaseAuth.getInstance().currentUser?.reload()
-            if (FirebaseAuth.getInstance().currentUser?.isEmailVerified!!){
+            val user = FirebaseAuth.getInstance().currentUser
+            if (user?.isEmailVerified!!){
                 navController.navigate("LoadingDataView")
             }
             else {
