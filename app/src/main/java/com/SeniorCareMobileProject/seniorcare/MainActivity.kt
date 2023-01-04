@@ -71,7 +71,7 @@ class MainActivity : ComponentActivity() {
         })
 
 
-        requestForegroundPermissions()
+//        requestForegroundPermissions()
 
         sharedViewModel.getUserFunctionFromLocalRepo()
         sharedViewModel.hasUserFunction.observeOnce(this, Observer<Boolean?>{
@@ -134,13 +134,17 @@ class MainActivity : ComponentActivity() {
         val firebaseAuth = FirebaseAuth.getInstance()
         val currentUser = firebaseAuth.currentUser?.uid
         var startDestination = ""
-        if (currentUser != null) {
-            sharedViewModel.getUserData()
-            startDestination = NavigationScreens.LoadingDataView.name
-        } else {
-            startDestination = NavigationScreens.ChooseLoginMethodScreen.name
-        }
 
+        if (!foregroundPermissionApproved()){
+            startDestination = NavigationScreens.PermissionInfoScreen.name
+        } else {
+            if (currentUser != null) {
+                sharedViewModel.getUserData()
+                startDestination = NavigationScreens.LoadingDataView.name
+            } else {
+                startDestination = NavigationScreens.ChooseLoginMethodScreen.name
+            }
+        }
 
         setContent {
             SeniorCareTheme() {
@@ -168,6 +172,9 @@ class MainActivity : ComponentActivity() {
                         CarerNotificationsView(navController, sharedViewModel, scope, scaffoldState)
                     }
 
+                    composable(NavigationScreens.PermissionInfoScreen.name) {
+                        PermissionInfoScreen(this@MainActivity, navController)
+                    }
 
                     composable(NavigationScreens.ChooseLoginMethodScreen.name) {
                         ChooseLoginMethodView(navController, sharedViewModel)
@@ -449,7 +456,7 @@ class MainActivity : ComponentActivity() {
         )
     }
 
-    private fun requestForegroundPermissions() {
+    fun requestForegroundPermissions() {
         val provideRationale = foregroundPermissionApproved()
 
         if (provideRationale) {

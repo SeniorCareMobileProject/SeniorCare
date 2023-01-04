@@ -36,5 +36,6 @@ enum class NavigationScreens(val title: String) {
     SosCascadeView("SosCascadeView"),
     CarerSettingsSafeZoneScreen("CarerSettingsSafeZoneScreen"),
     CarerNoConnectedSeniorsView("CarerNoConnectedSeniorsView"),
-    CarerAboutAppView("CarerAboutAppView")
+    CarerAboutAppView("CarerAboutAppView"),
+    PermissionInfoScreen("PermissionInfoScreen")
 }
