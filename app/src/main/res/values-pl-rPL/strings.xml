@@ -13,7 +13,7 @@
     <string name="appwidget_text">PRZYKŁAD</string>
     <string name="add_widget">Dodaj widget</string>
     <string name="app_widget_description">To jest opis widgetu</string>
-    <string name="welcome_to">Witamy w</string>
+    <string name="welcome_to">Witamy w </string>
     <string name="medical_info">Dane medyczne</string>
     <string name="calendar">Kalendarz</string>
     <string name="location">Lokalizacja</string>
@@ -172,4 +172,10 @@
     <string name="fall_detector_info_for_android_10">Ze względu na ograniczenia dla działania aplikacji w tle detektor upadku dla urządzeń z Androidem w wersji 10 bądź wyższej działa poprawnie tylko z pozostawioną włączoną aplikacją. Aby detektor upadku działał poprawnie nie wyłączaj aplikacji.</string>
     <string name="toast_logged_out">Zostałeś poprawnie wylogowany - aplikacja zamyka się.</string>
     <string name="sending_email_again">Wysyłamy ponownie email...</string>
+    <string name="our_goal">Naszym celem jest pomoc w opiece nad seniorami poprzez ciągłą wymianę danych pomiędzy telefonem seniora, a jego opiekuna. Z tego powodu dla poprawnego działania aplikacji potrzebne są przynajmniej 2 urządzenia z zainstalowaną aplikacją Mobilny Opiekun oraz 2 kontami (odpowiednio: telefon opiekuna z utworzonym kontem opiekuna oraz telefon seniora z utworzonym kontem seniora), które następnie należy ze sobą sparować. Z tego względu po założeniu konta zostaniesz przeniesiony na ekran parowania, które musisz ukończyć aby móc korzystać z aplikacji.</string>
+    <string name="to_work_properly_we_need">Aby móc działać prawidłowo aplikacja potrzebuje twojej zgody na:</string>
+    <string name="i_agree">Wyrażam zgodę</string>
+    <string name="location_permission_info">Zbieranie danych o lokalizacji, aby włączyć funkcję śledzenia seniorów, nawet gdy aplikacja jest zamknięta lub nie jest używana.</string>
+    <string name="calling_permission_info">Wykonywanie połączeń telefonicznych, aby włączyć funkcję przycisku SOS.</string>
+    <string name="sms_permission_info">Wysyłanie SMS, aby powiadomić opiekuna w przypadku zagrożenia seniora (np. opuszczenia bezpiecznej strefy lub wykrycia potencjalnego upadku).</string>
 </resources>

@@ -35,7 +35,7 @@
     <string name="fall_detection_alert_message">WARNING! Potential fall of the senior!</string>
     <string name="fall_detection_notification_text">Fall detector is working</string>
     <string name="about_app">Senior Care - mobile app for Android aiding in senior care. Developed for engineering project purposes by a 4-member team consisting of:</string>
-    <string name="welcome_to">Welcome to</string>
+    <string name="welcome_to">Welcome to </string>
     <string name="medical_info">Medical Info</string>
     <string name="calendar">Calendar</string>
     <string name="location">Localization</string>
@@ -181,4 +181,10 @@
     <string name="fall_detector_info_for_android_10">Due to background app limitations, the fall detector for devices with Android version 10 or higher only works properly with the app left running. For the fall detector to work properly, do not turn off the application.</string>
     <string name="toast_logged_out">You\'ve been successfully logged out</string>
     <string name="sending_email_again">Sending email again...</string>
+    <string name="our_goal">This app was created to help in taking care of senior citizens. In order for it to work properly it needs continuous data exchange between senior\'s and his carer\'s phones. To start using the app install it on at least 2 devices and set up 2 accounts (one as a carer account and one as a senior account). Once your account is created you will be taken to the pairing screen, where you must pair carer\'s account with senior\'s account to use the app.</string>
+    <string name="to_work_properly_we_need">To work properly this app needs your permission to:</string>
+    <string name="i_agree">I agree</string>
+    <string name="location_permission_info">Collects location data to enable senior tracking function even when the app is closed or not in use.</string>
+    <string name="calling_permission_info">Make phone calls to enable SOS button function.</string>
+    <string name="sms_permission_info">Send SMS to notify carer in case of senior\'s emergency (i.e. leaving the safe zone or potential fall detected).</string>
 </resources>
