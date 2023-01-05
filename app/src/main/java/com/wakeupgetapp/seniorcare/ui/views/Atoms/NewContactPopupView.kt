@@ -1,0 +1,100 @@
+package com.wakeupgetapp.seniorcare.ui.views.Atoms
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.navigation.compose.rememberNavController
+import com.wakeupgetapp.seniorcare.MyApplication
+import com.wakeupgetapp.seniorcare.R
+import com.wakeupgetapp.seniorcare.ui.SharedViewModel
+import com.wakeupgetapp.seniorcare.ui.theme.SeniorCareTheme
+
+
+@Composable
+fun NewContactPopupView(setShowDialog: (Boolean) -> Unit, sharedViewModel: SharedViewModel) {
+    Dialog(onDismissRequest = { setShowDialog(false) },
+    ) {
+        Surface(
+            modifier = Modifier
+                .width(360.dp),
+            shape = RoundedCornerShape(20.dp),
+            color = Color(0xFFF1ECF8)
+        ) {
+            val contactName = remember { mutableStateOf(TextFieldValue("")) }
+            val contactNumber = remember { mutableStateOf(TextFieldValue("")) }
+
+            Column(
+                modifier = Modifier
+                    .padding(horizontal = 24.dp)
+                    .padding(vertical = 18.dp),
+                verticalArrangement = Arrangement.spacedBy(18.dp)
+            ) {
+                TextField(
+                    value = contactName.value,
+                    onValueChange = { contactName.value = it },
+                    textStyle = TextStyle(
+                        fontSize = 16.sp
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.White,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    placeholder = { Text(text = MyApplication.context!!.getString(R.string.sos_contact_name)) }
+                )
+                TextField(
+                    value = contactNumber.value,
+                    onValueChange = { contactNumber.value = it },
+                    textStyle = TextStyle(
+                        fontSize = 16.sp
+                    ),
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.White,
+                        unfocusedIndicatorColor = Color.Transparent
+                    ),
+                    keyboardOptions = KeyboardOptions(
+                        keyboardType = KeyboardType.Number
+                    ),
+                    placeholder = { Text(text = MyApplication.context!!.getString(R.string.sos_phone_number)) }
+                )
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceAround
+                ) {
+                    PopupButton(MyApplication.context!!.getString(R.string.cancel),setShowDialog)
+                    PopupButtonAddNumber(
+                        text = MyApplication.context!!.getString(R.string.add),
+                        sharedViewModel = sharedViewModel,
+                        name = contactName.value.text,
+                        number = contactNumber.value.text,
+                        setShowDialog)
+
+                }
+            }
+        }
+    }
+}
+
+@Preview(showBackground = true, showSystemUi = true, widthDp = 360, heightDp = 800)
+@Composable
+fun NewContactPopupViewPreview() {
+    SeniorCareTheme() {
+        val navController = rememberNavController()
+        val showDialog =  remember { mutableStateOf(false) }
+
+        //NewContactPopupView( setShowDialog = { showDialog.value = it } )
+    }
+}
