@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:272124790691:android:09861071d857bcca49bc16",
         "android_client_info": {
-          "package_name": "com.SeniorCareMobileProject.seniorcare"
+          "package_name": "com.wakeupgetapp.seniorcare"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "272124790691-4fc31md4bauhuqlp0ajr1ul67o9mg4va.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.SeniorCareMobileProject.seniorcare",
+            "package_name": "com.wakeupgetapp.seniorcare",
             "certificate_hash": "8b0e8ff2219fc35dc000b0ec552289266fa2ad27"
           }
         },
