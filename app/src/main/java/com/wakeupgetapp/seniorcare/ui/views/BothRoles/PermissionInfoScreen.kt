@@ -41,7 +41,6 @@ fun PermissionInfoScreen(context: Context, navController: NavController){
             .fillMaxWidth()
             .fillMaxHeight()
             .padding(20.dp)
-            .background(Color.White)
             .verticalScroll(scrollState),
         verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -132,13 +131,9 @@ fun PermissionInfoScreen(context: Context, navController: NavController){
         }
         Button(onClick = {
             requestForegroundPermissions(context, navController)
-            var grantedPermission = false
-            while(!grantedPermission){
-                if (foregroundPermissionApproved(context)) {
-                    grantedPermission = true
-                    navController.navigate("ChooseLoginMethodScreen"){
-                        popUpTo("PermissionInfoScreen") {inclusive = true}
-                    }
+            if (foregroundPermissionApproved(context)) {
+                navController.navigate("ChooseLoginMethodScreen"){
+                    popUpTo("PermissionInfoScreen") {inclusive = true}
                 }
             }
         }) {

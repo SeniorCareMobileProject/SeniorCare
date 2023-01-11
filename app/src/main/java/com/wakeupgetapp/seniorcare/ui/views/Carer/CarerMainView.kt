@@ -88,11 +88,13 @@ fun CarerMainView(
     scope: CoroutineScope,
     scaffoldState: ScaffoldState
 ) {
+    val fullScreen by remember { sharedViewModel.mapFullscreen }
+
     Scaffold(
         bottomBar = { BottomNavBarView(navController, sharedViewModel) },
         topBar = { TopBar(navController, scope, scaffoldState, sharedViewModel) },
         scaffoldState = scaffoldState,
-        drawerGesturesEnabled = true,
+        drawerGesturesEnabled = !fullScreen,
         drawerContent = {
             Drawer(
                 scope = scope,
@@ -102,7 +104,6 @@ fun CarerMainView(
             )
         }) { innerPadding ->
         var mapModifier by remember { mutableStateOf(Modifier.height(350.dp)) }
-        val fullScreen by remember { sharedViewModel.mapFullscreen }
         mapModifier = if (fullScreen) {
             Modifier
                 .fillMaxSize()
