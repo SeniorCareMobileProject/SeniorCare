@@ -187,4 +187,5 @@
     <string name="location_permission_info">Collects location data to enable senior tracking function even when the app is closed or not in use.</string>
     <string name="calling_permission_info">Make phone calls to enable SOS button function.</string>
     <string name="sms_permission_info">Send SMS to notify carer in case of senior\'s emergency (i.e. leaving the safe zone or potential fall detected).</string>
+    <string name="go_on">Continue</string>
 </resources>

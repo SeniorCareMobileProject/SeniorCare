@@ -14,8 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Call
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Sms
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -129,7 +128,9 @@ fun PermissionInfoScreen(context: Context, navController: NavController){
                 modifier = Modifier.padding(start = 15.dp)
             )
         }
+        val buttonTextState = remember { mutableStateOf(context.getString(R.string.i_agree)) }
         Button(onClick = {
+            buttonTextState.value = context.getString(R.string.go_on)
             requestForegroundPermissions(context, navController)
             if (foregroundPermissionApproved(context)) {
                 navController.navigate("ChooseLoginMethodScreen"){
@@ -137,7 +138,7 @@ fun PermissionInfoScreen(context: Context, navController: NavController){
                 }
             }
         }) {
-            Text(stringResource(id = R.string.i_agree))
+            Text(buttonTextState.value)
         }
     }
 }

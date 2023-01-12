@@ -178,4 +178,5 @@
     <string name="location_permission_info">Zbieranie danych o lokalizacji, aby włączyć funkcję śledzenia seniorów, nawet gdy aplikacja jest zamknięta lub nie jest używana.</string>
     <string name="calling_permission_info">Wykonywanie połączeń telefonicznych, aby włączyć funkcję przycisku SOS.</string>
     <string name="sms_permission_info">Wysyłanie SMS, aby powiadomić opiekuna w przypadku zagrożenia seniora (np. opuszczenia bezpiecznej strefy lub wykrycia potencjalnego upadku).</string>
+    <string name="go_on">Przejdź dalej</string>
 </resources>
