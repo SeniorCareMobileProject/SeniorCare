@@ -188,4 +188,10 @@
     <string name="calling_permission_info">Make phone calls to enable SOS button function.</string>
     <string name="sms_permission_info">Send SMS to notify carer in case of senior\'s emergency (i.e. leaving the safe zone or potential fall detected).</string>
     <string name="go_on">Continue</string>
+    <string name="none">None</string>
+    <string name="every_day">Every day</string>
+    <string name="every_2_days">Every 2 days</string>
+    <string name="every_week">Every week</string>
+    <string name="frequency">Frequency</string>
+    <string name="radius">Radius</string>
 </resources>

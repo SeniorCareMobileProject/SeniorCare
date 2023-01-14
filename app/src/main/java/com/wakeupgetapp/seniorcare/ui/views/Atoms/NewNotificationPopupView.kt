@@ -48,6 +48,7 @@ fun NewNotificationPopupView(
             shape = RoundedCornerShape(20.dp),
             color = Color(0xFFF1ECF8)
         ) {
+            val context = LocalContext.current
 
             val mTime1 = remember { mutableStateOf("00:00") }
             val mTime2 = remember { mutableStateOf("00:00") }
@@ -59,7 +60,7 @@ fun NewNotificationPopupView(
             var expanded by remember { mutableStateOf(false) }
             var enabled by remember { mutableStateOf(1) }
 
-            var frequency by remember { mutableStateOf("Brak") }
+            var frequency by remember { mutableStateOf(context.getString(R.string.none)) }
 
 
             Column(
@@ -292,7 +293,7 @@ fun NewNotificationPopupView(
                         Button(onClick = {mTimePickerDialog.show()},shape = RoundedCornerShape(5.dp), colors =ButtonDefaults.buttonColors(backgroundColor = Color(0xFFFFFFFF))) {
                         Text(text = mTime.value)
                         }**/
-                        Text(text = "Częstotliwość")
+                        Text(text = context.getString(R.string.frequency))
                         Text(
                             modifier = Modifier
                                 .clickable {
@@ -315,7 +316,7 @@ fun NewNotificationPopupView(
                             ) {
                                 DropdownMenuItem(
                                     onClick = {
-                                        frequency = "Codziennie"
+                                        frequency = context.getString(R.string.every_day)
                                         expanded = false
 
                                     },
@@ -325,14 +326,14 @@ fun NewNotificationPopupView(
                                 ) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
-                                        text = "Codziennie",
+                                        text = context.getString(R.string.every_day),
                                         color = Color.Black,
                                         textAlign = TextAlign.Center
                                     )
                                 }
                                 DropdownMenuItem(
                                     onClick = {
-                                        frequency = "Co 2 dni"
+                                        frequency = context.getString(R.string.every_2_days)
                                         expanded = false
 
                                     },
@@ -342,14 +343,14 @@ fun NewNotificationPopupView(
                                 ) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
-                                        text = "Co 2 dni",
+                                        text = context.getString(R.string.every_2_days),
                                         color = Color.Black,
                                         textAlign = TextAlign.Center
                                     )
                                 }
                                 DropdownMenuItem(
                                     onClick = {
-                                        frequency = "Co tydzień"
+                                        frequency = context.getString(R.string.every_week)
                                         expanded = false
 
                                     },
@@ -359,7 +360,7 @@ fun NewNotificationPopupView(
                                 ) {
                                     Text(
                                         modifier = Modifier.fillMaxWidth(),
-                                        text = "Co tydzień",
+                                        text = context.getString(R.string.every_week),
                                         color = Color.Black,
                                         textAlign = TextAlign.Center
                                     )
@@ -378,7 +379,7 @@ fun NewNotificationPopupView(
                     PopupButton(context!!.getString(R.string.cancel), setShowDialog)
                     Button(
                         onClick = {
-                            if (!frequency.equals("Brak")) {
+                            if (!frequency.equals(context.getString(R.string.none))) {
                                 setShowDialog(false)
                                 var timeList = mutableListOf<String>()
                                 if (enabled == 1) {

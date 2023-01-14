@@ -121,7 +121,7 @@ fun RadiusChanger(navController: NavController, sharedViewModel: SharedViewModel
         modifier = Modifier.fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Promień (m.):", fontSize = 16.sp)
+        Text(text = context.getString(R.string.radius) + " (m.):", fontSize = 16.sp)
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
