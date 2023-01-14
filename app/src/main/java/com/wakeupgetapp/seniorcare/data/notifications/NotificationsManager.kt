@@ -77,10 +77,10 @@ class NotificationsManager {
 
 
         var alarmInterval = AlarmManager.INTERVAL_DAY
-        if(interval.equals("Co 2 dni")){
+        if(interval.equals(R.string.every_2_days)){
             alarmInterval *= 2
         }
-        if(interval.equals("Co tydzień")){
+        if(interval.equals(R.string.every_week)){
             alarmInterval *= 7
         }
 
