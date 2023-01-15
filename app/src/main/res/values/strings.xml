@@ -112,7 +112,7 @@
     <string name="space" translatable="false"> </string>
     <string name="application_information">Application information</string>
     <string name="battery_status_widget">Battery status</string>
-    <string name="recently_taken_medication_widget">Recently taken medication:</string>
+    <string name="recently_taken_medication_widget">Recently shown notification:</string>
     <string name="last_data_update_widget">Last data update: %1$s</string>
     <string name="caution">CAUTION!</string>
     <string name="not_connected_to_any_user_text">You are currently not connected to any user, which is required for the application to work properly. Pair your account with your mentee to continue using the app.</string>
@@ -168,8 +168,8 @@
     <string name="type_pairing_code">Enter the number shown on the carer\'s phone screen</string>
     <string name="confirm_pairing">Are you sure you want to pair your account with a user:</string>
     <string name="i_came_home">I\'m back home</string>
-    <string name="going_out_text">We have informed your carer about leaving home.</string>
-    <string name="another_call_in">" Another call will be made within 10 seconds"</string>
+    <string name="going_out_text">We are informing your carer about leaving home.</string>
+    <string name="another_call_in">"The phone call will be made within 10 seconds."</string>
     <string name="sos">SOS</string>
     <string name="i_am_going_out">I\'m going out</string>
     <string name="loading_register">Signing in...</string>

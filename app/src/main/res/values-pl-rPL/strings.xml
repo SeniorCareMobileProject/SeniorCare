@@ -103,7 +103,7 @@
     <string name="Michal_Dudziak">Michał Dudziak</string>
     <string name="application_information">Informacje o aplikacji</string>
     <string name="battery_status_widget">Stan baterii:</string>
-    <string name="recently_taken_medication_widget">Ostatnio przyjęty lek:</string>
+    <string name="recently_taken_medication_widget">Ostatnie powiadomienie:</string>
     <string name="last_data_update_widget">Ostatnia aktualizacja danych: %1$s</string>
     <string name="caution">UWAGA!</string>
     <string name="not_connected_to_any_user_text">Aktualnie nie jesteś połączony z żadnym użytkownikiem, co jest wymagane do poprawnego działania aplikacji. Sparuj swojego konto z podopiecznym, aby móc dalej korzystać z aplikacji.</string>
@@ -154,12 +154,12 @@
     <string name="confirm_pairing">Czy chcesz sparować konto z użytkownikiem:</string>
     <string name="paired_with_user">Sparowano z użytkownikiem:</string>
     <string name="i_came_home">Wróciłem do domu</string>
-    <string name="going_out_text">Poinformowaliśmy twojego opiekuna o wyjściu z domu. Proszę wciśnij poniższy przycisk w momencie, gdy wrócisz do swojego domu.</string>
+    <string name="going_out_text">Poinformujemy twojego opiekuna o wyjściu z domu. Proszę wciśnij poniższy przycisk w momencie, gdy wrócisz do swojego domu.</string>
     <string name="welcome">Witaj</string>
     <string name="fall_detector">Detektor upadku</string>
     <string name="add_carer">Dodaj opiekuna</string>
     <string name="turn_on_off">Włącz / Wyłącz</string>
-    <string name="another_call_in">W ciągu 10 sekund wykona się kolejne połączenie</string>
+    <string name="another_call_in">W ciągu 10 sekund wykona się połączenie telefoniczne.</string>
     <string name="stop_calling">Zakończ połączenia</string>
     <string name="sos">SOS</string>
     <string name="i_am_going_out">Wychodzę z domu</string>
